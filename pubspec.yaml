@@ -49,6 +49,7 @@ dependencies:
   simple_animations: ^5.0.2
   page_transition: ^2.1.0
   flutter_secure_storage: ^9.0.0
+  carousel_slider: ^4.2.1
 
 
 dev_dependencies:
@@ -106,6 +107,11 @@ flutter:
      - images/about2.png
      - images/about3.png
      - images/signup.png
+     - images/card2.png
+     - images/coverange.png
+     - images/promo1.png
+     - images/promo2.png
+     - images/promo3.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
