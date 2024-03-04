@@ -2,35 +2,33 @@ import 'package:idmall/admin/home_admin.dart';
 import 'package:idmall/pages/bottomnav.dart';
 import 'package:idmall/pages/forgotpassword.dart';
 import 'package:idmall/pages/signup.dart';
-import 'package:idmall/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  const Login({Key? key});
 
   @override
   State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  @override
-  void dispose() {
-    useremailcontroller.dispose();
-    userpasswordcontroller.dispose();
-
-    super.dispose();
-  }
-
   User? currentUser;
   String email = "", password = "";
 
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   TextEditingController useremailcontroller = TextEditingController();
   TextEditingController userpasswordcontroller = TextEditingController();
 
-  userLogin() async {
+  @override
+  void dispose() {
+    useremailcontroller.dispose();
+    userpasswordcontroller.dispose();
+    super.dispose();
+  }
+
+  Future<void> userLogin() async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: useremailcontroller.text,
@@ -45,32 +43,34 @@ class _LoginState extends State<Login> {
 
       print(currentUser?.uid);
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const BottomNav()));
-    } on FirebaseAuthException {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'An error occurred while signing in. Please try again.',
-            style: TextStyle(fontSize: 18.0, color: Colors.white),
-          ),
-        ),
+        context,
+        MaterialPageRoute(builder: (context) => const BottomNav()),
       );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'An error occurred while signing in. Please try again.';
+      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+        errorMessage = 'Email or password is incorrect. Please try again.';
+        // Tampilkan dialog popup
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Error"),
+              content: Text(errorMessage),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        print('User is currently signed out!');
-      } else {
-        print('User is signed in!');
-      }
-    });
-  }
-
-  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,38 +92,31 @@ class _LoginState extends State<Login> {
                             Expanded(
                               child: Container(
                                 margin:
-                                    const EdgeInsets.only(top: 155.0, left: 20),
+                                    const EdgeInsets.only(top: 120.0, left: 20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "Selamat Datang di IdMall",
                                       style: TextStyle(
-                                        color: Colors
-                                            .black, // Ubah warna teks menjadi hitam
-                                        fontWeight: FontWeight
-                                            .bold, // Tambahkan gaya teks bold
-                                        fontSize:
-                                            20.0, // Sesuaikan ukuran font jika diperlukan
-                                        fontFamily:
-                                            'Poppins', // Sesuaikan jenis font jika diperlukan
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20.0,
+                                        fontFamily: 'Poppins',
                                       ),
                                     ),
-                                    const SizedBox(
-                                        height:
-                                            20), // Padding tambahan di bagian bawah judul
+                                    const SizedBox(height: 20),
                                   ],
                                 ),
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.all(0.5),
-                              margin: const EdgeInsets.only(
-                                  right: 20.0), // Geser ke kanan sebesar 10px
+                              padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.only(right: 20.0),
                               child: Image.asset(
-                                'images/signup.png', // Ganti dengan path gambar yang sesuai
-                                height: 250,
-                                width: 250,
+                                'images/signup.png',
+                                height: 200,
+                                width: 200,
                               ),
                             ),
                           ],
@@ -131,7 +124,7 @@ class _LoginState extends State<Login> {
                       ),
                       const SizedBox(height: 30),
                       Form(
-                        key: _formkey,
+                        key: _formKey,
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Column(
@@ -145,19 +138,16 @@ class _LoginState extends State<Login> {
                                   return null;
                                 },
                                 style: const TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0)),
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                ),
                                 decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.email,
-                                      color: Color.fromARGB(255, 93, 92, 92)),
-                                  // Email icon
+                                  prefixIcon: const Icon(Icons.email, color: Color.fromARGB(255, 93, 92, 92)),
                                   hintText: 'Email',
-                                  hintStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 93, 92, 92)),
+                                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 92, 92)),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 15.0, horizontal: 20.0),
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -170,90 +160,48 @@ class _LoginState extends State<Login> {
                                   return null;
                                 },
                                 style: const TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0)),
-                                obscureText: !_isPasswordVisible,
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                ),
+                                obscureText: true,
                                 decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.lock,
-                                      color: Color.fromARGB(255, 93, 92, 92)),
+                                  prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 93, 92, 92)),
                                   hintText: 'Password',
-                                  hintStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 93, 92, 92)),
+                                  hintStyle: const TextStyle(color: Color.fromARGB(255, 93, 92, 92)),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 15.0, horizontal: 20.0),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _isPasswordVisible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color:
-                                          const Color.fromARGB(255, 93, 92, 92),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _isPasswordVisible =
-                                            !_isPasswordVisible;
-                                      });
-                                    },
-                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 10.0,
-                              ),
+                              const SizedBox(height: 10.0),
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ForgotPassword()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPassword()));
                                 },
                                 child: Container(
                                   alignment: Alignment.topRight,
                                   child: Text(
                                     "Lupa Password?",
                                     style: TextStyle(
-                                      color: const Color.fromARGB(255, 228, 99, 7), // Ubah warna teks menjadi hitam
-                                      fontWeight: FontWeight
-                                          .bold, // Sesuaikan gaya teks jika diperlukan
-                                      fontSize:
-                                          14.0, // Sesuaikan ukuran font jika diperlukan
-                                      fontFamily:
-                                          'Poppins', // Sesuaikan jenis font jika diperlukan
+                                      color: const Color.fromARGB(255, 228, 99, 7),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14.0,
+                                      fontFamily: 'Poppins',
                                       decoration: TextDecoration.underline,
                                     ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 30.0,
-                              ),
+                              const SizedBox(height: 30.0),
                               GestureDetector(
                                 onTap: () async {
-                                  if (_formkey.currentState!.validate()) {
-                                    String enteredEmail =
-                                        useremailcontroller.text;
-                                    String enteredPassword =
-                                        userpasswordcontroller.text;
+                                  if (_formKey.currentState!.validate()) {
+                                    String enteredEmail = useremailcontroller.text;
+                                    String enteredPassword = userpasswordcontroller.text;
 
-                                    if (enteredEmail == 'admin' &&
-                                        enteredPassword == 'admin') {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const HomeAdmin(),
-                                        ),
-                                      );
+                                    if (enteredEmail == 'admin' && enteredPassword == 'admin') {
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeAdmin()));
                                     } else {
-                                      setState(() {
-                                        email = enteredEmail;
-                                        password = enteredPassword;
-                                      });
-
                                       userLogin();
                                     }
                                   }
@@ -284,24 +232,23 @@ class _LoginState extends State<Login> {
                                     child: Container(
                                       height: 1.0,
                                       color: Colors.grey,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 10.0),
+                                      margin: const EdgeInsets.symmetric(horizontal: 10.0),
                                     ),
                                   ),
                                   const Text(
                                     "Atau",
                                     style: TextStyle(
-                                        color: Color.fromARGB(255, 93, 92, 92),
-                                        fontSize: 20.0,
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.bold),
+                                      color: Color.fromARGB(255, 93, 92, 92),
+                                      fontSize: 20.0,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   Expanded(
                                     child: Container(
                                       height: 1.0,
                                       color: Colors.grey,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 10.0),
+                                      margin: const EdgeInsets.symmetric(horizontal: 10.0),
                                     ),
                                   ),
                                 ],
@@ -313,18 +260,15 @@ class _LoginState extends State<Login> {
                                   const Text(
                                     "Tidak Memiliki Akun?",
                                     style: TextStyle(
-                                        color: Color.fromARGB(255, 93, 92, 92),
-                                        fontSize: 14.0,
-                                        fontFamily: 'Poppins'),
+                                      color: Color.fromARGB(255, 93, 92, 92),
+                                      fontSize: 14.0,
+                                      fontFamily: 'Poppins',
+                                    ),
                                   ),
                                   const SizedBox(width: 5.0),
                                   GestureDetector(
                                     onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const SignUp()));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUp()));
                                       print("Sign Up tapped!");
                                     },
                                     child: const Text(

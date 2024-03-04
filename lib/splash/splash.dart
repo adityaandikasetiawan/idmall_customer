@@ -1,8 +1,9 @@
-import 'package:idmall/pages/onboard.dart';
 import 'package:flutter/material.dart';
+import 'package:idmall/pages/onboard.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'fade_animation.dart';
+import 'package:onboard/onboard.dart'; // Make sure to import the Onboard screen
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -26,7 +27,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     _scaleController = AnimationController(
@@ -84,109 +84,112 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
 
-return Scaffold(
-  backgroundColor: Color.fromARGB(255, 255, 255, 255),
-  body: SizedBox(
-    width: double.infinity,
-    child: Stack(
-      children: <Widget>[
-        Container(
-          padding: const EdgeInsets.all(0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Stack(
             children: <Widget>[
-              FadeAnimation(
-                1,
-                Center(
-                  child: SizedBox(
-                    width: 300,
-                    height: 300,
-                    child: Image.asset("images/splash.png"),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30), // Decreased the height to move the image up
-              FadeAnimation(
-                1,
-                Center(
-                  child: SizedBox(
-                    width: 450, // Adjust width as needed
-                    height: 350, // Adjust height as needed
-                    child: Image.asset("images/moco.png"), // Replace with your image path
-                  ),
-                ),
-              ),
-              FadeAnimation(
-                1.6,
-                AnimatedBuilder(
-                  animation: _scaleController,
-                  builder: (context, child) => Transform.scale(
-                    scale: _scaleAnimation.value,
-                    child: Center(
-                      child: AnimatedBuilder(
-                        animation: _widthController,
-                        builder: (context, child) => Container(
-                          width: _widthAnimation.value,
-                          height: 80,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: Color.fromARGB(255, 51, 92, 213).withOpacity(.4),
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              _scaleController.forward();
-                            },
-                            child: Stack(
-                              children: <Widget>[
-                                AnimatedBuilder(
-                                  animation: _positionController,
-                                  builder: (context, child) => Positioned(
-                                    left: _positionAnimation.value,
-                                    child: AnimatedBuilder(
-                                      animation: _scale2Controller,
-                                      builder: (context, child) => Transform.scale(
-                                        scale: _scale2Animation.value,
-                                        child: Container(
-                                          width: 60,
-                                          height: 60,
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Color.fromARGB(255, 228, 99, 7),
+              Container(
+                padding: const EdgeInsets.only(top: 100), // Add padding here
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    FadeAnimation(
+                      1,
+                      Center(
+                        child: SizedBox(
+                          width: 200,
+                          height: 200,
+                          child: Image.asset("images/splash.png"),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                        height:
+                            0.05), // Decreased the height to move the image up
+                    FadeAnimation(
+                      1,
+                      Center(
+                        child: SizedBox(
+                          width: 450, // Adjust width as needed
+                          height: 350, // Adjust height as needed
+                          child: Image.asset(
+                              "images/moco.png"), // Replace with your image path
+                        ),
+                      ),
+                    ),
+                    FadeAnimation(
+                      1.6,
+                      AnimatedBuilder(
+                        animation: _scaleController,
+                        builder: (context, child) => Transform.scale(
+                          scale: _scaleAnimation.value,
+                          child: Center(
+                            child: AnimatedBuilder(
+                              animation: _widthController,
+                              builder: (context, child) => Container(
+                                width: _widthAnimation.value,
+                                height: 80,
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Color.fromARGB(255, 51, 92, 213)
+                                      .withOpacity(.4),
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    _scaleController.forward();
+                                  },
+                                  child: Stack(
+                                    children: <Widget>[
+                                      AnimatedBuilder(
+                                        animation: _positionController,
+                                        builder: (context, child) => Positioned(
+                                          left: _positionAnimation.value,
+                                          child: AnimatedBuilder(
+                                            animation: _scale2Controller,
+                                            builder: (context, child) =>
+                                                Transform.scale(
+                                              scale: _scale2Animation.value,
+                                              child: Container(
+                                                width: 60,
+                                                height: 60,
+                                                decoration: const BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Color.fromARGB(
+                                                      255, 228, 99, 7),
+                                                ),
+                                                child: hideIcon == false
+                                                    ? const Icon(
+                                                        Icons.arrow_forward,
+                                                        color: Colors.white,
+                                                      )
+                                                    : Container(),
+                                              ),
+                                            ),
                                           ),
-                                          child: hideIcon == false
-                                              ? const Icon(
-                                                  Icons.arrow_forward,
-                                                  color: Colors.white,
-                                                )
-                                              : Container(),
                                         ),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 60),
+                  ],
                 ),
               ),
-              const SizedBox(height: 60),
             ],
           ),
         ),
-      ],
-    ),
-  ),
-);
-
-
-
-
-
+      ),
+    );
   }
 }

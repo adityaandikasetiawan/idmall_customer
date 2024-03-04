@@ -1,10 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:idmall/pages/details.dart';
 import 'package:idmall/service/database.dart';
 import 'package:idmall/service/shared_preference_helper.dart';
 import 'package:idmall/widget/button.dart';
 import 'package:idmall/widget/widget_support.dart';
+import 'package:idmall/widget/notificationpage.dart';
+import 'package:idmall/widget/chatbotpage.dart';
+import 'package:idmall/widget/shoppingchartpage.dart';
+import 'package:idmall/pages/promotionpage.dart';
+import 'package:idmall/pages/allmenu.dart';
+import 'package:idmall/pages/gangguan.dart';
+import 'package:idmall/pages/packagepage.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -24,7 +30,6 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     setGreeting();
-    ontheload();
   }
 
   void setGreeting() {
@@ -51,213 +56,12 @@ class _HomeState extends State<Home> {
     }
   }
 
-  bool cake = false, food = false, drink = false;
-
   Stream? fooditemStream;
-
-  ontheload() async {
-    await getthesharedpref();
-    fooditemStream = await DatabaseMethods().getFoodItem("Cake");
-    setState(() {});
-  }
-
-  Widget allItemsVertically() {
-    return StreamBuilder(
-      stream: fooditemStream,
-      builder: (context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData && snapshot.data.docs.isNotEmpty) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              children: List.generate(snapshot.data.docs.length, (index) {
-                DocumentSnapshot ds = snapshot.data.docs[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Details(
-                          detail: ds["Detail"],
-                          name: ds["Name"],
-                          price: ds["Price"],
-                          image: ds["Image"],
-                        ),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      ClipPath(
-                        clipper: ShapeBezierRightToLeft(),
-                        child: Card(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          elevation: 4.0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(30.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Image.network(
-                                    ds["Image"],
-                                    height: 100,
-                                    width: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(width: 20.0),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        ds["Name"],
-                                        style:
-                                            AppWidget.semibold2TextFeildStyle(),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 5.0),
-                                      Text(
-                                        ds["Detail"],
-                                        style: AppWidget.Light2TextFeildStyle(),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 5.0),
-                                      Text(
-                                        "Rp." + ds["Price"],
-                                        style:
-                                            AppWidget.semibold2TextFeildStyle(),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      ClipPath(
-                        clipper: ShapeBezierLeftToRight(),
-                        child: Container(
-                          color: Colors.transparent,
-                          height: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
-    );
-  }
-
-  Widget allItems() {
-    return StreamBuilder(
-        stream: fooditemStream,
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: snapshot.data.docs.length,
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  DocumentSnapshot ds = snapshot.data.docs[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Details(
-                                    detail: ds["Detail"],
-                                    name: ds["Name"],
-                                    price: ds["Price"],
-                                    image: ds["Image"],
-                                  )));
-                    },
-                    child: SingleChildScrollView(
-                      child: Container(
-                        margin: const EdgeInsets.all(8),
-                        child: Material(
-                          elevation: 5.0,
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            padding: const EdgeInsets.all(14),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
-                                    ds["Image"],
-                                    height: 150,
-                                    width: 160,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  ds["Name"].length > 10
-                                      ? ds["Name"].substring(0, 10) + '...'
-                                      : ds["Name"],
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                      fontFamily: 'Poppins'),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.justify,
-                                ),
-                                const SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  ds["Detail"],
-                                  style: AppWidget.Light2TextFeildStyle(),
-                                ),
-                                const SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  "Rp. " + ds["Price"],
-                                  style: AppWidget.semibold2TextFeildStyle(),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                });
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff343456),
+      backgroundColor: Color.fromARGB(255, 250, 250, 255),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Container(
@@ -273,13 +77,16 @@ class _HomeState extends State<Home> {
                       children: [
                         TextSpan(
                           text: "$greeting, ",
-                          style: AppWidget.boldTextFeildStyle(),
+                          style: AppWidget.boldTextFeildStyle().copyWith(
+                            color: Colors.black, // Menambahkan warna hitam
+                          ),
                         ),
                         TextSpan(
                           text: "${name ?? "Guest"}",
                           style: TextStyle(
                             fontSize: 18,
-                            color: Colors.white, // Ubah warna sesuai kebutuhan
+                            color: const Color.fromARGB(
+                                255, 0, 0, 0), // Ubah warna sesuai kebutuhan
                             fontFamily:
                                 'Poppins', // Sesuaikan dengan gaya font yang Anda gunakan
                           ),
@@ -289,45 +96,87 @@ class _HomeState extends State<Home> {
                   ),
                   Row(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: IconButton(
-                          icon: Icon(Icons.notifications),
-                          color: Colors.white,
-                          onPressed: () {
-                            // Aksi ketika notifikasi diklik
-                          },
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => NotificationsPage()),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                                color: const Color.fromARGB(255, 0, 0, 0)),
+                          ),
+                          child: IconButton(
+                            icon: Icon(Icons.notifications),
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => NotificationsPage()),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: IconButton(
-                          icon: Icon(Icons.chat_bubble),
-                          color: Colors.white,
-                          onPressed: () {
-                            // Aksi ketika chatbot diklik
-                          },
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChatbotPage()),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(
+                                color: const Color.fromARGB(255, 0, 0, 0)),
+                          ),
+                          child: IconButton(
+                            icon: Image.asset('images/Chatbot.png',
+                                width: 15, height: 15),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatbotPage()),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: IconButton(
-                          icon: Icon(Icons.shopping_cart),
-                          color: Colors.white,
-                          onPressed: () {
-                            // Aksi ketika troli diklik
-                          },
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ShoppingCartPage()),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                                color: const Color.fromARGB(255, 0, 0, 0)),
+                          ),
+                          child: IconButton(
+                            icon: Icon(Icons.shopping_cart),
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ShoppingCartPage()),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -344,37 +193,108 @@ class _HomeState extends State<Home> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
+                  color: Color.fromARGB(255, 19, 24,
+                      84), // Mengubah warna background menjadi biru dongker
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        CardWidgetWithIcon(
-                          icon: Icons.point_of_sale,
-                          text: 'Poin',
-                          value: points,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset('images/point.png',
+                                  width: 20,
+                                  height: 20), // Menggunakan gambar untuk icon
+                              SizedBox(
+                                  height:
+                                      8), // Tambahkan jarak antara icon dan teks
+                              Text(
+                                'Point',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Rp.100.000',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(
                             width:
                                 20), // Tambahkan jarak horizontal di antara widget
-                        CardWidgetWithIcon(
-                          icon: Icons.receipt,
-                          text: 'Aktual Billing',
-                          value: billing,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset('images/bill.png',
+                                  width: 20,
+                                  height: 20), // Menggunakan gambar untuk icon
+                              SizedBox(
+                                  height:
+                                      8), // Tambahkan jarak antara icon dan teks
+                              Text(
+                                'Actual Bill',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Rp.100.000',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(
                             width:
                                 20), // Tambahkan jarak horizontal di antara widget
-                        CardWidgetWithIcon(
-                          icon: Icons.card_giftcard,
-                          text: 'Voucher',
-                          value: vouchers,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset('images/voucher.png',
+                                  width: 20,
+                                  height: 20), // Menggunakan gambar untuk icon
+                              SizedBox(
+                                  height:
+                                      8), // Tambahkan jarak antara icon dan teks
+                              Text(
+                                'Voucher',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Rp.100.000',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
+
               // New Promotion Card
               Container(
                 margin: EdgeInsets.symmetric(vertical: 20.0),
@@ -383,41 +303,57 @@ class _HomeState extends State<Home> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'New Promotions!!!',
-                                style: TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 19, 24, 84),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(20.0),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                PromotionsPage()), // Memanggil halaman promosi
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'New Promotions!!!',
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 10.0),
-                              Text(
-                                'Learn More',
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                  color: Color.fromARGB(255, 228, 99,
-                                      7), // Ubah warna sesuai kebutuhan
-                                  decoration: TextDecoration.underline,
+                                SizedBox(height: 10.0),
+                                Text(
+                                  'Learn More',
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Color.fromARGB(255, 228, 99, 7),
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Image.asset(
-                            'images/card2.png', // Ganti dengan path gambar yang sesuai
-                            fit: BoxFit.cover,
+                          SizedBox(width: 10.0),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Image.asset(
+                              'images/card2.png',
+                              fit: BoxFit.cover,
+                              width: 150.0,
+                              height: 150.0,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -430,69 +366,108 @@ class _HomeState extends State<Home> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      // Tindakan ketika ikon "Paket" diklik
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PackagesPage()),
+                      );
                     },
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.black,
-                          radius: 30,
-                          child: Icon(
-                            Icons.shop,
-                            size: 40,
-                            color: Colors.white,
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Image.asset(
+                              'images/paket.png',
+                              width: 20,
+                              height: 20,
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                            ),
                           ),
                         ),
                         SizedBox(height: 5),
                         Text(
                           'Paket',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                          ),
                         ),
                       ],
                     ),
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Tindakan ketika ikon "Gangguan" diklik
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => TroublePage()),
+                      );
                     },
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.black,
-                          radius: 30,
-                          child: Icon(
-                            Icons.warning,
-                            size: 40,
-                            color: Colors.white,
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Image.asset(
+                              'images/gangguan.png',
+                              width: 20,
+                              height: 20,
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                            ),
                           ),
                         ),
                         SizedBox(height: 5),
                         Text(
                           'Gangguan',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                          ),
                         ),
                       ],
                     ),
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Tindakan ketika ikon "Semua" diklik
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AllPage()),
+                      );
                     },
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.black,
-                          radius: 30,
-                          child: Icon(
-                            Icons.all_inclusive,
-                            size: 40,
-                            color: Colors.white,
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Image.asset(
+                              'images/semua.png',
+                              width: 20,
+                              height: 20,
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                            ),
                           ),
                         ),
                         SizedBox(height: 5),
                         Text(
                           'Semua',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                          ),
                         ),
                       ],
                     ),
@@ -508,6 +483,8 @@ class _HomeState extends State<Home> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
+                  color: const Color.fromARGB(255, 19, 24,
+                      84), // Ubah warna latar belakang kartu menjadi biru tua
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: Row(
@@ -521,6 +498,8 @@ class _HomeState extends State<Home> {
                                 style: TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
+                                  color: Colors
+                                      .white, // Ubah warna teks menjadi putih
                                 ),
                               ),
                             ],
@@ -538,34 +517,70 @@ class _HomeState extends State<Home> {
                 ),
               ),
 
-              SizedBox(height: 20),
+              SizedBox(height: 2),
               // Carousel slides
-              Container(
-                height: 250,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    buildCarouselItem(
-                      title: 'Title 1',
-                      price: 'Rp. 100.000',
-                      imagePath: 'images/promo1.png',
-                      backgroundColor: Color.fromARGB(255, 26, 27, 76), // Change background color as needed
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      Text(
+                        'Penawaran Terbaru',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                          width:
+                              110), // Tambahkan jarak antara judul dan subjudul
+                      Text(
+                        'Lihat Semuanya',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color.fromARGB(255, 228, 99, 7),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                      height:
+                          5), // Tambahkan jarak vertikal antara judul dan carousel
+                  Container(
+                    height: 280,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        buildCarouselItem(
+                          title: 'Title 1',
+                          price: 'Rp. 100.000',
+                          imagePath: 'images/promo1.png',
+                          backgroundColor: Color.fromARGB(255, 77, 77, 77),
+                        ),
+                        SizedBox(
+                            width:
+                                10), // Tambahkan jarak horizontal antara slide
+                        buildCarouselItem(
+                          title: 'Title 2',
+                          price: 'Rp. 150.000',
+                          imagePath: 'images/promo2.png',
+                          backgroundColor: Color.fromARGB(255, 77, 77, 77),
+                        ),
+                        SizedBox(
+                            width:
+                                10), // Tambahkan jarak horizontal antara slide
+                        buildCarouselItem(
+                          title: 'Title 3',
+                          price: 'Rp. 200.000',
+                          imagePath: 'images/promo3.png',
+                          backgroundColor: Color.fromARGB(255, 77, 77, 77),
+                        ),
+                      ],
                     ),
-                    buildCarouselItem(
-                      title: 'Title 2',
-                      price: 'Rp. 150.000',
-                      imagePath: 'images/promo2.png',
-                      backgroundColor: const Color.fromARGB(255, 26, 27, 76), // Change background color as needed
-                    ),
-                    buildCarouselItem(
-                      title: 'Title 3',
-                      price: 'Rp. 200.000',
-                      imagePath: 'images/promo3.png',
-                      backgroundColor: const Color.fromARGB(255, 26, 27, 76), // Change background color as needed
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+
               SizedBox(height: 20),
             ],
           ),
@@ -573,7 +588,6 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-  
 
   Widget buildCarouselItem({
     required String title,
@@ -625,11 +639,6 @@ class _HomeState extends State<Home> {
     );
   }
 }
-
-
- 
-
-
 
 class CardWidgetWithIcon extends StatelessWidget {
   final IconData icon;

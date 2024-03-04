@@ -29,171 +29,159 @@ class _OnboardState extends State<Onboard> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () async {
-          SystemNavigator.pop();
-          return true;
-        },
-        child: Scaffold(
-          body: Stack(
-            children: [
-              PageView.builder(
-                controller: _controller,
-                itemCount: contents.length,
-                onPageChanged: (int index) {
-                  setState(() {
-                    currentIndex = index;
-                  });
-                },
-                itemBuilder: (_, i) {
-                  return Stack(
-  children: [
-    Hero(
-      tag: 'image${contents[i].image}',
-      child: ColorFiltered(
-        colorFilter: ColorFilter.mode(
-          Colors.black.withOpacity(currentIndex == i ? 0.0 : 0.5),
-          BlendMode.srcOver,
-        ),
-        child: Image.asset(
-          contents[i].image,
-          height: double.infinity,
-          width: double.infinity,
-          fit: BoxFit.cover,
-        ),
-      ),
-    ),
-    Padding(
-      padding: const EdgeInsets.all(20),
-      child: Center(
-        child: Transform.translate(
-          offset: Offset(0.0, -50.0 * (1.0 - currentIndex + i)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 100), // Decreased height
-              AnimatedOpacity(
-                opacity: currentIndex == i ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 500),
-                child: Center(
-                  child: Image.asset(
-                    contents[i].image2,
-                    // Adjust properties as needed
-                    height: 300,
-                    width: 300,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                  height: 20.0), // Increased height
-              const SizedBox(
-                height: 300.0, // Added SizedBox for separation
-              ),
-              AnimatedOpacity(
-                opacity: currentIndex == i ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 500),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20), // Added horizontal padding
-                    child: Positioned(
-                      bottom: 0, // Adjust as needed
-                      child: Text(
-                        contents[i].description,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold, // Make text bold
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-  ],
-);
-
-                },
-              ),
-              Positioned(
-                bottom: 30,
-                left: 0,
-                right: 0,
-                child: Column(
+      onWillPop: () async {
+        SystemNavigator.pop();
+        return true;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            PageView.builder(
+              controller: _controller,
+              itemCount: contents.length,
+              onPageChanged: (int index) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
+              itemBuilder: (_, i) {
+                return Stack(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          contents.length,
-                          (index) => buildDot(index, context),
+                    Hero(
+                      tag: 'image${contents[i].image}',
+                      child: ColorFiltered(
+                        colorFilter: ColorFilter.mode(
+                          Colors.black
+                              .withOpacity(currentIndex == i ? 0.0 : 0.5),
+                          BlendMode.srcOver,
+                        ),
+                        child: Image.asset(
+                          contents[i].image,
+                          height: double.infinity,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: TextButton(
-                        onPressed: () {
-                          if (currentIndex == contents.length - 1) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Hero(
-                                  tag: 'image${contents[currentIndex].image}',
-                                  child: ColorFiltered(
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.black.withOpacity(
-                                          currentIndex == contents.length - 1
-                                              ? 0.0
-                                              : 0.5),
-                                      BlendMode.srcOver,
-                                    ),
-                                    child: const Login(),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Center(
+                        child: Transform.translate(
+                          offset: Offset(0.0, -50.0 * (1.0 - currentIndex + i)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 150),
+                              AnimatedOpacity(
+                                opacity: currentIndex == i ? 1.0 : 0.0,
+                                duration: const Duration(milliseconds: 500),
+                                child: Center(
+                                  child: Image.asset(
+                                    contents[i].image2,
+                                    height: 200,
+                                    width: 200,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
-                            );
-                          } else {
-                            _controller.nextPage(
-                              duration: const Duration(milliseconds: 400),
-                              curve: Curves.easeInOut,
-                            );
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                          backgroundColor: currentIndex == contents.length - 1
-                              ? Color.fromARGB(255, 228, 99, 7)
-                              : Color.fromARGB(255, 228, 99, 7),
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
+                              const SizedBox(height: 275),
+                              AnimatedOpacity(
+                                opacity: currentIndex == i ? 1.0 : 0.0,
+                                duration: const Duration(milliseconds: 500),
+                                child: Center(
+                                  child: Text(
+                                    contents[i].description,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        child: Text(
-                          currentIndex == contents.length - 1
-                              ? "Start"
-                              : "Next",
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontFamily: 'Poppins'),
                         ),
                       ),
                     ),
                   ],
-                ),
+                );
+              },
+            ),
+            Positioned(
+              bottom: 30,
+              left: 0,
+              right: 0,
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        contents.length,
+                        (index) => buildDot(index, context),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: TextButton(
+                      onPressed: () {
+                        if (currentIndex == contents.length - 1) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Hero(
+                                tag: 'image${contents[currentIndex].image}',
+                                child: ColorFiltered(
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(
+                                        currentIndex == contents.length - 1
+                                            ? 0.0
+                                            : 0.5),
+                                    BlendMode.srcOver,
+                                  ),
+                                  child: const Login(),
+                                ),
+                              ),
+                            ),
+                          );
+                        } else {
+                          _controller.nextPage(
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: currentIndex == contents.length - 1
+                            ? const Color.fromARGB(255, 228, 99, 7)
+                            : const Color.fromARGB(255, 228, 99, 7),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                      ),
+                      child: Text(
+                        currentIndex == contents.length - 1 ? "Start" : "Next",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Container buildDot(int index, BuildContext context) {
