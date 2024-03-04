@@ -307,12 +307,12 @@ class _HomeState extends State<Home> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(20.0),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                PromotionsPage()), // Memanggil halaman promosi
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) =>
+                      //           PromotionsPage()), // Memanggil halaman promosi
+                      // );
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(18.0),
@@ -552,28 +552,28 @@ class _HomeState extends State<Home> {
                       scrollDirection: Axis.horizontal,
                       children: [
                         buildCarouselItem(
-                          title: 'Title 1',
-                          price: 'Rp. 100.000',
+                          title: 'IdPlay Home',
+                          price: 'Rp. 179.000',
                           imagePath: 'images/promo1.png',
-                          backgroundColor: Color.fromARGB(255, 77, 77, 77),
+                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
                         ),
                         SizedBox(
                             width:
                                 10), // Tambahkan jarak horizontal antara slide
                         buildCarouselItem(
-                          title: 'Title 2',
-                          price: 'Rp. 150.000',
+                          title: 'IdPlay Home',
+                          price: 'Rp. 230.000',
                           imagePath: 'images/promo2.png',
-                          backgroundColor: Color.fromARGB(255, 77, 77, 77),
+                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
                         ),
                         SizedBox(
                             width:
                                 10), // Tambahkan jarak horizontal antara slide
                         buildCarouselItem(
-                          title: 'Title 3',
-                          price: 'Rp. 200.000',
+                          title: 'IdPlay Home',
+                          price: 'Rp. 270.000',
                           imagePath: 'images/promo3.png',
-                          backgroundColor: Color.fromARGB(255, 77, 77, 77),
+                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
                         ),
                       ],
                     ),
@@ -632,7 +632,7 @@ class _HomeState extends State<Home> {
             onPressed: () {
               // Action when button is pressed
             },
-            child: Text('Tambah'),
+            child: Text('Detail'),
           ),
         ],
       ),
