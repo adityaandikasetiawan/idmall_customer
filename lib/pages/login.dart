@@ -1,15 +1,64 @@
+import 'dart:convert';
 import 'package:idmall/admin/home_admin.dart';
 import 'package:idmall/pages/bottomnav.dart';
 import 'package:idmall/pages/forgotpassword.dart';
 import 'package:idmall/pages/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+import 'dart:convert';
+import 'package:idmall/config/config.dart' as config;
+
 
 class Login extends StatefulWidget {
   const Login({Key? key});
 
   @override
   State<Login> createState() => _LoginState();
+}
+
+class LoginResponse {
+  final String email;
+  final String firstName;
+  final String lastName;
+  final String token;
+
+  const LoginResponse(
+    this.email,
+    this.firstName,
+    this.lastName,
+    this.token,
+  );
+
+  LoginResponse.fromJson(Map<String, dynamic> json)
+    : email = json['email'] as String,
+      firstName = json['first_name'] as String,
+      lastName = json['last_name'] as String,
+      token = json['token'] as String;
+
+  Map<String, dynamic> toJson() => {
+      'email': email,
+      'firstName' : firstName,
+      'lastName' : lastName,
+      'token': token
+  };
+}
+
+Future<void> loginWithEmailPassword(payload) async{
+  final body = jsonDecode(payload);
+
+  final dio = Dio();
+  final response = await dio.post('${config.backendBaseUrl}/user/login',
+    data: {
+      "email" : body["email"],
+      "password" : body["password"],
+    },
+  );
+
+  var data = response.data.toString();
+  var httpStatus = response.statusCode;
+
 }
 
 class _LoginState extends State<Login> {
@@ -30,33 +79,38 @@ class _LoginState extends State<Login> {
 
   Future<void> userLogin() async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: useremailcontroller.text,
-        password: userpasswordcontroller.text,
-      );
-      User? user = FirebaseAuth.instance.currentUser;
-      print('User after login: $user');
-
-      setState(() {
-        currentUser = user;
+      var payload = json.encode({
+          "email": "${useremailcontroller.text}",
+          "password": "${userpasswordcontroller.text}", 
       });
 
-      print(currentUser?.uid);
+      var response = await loginWithEmailPassword(payload);
+      // await FirebaseAuth.instance.signInWithEmailAndPassword(
+      //   email: useremailcontroller.text,
+      //   password: userpasswordcontroller.text,
+      // );
+      // User? user = FirebaseAuth.instance.currentUser;
+      // print('User after login: $user');
+
+      // setState(() {
+      //   currentUser = user;
+      // });
+
+      // print("response ${response}");
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const BottomNav()),
       );
-    } on FirebaseAuthException catch (e) {
-      String errorMessage = 'An error occurred while signing in. Please try again.';
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        errorMessage = 'Email or password is incorrect. Please try again.';
-        // Tampilkan dialog popup
+    }on DioException catch (e) {
+
+      if(e.response?.statusCode == 403){
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text("Error"),
-              content: Text(errorMessage),
+              content: Text("Email atau password salah, silakan coba lagi"),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -69,8 +123,75 @@ class _LoginState extends State<Login> {
           },
         );
       }
+
+    //   String errorMessage = 'An error occurred while signing in. Please try again.';
+    //   if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+    //     errorMessage = 'Email or password is incorrect. Please try again.';
+    //     // Tampilkan dialog popup
+    //     showDialog(
+    //       context: context,
+    //       builder: (BuildContext context) {
+    //         return AlertDialog(
+    //           title: const Text("Error"),
+    //           content: Text(errorMessage),
+    //           actions: <Widget>[
+    //             TextButton(
+    //               onPressed: () {
+    //                 Navigator.of(context).pop();
+    //               },
+    //               child: const Text("OK"),
+    //             ),
+    //           ],
+    //         );
+    //       },
+    //     );
+    //   }
     }
   }
+//unused
+//   Future<void> userLogin() async {
+//     try {
+//       await FirebaseAuth.instance.signInWithEmailAndPassword(
+//         email: useremailcontroller.text,
+//         password: userpasswordcontroller.text,
+//       );
+//       User? user = FirebaseAuth.instance.currentUser;
+//       print('User after login: $user');
+//
+//       setState(() {
+//         currentUser = user;
+//       });
+//
+//       print(currentUser?.uid);
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(builder: (context) => const BottomNav()),
+//       );
+//     } on FirebaseAuthException catch (e) {
+//       String errorMessage = 'An error occurred while signing in. Please try again.';
+//       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+//         errorMessage = 'Email or password is incorrect. Please try again.';
+//         // Tampilkan dialog popup
+//         showDialog(
+//           context: context,
+//           builder: (BuildContext context) {
+//             return AlertDialog(
+//               title: const Text("Error"),
+//               content: Text(errorMessage),
+//               actions: <Widget>[
+//                 TextButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   child: const Text("OK"),
+//                 ),
+//               ],
+//             );
+//           },
+//         );
+//       }
+//     }
+//   }
 
   @override
   Widget build(BuildContext context) {
