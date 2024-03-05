@@ -53,6 +53,7 @@ dependencies:
   onboard: ^1.0.1
   dash_chat_2: ^0.0.20
   chat_gpt_sdk: ^3.0.3
+  dio: ^5.4.1
 
 
 dev_dependencies:
