@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:idmall/models/signup.dart';
 import 'package:idmall/pages/login.dart';
 import 'package:idmall/service/database.dart';
 import 'package:idmall/service/shared_preference_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:random_string/random_string.dart';
 import '../widget/widget_support.dart';
+import 'package:idmall/config/config.dart' as config;
+import 'package:dio/dio.dart';
 import 'package:idmall/pages/bottomnav.dart';
+
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key});
@@ -31,13 +37,36 @@ class _SignUpState extends State<SignUp> {
   bool _isPasswordVisible = false;
   bool _isRepeatPasswordVisible = false;
 
+  Future<Signup?> registerUser() async {
+    final dio = Dio();
+    final response = await dio.post("${config.backendBaseUrl}/user/register",
+        data: {
+          "first_name": firstNameController.text,
+          "last_name": lastNameController.text,
+          "email": emailController.text,
+          "password": passwordController.text,
+        },
+    );
+
+    if(response.statusCode == 200){
+      var responseJson = jsonDecode(response.data);
+      return Signup.fromJson(responseJson);
+    }else{
+      return null;
+    }
+  }
+
   registration() async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
+        // await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        //   email: emailController.text,
+        //   password: passwordController.text,
+        // );
+
+        var response  = await registerUser();
+
+        print("return from registerUser() ${response}");
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.green,
@@ -92,6 +121,68 @@ class _SignUpState extends State<SignUp> {
       }
     }
   }
+
+  // registration() async {
+  //   if (_formKey.currentState?.validate() ?? false) {
+  //     try {
+  //       await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  //         email: emailController.text,
+  //         password: passwordController.text,
+  //       );
+  //
+  //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+  //         backgroundColor: Colors.green,
+  //         content: Text(
+  //           "Registered Successfully",
+  //           style: TextStyle(fontSize: 20.0),
+  //         ),
+  //       ));
+  //
+  //       String uid = randomAlphaNumeric(10);
+  //       Map<String, dynamic> addUserInfo = {
+  //         "Name": firstNameController.text + " " + lastNameController.text,
+  //         "Email": emailController.text,
+  //         "Wallet": "0",
+  //         "Id": uid,
+  //       };
+  //
+  //       await SharedPreferenceHelper().clearAllPreferences();
+  //       await DatabaseMethods().addUserDetail(addUserInfo, uid);
+  //       await SharedPreferenceHelper().saveUserName(
+  //           firstNameController.text + " " + lastNameController.text);
+  //       await SharedPreferenceHelper().saveUserEmail(emailController.text);
+  //       await SharedPreferenceHelper().saveUserUId(uid);
+  //       await SharedPreferenceHelper().saveUserWallet('0');
+  //
+  //       print('id saat daftar: ${await SharedPreferenceHelper().getIdUser()}');
+  //       print(
+  //           'nama saat daftar: ${await SharedPreferenceHelper().getNameUser()}');
+  //       print(
+  //           'email saat daftar: ${await SharedPreferenceHelper().getEmailUser()}');
+  //
+  //       Navigator.pushReplacement(context,
+  //           MaterialPageRoute(builder: (context) => const BottomNav()));
+  //     } on FirebaseAuthException catch (e) {
+  //       print('Firebase Auth Exception: $e');
+  //
+  //       if (e.code == 'email-already-in-use') {
+  //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+  //           backgroundColor: Colors.red,
+  //           content: Text(
+  //             "Email already exists. Please use a different email.",
+  //             style: TextStyle(fontSize: 18.0, fontFamily: 'Poppins'),
+  //           ),
+  //         ));
+  //       } else if (e.code == 'network-request-failed') {
+  //         print('Network request failed: Check internet connection.');
+  //       } else {
+  //         print('Error signing up: ${e.message}');
+  //       }
+  //     } catch (error) {
+  //       print('Unexpected error: $error');
+  //     }
+  //   }
+  // }
 
   @override
   void dispose() {
