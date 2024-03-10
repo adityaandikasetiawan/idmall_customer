@@ -55,6 +55,9 @@ dependencies:
   chat_gpt_sdk: ^3.0.3
   dio: ^5.4.1
 
+  
+
+
 
 dev_dependencies:
   flutter_test:

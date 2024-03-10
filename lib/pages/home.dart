@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+// ignore: unused_import
 import 'package:idmall/pages/details.dart';
+// ignore: unused_import
 import 'package:idmall/service/database.dart';
 import 'package:idmall/service/shared_preference_helper.dart';
+// ignore: unused_import
 import 'package:idmall/widget/button.dart';
 import 'package:idmall/widget/widget_support.dart';
 import 'package:idmall/widget/notificationpage.dart';
 import 'package:idmall/widget/chatbotpage.dart';
 import 'package:idmall/widget/shoppingchartpage.dart';
-import 'package:idmall/pages/promotionpage.dart';
 import 'package:idmall/pages/allmenu.dart';
 import 'package:idmall/pages/gangguan.dart';
 import 'package:idmall/pages/packagepage.dart';
+import 'package:idmall/pages/promo.dart';
+import 'package:idmall/pages/coverange.dart';
+import 'package:idmall/widget/lihatsemua.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -83,9 +89,9 @@ class _HomeState extends State<Home> {
                         ),
                         TextSpan(
                           text: "${name ?? "Guest"}",
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
-                            color: const Color.fromARGB(
+                            color: Color.fromARGB(
                                 255, 0, 0, 0), // Ubah warna sesuai kebutuhan
                             fontFamily:
                                 'Poppins', // Sesuaikan dengan gaya font yang Anda gunakan
@@ -106,12 +112,23 @@ class _HomeState extends State<Home> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(15),
                             border: Border.all(
-                                color: const Color.fromARGB(255, 0, 0, 0)),
+                              color: Colors.black,
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
+                              BoxShadow(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                spreadRadius: 7.0,
+                                blurRadius: 12.0,
+                              ),
+                            ],
                           ),
                           child: IconButton(
-                            icon: Icon(Icons.notifications),
+                            icon: const Icon(Icons.notifications),
                             color: const Color.fromARGB(255, 0, 0, 0),
                             onPressed: () {
                               Navigator.push(
@@ -134,9 +151,20 @@ class _HomeState extends State<Home> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(15),
                             border: Border.all(
-                                color: const Color.fromARGB(255, 0, 0, 0)),
+                              color: Colors.black,
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
+                              BoxShadow(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                spreadRadius: 7.0,
+                                blurRadius: 12.0,
+                              ),
+                            ],
                           ),
                           child: IconButton(
                             icon: Image.asset('images/Chatbot.png',
@@ -162,9 +190,20 @@ class _HomeState extends State<Home> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(15),
                             border: Border.all(
-                                color: const Color.fromARGB(255, 0, 0, 0)),
+                              color: Colors.black,
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
+                              BoxShadow(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                spreadRadius: 7.0,
+                                blurRadius: 12.0,
+                              ),
+                            ],
                           ),
                           child: IconButton(
                             icon: Icon(Icons.shopping_cart),
@@ -193,7 +232,7 @@ class _HomeState extends State<Home> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
-                  color: Color.fromARGB(255, 19, 24,
+                  color: const Color.fromARGB(255, 19, 24,
                       84), // Mengubah warna background menjadi biru dongker
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
@@ -206,10 +245,10 @@ class _HomeState extends State<Home> {
                               Image.asset('images/point.png',
                                   width: 20,
                                   height: 20), // Menggunakan gambar untuk icon
-                              SizedBox(
+                              const SizedBox(
                                   height:
                                       8), // Tambahkan jarak antara icon dan teks
-                              Text(
+                              const Text(
                                 'Point',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -217,7 +256,7 @@ class _HomeState extends State<Home> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
+                              const Text(
                                 'Rp.100.000',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -227,7 +266,7 @@ class _HomeState extends State<Home> {
                             ],
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                             width:
                                 20), // Tambahkan jarak horizontal di antara widget
                         Expanded(
@@ -237,10 +276,10 @@ class _HomeState extends State<Home> {
                               Image.asset('images/bill.png',
                                   width: 20,
                                   height: 20), // Menggunakan gambar untuk icon
-                              SizedBox(
+                              const SizedBox(
                                   height:
                                       8), // Tambahkan jarak antara icon dan teks
-                              Text(
+                              const Text(
                                 'Actual Bill',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -248,7 +287,7 @@ class _HomeState extends State<Home> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
+                              const Text(
                                 'Rp.100.000',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -258,7 +297,7 @@ class _HomeState extends State<Home> {
                             ],
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                             width:
                                 20), // Tambahkan jarak horizontal di antara widget
                         Expanded(
@@ -268,10 +307,10 @@ class _HomeState extends State<Home> {
                               Image.asset('images/voucher.png',
                                   width: 20,
                                   height: 20), // Menggunakan gambar untuk icon
-                              SizedBox(
+                              const SizedBox(
                                   height:
                                       8), // Tambahkan jarak antara icon dan teks
-                              Text(
+                              const Text(
                                 'Voucher',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -279,7 +318,7 @@ class _HomeState extends State<Home> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
+                              const Text(
                                 'Rp.100.000',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -297,7 +336,7 @@ class _HomeState extends State<Home> {
 
               // New Promotion Card
               Container(
-                margin: EdgeInsets.symmetric(vertical: 20.0),
+                margin: const EdgeInsets.symmetric(vertical: 20.0),
                 child: Card(
                   elevation: 4.0,
                   shape: RoundedRectangleBorder(
@@ -307,18 +346,16 @@ class _HomeState extends State<Home> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(20.0),
                     onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //       builder: (context) =>
-                      //           PromotionsPage()), // Memanggil halaman promosi
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PromoPage()),
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(18.0),
                       child: Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -335,6 +372,7 @@ class _HomeState extends State<Home> {
                                   'Learn More',
                                   style: TextStyle(
                                     fontSize: 12.0,
+                                    fontWeight: FontWeight.bold,
                                     color: Color.fromARGB(255, 228, 99, 7),
                                     decoration: TextDecoration.underline,
                                   ),
@@ -342,7 +380,7 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
-                          SizedBox(width: 10.0),
+                          const SizedBox(width: 10.0),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(20.0),
                             child: Image.asset(
@@ -379,22 +417,32 @@ class _HomeState extends State<Home> {
                             border: Border.all(
                               color: Colors.black,
                             ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
+                              BoxShadow(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                spreadRadius: 7.0,
+                                blurRadius: 12.0,
+                              ),
+                            ],
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Image.asset(
                               'images/paket.png',
-                              width: 20,
-                              height: 20,
+                              width: 50,
+                              height: 50,
                               color: const Color.fromARGB(255, 0, 0, 0),
                             ),
                           ),
                         ),
-                        SizedBox(height: 5),
-                        Text(
+                        const SizedBox(height: 5),
+                        const Text(
                           'Paket',
                           style: TextStyle(
-                            color: const Color.fromARGB(255, 0, 0, 0),
+                            color: Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                       ],
@@ -415,22 +463,32 @@ class _HomeState extends State<Home> {
                             border: Border.all(
                               color: Colors.black,
                             ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
+                              BoxShadow(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                spreadRadius: 7.0,
+                                blurRadius: 12.0,
+                              ),
+                            ],
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Image.asset(
                               'images/gangguan.png',
-                              width: 20,
-                              height: 20,
+                              width: 50,
+                              height: 50,
                               color: const Color.fromARGB(255, 0, 0, 0),
                             ),
                           ),
                         ),
-                        SizedBox(height: 5),
-                        Text(
+                        const SizedBox(height: 5),
+                        const Text(
                           'Gangguan',
                           style: TextStyle(
-                            color: const Color.fromARGB(255, 0, 0, 0),
+                            color: Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                       ],
@@ -451,22 +509,32 @@ class _HomeState extends State<Home> {
                             border: Border.all(
                               color: Colors.black,
                             ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
+                              BoxShadow(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                spreadRadius: 7.0,
+                                blurRadius: 12.0,
+                              ),
+                            ],
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Image.asset(
                               'images/semua.png',
-                              width: 20,
-                              height: 20,
+                              width: 50,
+                              height: 50,
                               color: const Color.fromARGB(255, 0, 0, 0),
                             ),
                           ),
                         ),
-                        SizedBox(height: 5),
-                        Text(
+                        const SizedBox(height: 5),
+                        const Text(
                           'Semua',
                           style: TextStyle(
-                            color: const Color.fromARGB(255, 0, 0, 0),
+                            color: Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                       ],
@@ -478,72 +546,89 @@ class _HomeState extends State<Home> {
               // New Card
               Container(
                 margin: EdgeInsets.symmetric(vertical: 20.0),
-                child: Card(
-                  elevation: 4.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  color: const Color.fromARGB(255, 19, 24,
-                      84), // Ubah warna latar belakang kartu menjadi biru tua
-                  child: Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Cek coverage is available!',
-                                style: TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors
-                                      .white, // Ubah warna teks menjadi putih
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20.0),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CoveragePage()),
+                    );
+                  },
+                  child: Card(
+                    elevation: 4.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    color: const Color.fromARGB(255, 19, 24, 84),
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Row(
+                        children: [
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Cek coverage is available!',
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Image.asset(
-                            'images/coverange.png', // Ganti dengan path gambar yang sesuai
-                            fit: BoxFit.cover,
+                          Expanded(
+                            child: Image.asset(
+                              'images/coverange.png',
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
 
-              SizedBox(height: 2),
+              const SizedBox(height: 2),
               // Carousel slides
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
-                    children: [
-                      Text(
-                        'Penawaran Terbaru',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                          width:
-                              110), // Tambahkan jarak antara judul dan subjudul
-                      Text(
-                        'Lihat Semuanya',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color.fromARGB(255, 228, 99, 7),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
+                  Row(
+  children: [
+    Text(
+      'Penawaran Terbaru',
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    SizedBox(
+      width: 150,
+    ),
+    GestureDetector(
+      onTap: () {
+        // Navigasi ke halaman yang diinginkan
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LihatSemua()), // Ganti dengan halaman yang diinginkan
+        );
+      },
+      child: Text(
+        'Lihat Semuanya',
+        style: TextStyle(
+          fontSize: 10,
+          color: Color.fromARGB(255, 228, 99, 7),
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  ],
+),
+                  const SizedBox(
                       height:
                           5), // Tambahkan jarak vertikal antara judul dan carousel
                   Container(
@@ -551,25 +636,25 @@ class _HomeState extends State<Home> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                        buildCarouselItem(
+                        buildRoundedCarouselItem(
                           title: 'IdPlay Home',
                           price: 'Rp. 179.000',
                           imagePath: 'images/promo1.png',
                           backgroundColor: Color.fromARGB(255, 255, 255, 255),
                         ),
-                        SizedBox(
+                        const SizedBox(
                             width:
                                 10), // Tambahkan jarak horizontal antara slide
-                        buildCarouselItem(
+                        buildRoundedCarouselItem(
                           title: 'IdPlay Home',
                           price: 'Rp. 230.000',
                           imagePath: 'images/promo2.png',
                           backgroundColor: Color.fromARGB(255, 255, 255, 255),
                         ),
-                        SizedBox(
+                        const SizedBox(
                             width:
                                 10), // Tambahkan jarak horizontal antara slide
-                        buildCarouselItem(
+                        buildRoundedCarouselItem(
                           title: 'IdPlay Home',
                           price: 'Rp. 270.000',
                           imagePath: 'images/promo3.png',
@@ -581,7 +666,7 @@ class _HomeState extends State<Home> {
                 ],
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -589,7 +674,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildCarouselItem({
+  Widget buildRoundedCarouselItem({
     required String title,
     required String price,
     required String imagePath,
@@ -597,42 +682,39 @@ class _HomeState extends State<Home> {
   }) {
     return Container(
       width: 200,
-      margin: EdgeInsets.symmetric(horizontal: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(30), // Rounded corners
         color: backgroundColor,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            imagePath,
-            height: 150,
-            width: double.infinity,
-            fit: BoxFit.cover,
+          ClipRRect(
+            // Rounded image
+            borderRadius: BorderRadius.circular(10),
+            child: Image.asset(
+              imagePath,
+              height: 150,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             price,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               color: Colors.grey,
             ),
-          ),
-          SizedBox(height: 5),
-          ElevatedButton(
-            onPressed: () {
-              // Action when button is pressed
-            },
-            child: Text('Detail'),
           ),
         ],
       ),
@@ -666,7 +748,7 @@ class CardWidgetWithIcon extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
               fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
         ),
       ],
