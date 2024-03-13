@@ -151,7 +151,7 @@ class _HomeState extends State<Home> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(15),
                             border: Border.all(
                               color: Colors.black,
                             ),
@@ -598,40 +598,42 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-  children: [
-    Text(
-      'Penawaran Terbaru',
-      style: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    SizedBox(
-      width: 150,
-    ),
-    GestureDetector(
-      onTap: () {
-        // Navigasi ke halaman yang diinginkan
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LihatSemua()), // Ganti dengan halaman yang diinginkan
-        );
-      },
-      child: Text(
-        'Lihat Semuanya',
-        style: TextStyle(
-          fontSize: 10,
-          color: Color.fromARGB(255, 228, 99, 7),
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ),
-  ],
-),
+                    children: [
+                      const Text(
+                        'Penawaran Terbaru',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 150,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // Navigasi ke halaman yang diinginkan
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    LihatSemua()), // Ganti dengan halaman yang diinginkan
+                          );
+                        },
+                        child: const Text(
+                          'Lihat Semuanya',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Color.fromARGB(255, 228, 99, 7),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(
                       height:
                           5), // Tambahkan jarak vertikal antara judul dan carousel
-                  Container(
+                  SizedBox(
                     height: 280,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
@@ -682,7 +684,7 @@ class _HomeState extends State<Home> {
   }) {
     return Container(
       width: 200,
-      margin: const EdgeInsets.symmetric(horizontal: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 1),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30), // Rounded corners
         color: backgroundColor,

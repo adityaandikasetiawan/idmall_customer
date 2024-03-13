@@ -1,10 +1,10 @@
-import 'package:idmall/pages/bottomnav.dart';
-import 'package:idmall/pages/profile.dart';
+import 'package:idmall/pages/navigation.dart';
 import 'package:idmall/splash/splash.dart';
 import 'package:idmall/widget/app_constant.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

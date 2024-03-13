@@ -21,8 +21,8 @@ class NotificationsPage extends StatelessWidget {
         ),
         body: TabBarView( // Menampilkan konten sesuai dengan tab yang dipilih
           children: [
-            PromotionsPage(data: 'Ini adalah halaman Promosi'), // Konten untuk tab 'Promosi'
-            StatusBarPage(data: 'Ini adalah halaman Status Bar'), // Konten untuk tab 'Status Bar'
+            PromotionsPage(), // Konten untuk tab 'Promosi'
+            StatusBarPage(), // Konten untuk tab 'Status Bar'
           ],
         ),
       ),
@@ -31,27 +31,102 @@ class NotificationsPage extends StatelessWidget {
 }
 
 class PromotionsPage extends StatelessWidget {
-  final String data;
-
-  PromotionsPage({required this.data});
-
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(data),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // Card pertama
+          Card(
+            margin: EdgeInsets.all(16.0),
+            elevation: 4.0,
+            child: ListTile(
+              title: Text(
+                'Promosi 1',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text('Deskripsi Promosi 1'),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                // Tambahkan aksi yang diinginkan saat card ditekan
+              },
+            ),
+          ),
+          // Card kedua
+          Card(
+            margin: EdgeInsets.all(16.0),
+            elevation: 4.0,
+            child: ListTile(
+              title: Text(
+                'Promosi 2',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text('Deskripsi Promosi 2'),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                // Tambahkan aksi yang diinginkan saat card ditekan
+              },
+            ),
+          ),
+          // Card ketiga
+          Card(
+            margin: EdgeInsets.all(16.0),
+            elevation: 4.0,
+            child: ListTile(
+              title: Text(
+                'Promosi 3',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text('Deskripsi Promosi 3'),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                // Tambahkan aksi yang diinginkan saat card ditekan
+              },
+            ),
+          ),
+          // Card keempat
+          Card(
+            margin: EdgeInsets.all(16.0),
+            elevation: 4.0,
+            child: ListTile(
+              title: Text(
+                'Promosi 4',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text('Deskripsi Promosi 4'),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                // Tambahkan aksi yang diinginkan saat card ditekan
+              },
+            ),
+          ),
+          // Card kelima
+          Card(
+            margin: EdgeInsets.all(16.0),
+            elevation: 4.0,
+            child: ListTile(
+              title: Text(
+                'Promosi 5',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text('Deskripsi Promosi 5'),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                // Tambahkan aksi yang diinginkan saat card ditekan
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class StatusBarPage extends StatelessWidget {
-  final String data;
-
-  StatusBarPage({required this.data});
-
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(data),
+      child: Text('Ini adalah halaman Status Bar'),
     );
   }
 }

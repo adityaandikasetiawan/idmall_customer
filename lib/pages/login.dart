@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:idmall/admin/home_admin.dart';
 import 'package:idmall/pages/bottomnav.dart';
+import 'package:idmall/pages/navigation.dart';
 import 'package:idmall/pages/forgotpassword.dart';
 import 'package:idmall/pages/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -100,7 +101,7 @@ class _LoginState extends State<Login> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const BottomNav()),
+        MaterialPageRoute(builder: (context) => const NavigationScreen()),
       );
     }on DioException catch (e) {
 
