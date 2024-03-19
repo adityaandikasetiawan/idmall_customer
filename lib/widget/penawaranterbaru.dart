@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: PackagesPage(),
+    home: PenawaranPage(),
   ));
 }
 
-class PackagesPage extends StatelessWidget {
+class PenawaranPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -14,7 +14,7 @@ class PackagesPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Paket',
+            'Lihat Semua',
             style: TextStyle(fontSize: 16),
           ),
           centerTitle: true,
@@ -24,4 +24,5 @@ class PackagesPage extends StatelessWidget {
     );
   }
 }
+
 

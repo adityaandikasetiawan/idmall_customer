@@ -16,7 +16,7 @@ import 'package:idmall/pages/gangguan.dart';
 import 'package:idmall/pages/packagepage.dart';
 import 'package:idmall/pages/promo.dart';
 import 'package:idmall/pages/coverange.dart';
-import 'package:idmall/widget/lihatsemua.dart';
+import 'package:idmall/widget/penawaranterbaru.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -616,7 +616,7 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    LihatSemua()), // Ganti dengan halaman yang diinginkan
+                                    PenawaranPage()), // Ganti dengan halaman yang diinginkan
                           );
                         },
                         child: const Text(

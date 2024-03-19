@@ -7,14 +7,19 @@ class PelaporanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pelaporan'),
+        title: const Text(
+          'Pelaporan',
+          style: TextStyle(fontSize: 16), // Mengatur ukuran teks menjadi 16
+        ),
+        centerTitle: true, // Menengahkan judul
       ),
-      body: const Center(
+      body: Center(
         child: Text(
           'Halaman Pelaporan',
-          style: TextStyle(fontSize: 24),
+          style: TextStyle(fontSize: 24), // Contoh ukuran teks untuk halaman
         ),
       ),
     );
   }
 }
+

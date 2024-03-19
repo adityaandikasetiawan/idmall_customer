@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:idmall/pages/wallet.dart';
 import 'package:idmall/pages/home.dart';
 import 'package:idmall/pages/kategori.dart';
 import 'package:idmall/pages/pelaporan.dart';
@@ -19,7 +18,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   List<Widget> pages = [
     const Home(),
-    const CategoryPage(),
+    CategoryPage(),
     const PelaporanPage(),
     const Account(),
   ];
