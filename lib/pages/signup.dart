@@ -10,7 +10,6 @@ import 'package:random_string/random_string.dart';
 import '../widget/widget_support.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:dio/dio.dart';
-import 'package:idmall/pages/bottomnav.dart';
 import 'package:idmall/pages/navigation.dart';
 
 

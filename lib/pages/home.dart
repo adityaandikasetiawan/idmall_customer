@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 // ignore: unused_import
 import 'package:idmall/pages/details.dart';
 // ignore: unused_import
@@ -547,33 +549,34 @@ class _HomeState extends State<Home> {
               Container(
                 margin: EdgeInsets.symmetric(vertical: 20.0),
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(20.0),
                   onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => CoveragePage()),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Coverage()),
+                    );
                   },
                   child: Card(
                     elevation: 4.0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    color: const Color.fromARGB(255, 19, 24, 84),
+                    color: const Color.fromARGB(255, 19, 24,
+                        84), // Ubah warna latar belakang kartu menjadi biru tua
                     child: Padding(
                       padding: const EdgeInsets.all(18.0),
                       child: Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Cek coverage is available!',
+                                  'Check Coverage',
                                   style: TextStyle(
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Colors
+                                        .white, // Ubah warna teks menjadi putih
                                   ),
                                 ),
                               ],
@@ -581,7 +584,7 @@ class _HomeState extends State<Home> {
                           ),
                           Expanded(
                             child: Image.asset(
-                              'images/coverange.png',
+                              'images/coverange.png', // Perhatikan penulisan nama gambar
                               fit: BoxFit.cover,
                             ),
                           ),

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:idmall/admin/home_admin.dart';
-import 'package:idmall/pages/bottomnav.dart';
 import 'package:idmall/pages/navigation.dart';
 import 'package:idmall/pages/forgotpassword.dart';
 import 'package:idmall/pages/signup.dart';
