@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Coverage extends StatefulWidget {
   static const String route = '/';
 
-  const Coverage({super.key});
+  const Coverage({Key? key});
 
   @override
   State<Coverage> createState() => _CoverageState();
@@ -81,6 +81,53 @@ class _CoverageState extends State<Coverage> {
         ),
       );
 
+  void showLocationSearch() async {
+    String? searchQuery = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String query = '';
+        return AlertDialog(
+          title: Text('Pencarian Lokasi'),
+          content: TextFormField(
+            onChanged: (value) {
+              query = value;
+            },
+            decoration: InputDecoration(
+              hintText: 'Masukkan lokasi',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(query);
+              },
+              child: Text('Cari'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Batal'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      // Di sini Anda dapat menambahkan logika untuk mencari lokasi berdasarkan `searchQuery`
+      // Misalnya, dengan menggunakan Google Places API atau sumber data lainnya.
+      // Setelah mendapatkan lokasi, Anda bisa menambahkan marker baru ke peta.
+
+      // Contoh: menambahkan marker ke lokasi yang ditemukan
+      LatLng location = LatLng(0.0, 0.0); // Ganti dengan koordinat yang ditemukan
+      customMarkers.add(buildPin(location));
+
+      // Perbarui tampilan peta
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     getOdpList();
@@ -88,29 +135,40 @@ class _CoverageState extends State<Coverage> {
     Alignment selectedAlignment = Alignment.topCenter;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Coverage Area',
+          style: TextStyle(fontSize: 16),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              // Tambahkan fungsi untuk menampilkan petunjuk di sini
+            },
+            icon: Icon(Icons.help_outline),
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           FlutterMap(
             options: MapOptions(
-                initialCenter: const LatLng(-6.200000, 106.816666),
-                initialZoom: 12,
-                cameraConstraint: CameraConstraint.contain(
-                  bounds: LatLngBounds(
-                    const LatLng(-90, -180),
-                    const LatLng(90, 180),
-                  ),
+              initialCenter: const LatLng(-6.200000, 106.816666),
+              initialZoom: 12,
+              cameraConstraint: CameraConstraint.contain(
+                bounds: LatLngBounds(
+                  const LatLng(-90, -180),
+                  const LatLng(90, 180),
                 ),
-                interactionOptions: InteractionOptions(
-                  enableScrollWheel: true,
-                  flags: InteractiveFlag.all,
-                )),
+              ),
+              interactionOptions: InteractionOptions(
+                enableScrollWheel: true,
+                flags: InteractiveFlag.all,
+              ),
+            ),
             children: [
               openStreetMapTileLayer,
-              // MarkerLayer(
-              //   markers: customMarkers,
-              //   rotate: counterRotate,
-              //   alignment: selectedAlignment,
-              // ),
               CircleLayer(
                 circles: circleMarkers,
               ),
@@ -118,6 +176,15 @@ class _CoverageState extends State<Coverage> {
           ),
         ],
       ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(top: 100.0),
+        child: FloatingActionButton(
+          onPressed: showLocationSearch,
+          tooltip: 'Cari Lokasi',
+          child: Icon(Icons.search),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
     );
   }
 }

@@ -637,37 +637,80 @@ class _HomeState extends State<Home> {
                       height:
                           5), // Tambahkan jarak vertikal antara judul dan carousel
                   SizedBox(
-                    height: 280,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        buildRoundedCarouselItem(
-                          title: 'IdPlay Home',
-                          price: 'Rp. 179.000',
-                          imagePath: 'images/promo1.png',
-                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
-                        ),
-                        const SizedBox(
-                            width:
-                                10), // Tambahkan jarak horizontal antara slide
-                        buildRoundedCarouselItem(
-                          title: 'IdPlay Home',
-                          price: 'Rp. 230.000',
-                          imagePath: 'images/promo2.png',
-                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
-                        ),
-                        const SizedBox(
-                            width:
-                                10), // Tambahkan jarak horizontal antara slide
-                        buildRoundedCarouselItem(
-                          title: 'IdPlay Home',
-                          price: 'Rp. 270.000',
-                          imagePath: 'images/promo3.png',
-                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
-                        ),
-                      ],
-                    ),
-                  ),
+  height: 280,
+  child: ListView(
+    scrollDirection: Axis.horizontal,
+    children: [
+      GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailPage(
+                title: 'IdPlay Home',
+                price: 'Rp. 179.000',
+                imagePath: 'images/promo1.png',
+              ),
+            ),
+          );
+        },
+        child: buildRoundedCarouselItem(
+          title: 'IdPlay Home',
+          price: 'Rp. 179.000',
+          imagePath: 'images/promo1.png',
+          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        ),
+      ),
+      const SizedBox(
+        width: 10,
+      ), // Tambahkan jarak horizontal antara slide
+      GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailPage(
+                title: 'IdPlay Home',
+                price: 'Rp. 230.000',
+                imagePath: 'images/promo2.png',
+              ),
+            ),
+          );
+        },
+        child: buildRoundedCarouselItem(
+          title: 'IdPlay Home',
+          price: 'Rp. 230.000',
+          imagePath: 'images/promo2.png',
+          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        ),
+      ),
+      const SizedBox(
+        width: 10,
+      ), // Tambahkan jarak horizontal antara slide
+      GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailPage(
+                title: 'IdPlay Home',
+                price: 'Rp. 270.000',
+                imagePath: 'images/promo3.png',
+              ),
+            ),
+          );
+        },
+        child: buildRoundedCarouselItem(
+          title: 'IdPlay Home',
+          price: 'Rp. 270.000',
+          imagePath: 'images/promo3.png',
+          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        ),
+      ),
+    ],
+  ),
+),
+
                 ],
               ),
 
