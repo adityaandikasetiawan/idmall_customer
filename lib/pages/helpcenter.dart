@@ -38,10 +38,6 @@ class _HelpCenterPageState extends State<HelpCenterPage> {
 
   List<FAQItem> _generateFAQs() {
     return [
-      FAQItem(
-              question:'Temukan jawaban untuk pertanyaan-pertanyaan yang sering diajukan oleh pelanggan lainnya.',
-              answer:'• Cakupan Area\n• Cara Berlangganan\n• Tentang IdPlay Home',
-            ),
             FAQItem(
               question: 'Dimana saja jangkauan area IdPlay?',
               answer: 'Layanan IdPlay saat ini tersedia di Jawa, Bali, Lombok, Kalimantan, Sulawesi. Untuk melihat detil area Anda, silahkan masuk ke kontak Cek Area pada halaman depan Website IdPlay.',
@@ -94,7 +90,10 @@ class _HelpCenterPageState extends State<HelpCenterPage> {
               question: 'Harga & Paket IdPlay apakah sudah termasuk pajak?',
               answer: 'Paket & Harga yang tertera pada brochure/ flyer IdPlay merupakan harga Nett (sudah termasuk PPN 10%)',
             ),
-            // Tambahkan FAQItem lainnya sesuai dengan pertanyaan yang ada
+            FAQItem(
+              question:'Temukan jawaban untuk pertanyaan-pertanyaan yang sering diajukan oleh pelanggan lainnya.',
+              answer: 'Pendaftaran layanan IdPlay dapat dilakukan dengan beberapa cara.• Cakupan Area\n• Cara Berlangganan\n• Tentang IdPlay Home.',
+            ),
 
     ];
   }

@@ -549,10 +549,10 @@ class _HomeState extends State<Home> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20.0),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CoveragePage()),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => CoveragePage()),
+                    // );
                   },
                   child: Card(
                     elevation: 4.0,

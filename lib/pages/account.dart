@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:idmall/pages/helpcenter.dart';
+import 'package:idmall/pages/activation.dart';
+import 'package:idmall/pages/survei.dart';
 
 class Account extends StatelessWidget {
   const Account({Key? key}) : super(key: key);
@@ -53,13 +55,15 @@ class Account extends StatelessWidget {
                           SizedBox(height: 10),
                           Text('johndoe@example.com'),
                           SizedBox(height: 20),
-                          ElevatedButton.icon(
+                          ElevatedButton(
                             onPressed: () {
-                              // Tambahkan logika untuk tombol Hubungkan akun
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ActivationPage()),
+                              );
                             },
-                            icon: Icon(
-                                Icons.arrow_forward_ios), // Icon panah ke kanan
-                            label: Text('Hubungkan Account'),
+                            child: Text('Hubungkan Account'),
                           ),
                         ],
                       ),
@@ -81,9 +85,7 @@ class Account extends StatelessWidget {
               ),
               title: Text('Account'),
               trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
-              onTap: () {
-                // Tambahkan logika untuk tombol Account
-              },
+              onTap: () {},
             ),
             SizedBox(height: 15),
             ListTile(
@@ -116,7 +118,11 @@ class Account extends StatelessWidget {
               title: Text('Pelanggan'),
               trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
               onTap: () {
-                // Tambahkan logika untuk tombol Pelanggan
+                // Navigasi ke halaman survei
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SurveyForm()),
+                );
               },
             ),
             SizedBox(height: 15),

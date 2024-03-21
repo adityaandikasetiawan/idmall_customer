@@ -62,18 +62,56 @@ class _NavigationScreenState extends State<NavigationScreen> {
             padding: const EdgeInsets.all(
                 8), // Sesuaikan ukuran padding inner circle sesuai kebutuhan
             child: IconButton(
-              onPressed: () {
-                // Tambahkan fungsi untuk aksi yang diinginkan saat tombol ditekan
-              },
-              icon: Image.asset(
-                'images/splash.png', // Ubah 'your_image.png' sesuai dengan nama dan lokasi gambar Anda
-                height: 60,
-                width: 60,
+  onPressed: () {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 100, // Sesuaikan tinggi bottom sheet sesuai kebutuhan
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: <Widget>[
+              IconButton(
+                onPressed: () {
+                  // Aksi yang diinginkan saat ikon pertama ditekan
+                },
+                icon: Icon(Icons.favorite),
+                color: Colors.red,
+                iconSize: 40,
               ),
-              padding: EdgeInsets.zero, // Hilangkan padding dari IconButton
-              splashRadius: 30, // Ukuran radius efek splash saat tombol ditekan
-              color: Colors.white, // Warna ikon
-            ),
+              IconButton(
+                onPressed: () {
+                  // Aksi yang diinginkan saat ikon kedua ditekan
+                },
+                icon: Icon(Icons.star),
+                color: Colors.yellow,
+                iconSize: 40,
+              ),
+              IconButton(
+                onPressed: () {
+                  // Aksi yang diinginkan saat ikon ketiga ditekan
+                },
+                icon: Icon(Icons.share),
+                color: Colors.blue,
+                iconSize: 40,
+              ),
+              // Lanjutkan menambahkan ikon-ikon lainnya sesuai kebutuhan
+            ],
+          ),
+        );
+      },
+    );
+  },
+  icon: Image.asset(
+    'images/splash.png', // Ubah 'your_image.png' sesuai dengan nama dan lokasi gambar Anda
+    height: 60,
+    width: 60,
+  ),
+  padding: EdgeInsets.zero, // Hilangkan padding dari IconButton
+  splashRadius: 30, // Ukuran radius efek splash saat tombol ditekan
+  color: Colors.white, // Warna ikon
+),
+
           ),
         ),
       ),

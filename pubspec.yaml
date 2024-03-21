@@ -51,12 +51,15 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   carousel_slider: ^4.2.1
   onboard: ^1.0.1
-  dash_chat_2: ^0.0.20
-  chat_gpt_sdk: ^3.0.3
+  whatsapp_chatbot: ^1.0.0
   dio: ^5.4.1
   json_annotation: ^4.8.1
   animated_bottom_navigation_bar: ^1.3.3
-  google_maps_flutter: ^2.6.0
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+
+
+  
 
 
   

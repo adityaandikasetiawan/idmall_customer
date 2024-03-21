@@ -113,7 +113,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(width: 8.0),
+                    SizedBox(width: 1.0),
                     Image.asset(
                       'images/enterprisesolution.png',
                       width: 235,
@@ -127,19 +127,27 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
               _buildTextField('Email', _emailController),
               _buildTextField('Mobile Number', _mobileNumberController),
               _buildTextField('Company Name', _companyNameController),
-              _buildDropdown('Business Industry', _businessIndustries, _selectedBusinessIndustry),
-              _buildDropdown('Business Scale', _businessScales, _selectedBusinessScale),
+              _buildDropdown('Business Industry', _businessIndustries,
+                  _selectedBusinessIndustry),
+              _buildDropdown(
+                  'Business Scale', _businessScales, _selectedBusinessScale),
               _buildDropdown('Your Needs', _needs, _selectedNeeds),
-              _buildDropdown('Your IT Budget Monthly (IDR)', _budgets, _selectedBudget),
+              _buildDropdown(
+                  'Your IT Budget Monthly (IDR)', _budgets, _selectedBudget),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Handle form submission
-                    _submitForm();
-                  }
-                },
-                child: Text('Submit'),
+                onPressed:
+                    _submitForm, // Panggil _submitForm saat tombol ditekan
+                child: Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                ),
               ),
             ],
           ),
@@ -202,12 +210,13 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
   }
 
   void _submitForm() {
-    // Handle form submission
-    print('Form submitted successfully!');
-    // You can access form data using controllers
-    print('Name: ${_nameController.text}');
-    print('Email: ${_emailController.text}');
-    // ...access other form fields in a similar way
+    if (_formKey.currentState!.validate()) {
+      // Jika validasi berhasil, tangani pengiriman formulir di sini
+      print('Form submitted successfully!');
+      print('Name: ${_nameController.text}');
+      print('Email: ${_emailController.text}');
+      // ...akses bidang formulir lainnya dengan cara yang serupa
+    }
   }
 }
 
