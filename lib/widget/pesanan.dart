@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:idmall/pages/pembayaran.dart'; // Mengimport halaman pembayaran
 
 class OrderPage extends StatelessWidget {
   @override
@@ -187,11 +188,15 @@ class OrderPage extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Logika untuk proses pembayaran
+                          // Navigasi ke halaman pembayaran saat tombol ditekan
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => PaymentPage()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange, // Warna background orange
-                           // Warna text putih
+                          // Warna text putih
                           padding: EdgeInsets.symmetric(vertical: 16.0), // Padding tambahan
                         ),
                         child: Text('Proses Pembayaran'),
