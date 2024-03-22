@@ -86,7 +86,7 @@ class CategoryPage extends StatelessWidget {
                       ],
                     ),
                     child: IconButton(
-                      icon: Image.asset('images/Chatbot.png',
+                      icon: Image.asset('images/widget/Chatbot.png',
                           width: 15, height: 15),
                       onPressed: () {
                         Navigator.push(

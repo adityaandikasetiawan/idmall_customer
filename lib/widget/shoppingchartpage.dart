@@ -90,7 +90,7 @@ class ShoppingCartPage extends StatelessWidget {
                               Expanded(
                                 child: Center(
                                   child: Image.asset(
-                                    'images/add.png',
+                                    'images/widget/add.png',
                                     width: 50.0,
                                     height: 50.0,
                                   ),

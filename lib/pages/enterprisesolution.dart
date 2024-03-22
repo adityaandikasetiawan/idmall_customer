@@ -79,7 +79,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                 ),
               );
             },
-            icon: Image.asset('images/Chatbot.png', width: 15, height: 15),
+            icon: Image.asset('images/widget/Chatbot.png', width: 15, height: 15),
           ),
           SizedBox(width: 10),
           IconButton(

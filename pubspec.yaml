@@ -101,35 +101,13 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - images/brownies.png
-     - images/kuecoklat.png
-     - images/kuehitam.png
-     - images/kuekuning.png
-     - images/kuepink.png
-     - images/cake.png
-     - images/food.png
-     - images/drink.png
-     - images/background2.jpg
-     - images/background1.jpg
-     - images/bg4.jpg
+
      - images/wallet.png
      - images/profiles.png
-     - images/bg5.jpg
-     - images/bg1.png
-     - images/open.jpg
      - images/accept.png
      - images/reject.png
      - images/splash.png
-     - images/welcome.png
-     - images/welcome2.png
-     - images/welcome3.jpg
-     - images/moco.png
-     - images/Welcome3.png
-     - images/Welcome4.png
-     - images/Welcome4.jpg
-     - images/camera.png
-     - images/about1.png
-     - images/about2.png
+     - images/idplay.png
      - images/about3.png
      - images/signup.png
      - images/card2.png
@@ -137,21 +115,33 @@ flutter:
      - images/promo1.png
      - images/promo2.png
      - images/promo3.png
-     - images/point.png
-     - images/bill.png
-     - images/voucher.png
-     - images/Chatbot.png
-     - images/paket.png
-     - images/gangguan.png
-     - images/semua.png
-     - images/Stoke.png
      - images/broadbandhome.png
      - images/pakethome1.png
      - images/paketbisnis.png
      - images/broadbandbisnis.png
      - images/enterprisesolution.png
-     - images/upload.png
-     - images/add.png
+     - images/widget/upload.png
+     - images/widget/point.png
+     - images/widget/bill.png
+     - images/widget/voucher.png
+     - images/widget/Chatbot.png
+     - images/widget/paket.png
+     - images/widget/gangguan.png
+     - images/widget/semua.png
+     - images/widget/Stoke.png
+     - images/widget/add.png
+     - images/bank/alfamart.png
+     - images/bank/bca.png
+     - images/bank/BJB.png
+     - images/bank/bni.png
+     - images/bank/bri.png
+     - images/bank/BSI.png
+     - images/bank/cimb.png
+     - images/bank/DBS.png
+     - images/bank/indomart.png
+     - images/bank/mandiri.png
+     - images/bank/permata.png
+     - images/bank/sampoerna.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

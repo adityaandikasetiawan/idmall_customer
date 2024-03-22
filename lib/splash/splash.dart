@@ -117,7 +117,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                           width: 450, // Adjust width as needed
                           height: 350, // Adjust height as needed
                           child: Image.asset(
-                              "images/moco.png"), // Replace with your image path
+                              "images/idplay.png"), // Replace with your image path
                         ),
                       ),
                     ),

@@ -169,7 +169,7 @@ class _HomeState extends State<Home> {
                             ],
                           ),
                           child: IconButton(
-                            icon: Image.asset('images/Chatbot.png',
+                            icon: Image.asset('images/widget/Chatbot.png',
                                 width: 15, height: 15),
                             onPressed: () {
                               Navigator.push(
@@ -244,7 +244,7 @@ class _HomeState extends State<Home> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset('images/point.png',
+                              Image.asset('images/widget/point.png',
                                   width: 20,
                                   height: 20), // Menggunakan gambar untuk icon
                               const SizedBox(
@@ -275,7 +275,7 @@ class _HomeState extends State<Home> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset('images/bill.png',
+                              Image.asset('images/widget/bill.png',
                                   width: 20,
                                   height: 20), // Menggunakan gambar untuk icon
                               const SizedBox(
@@ -433,7 +433,7 @@ class _HomeState extends State<Home> {
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Image.asset(
-                              'images/paket.png',
+                              'images/widget/paket.png',
                               width: 50,
                               height: 50,
                               color: const Color.fromARGB(255, 0, 0, 0),
@@ -479,7 +479,7 @@ class _HomeState extends State<Home> {
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Image.asset(
-                              'images/gangguan.png',
+                              'images/widget/gangguan.png',
                               width: 50,
                               height: 50,
                               color: const Color.fromARGB(255, 0, 0, 0),
@@ -525,7 +525,7 @@ class _HomeState extends State<Home> {
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Image.asset(
-                              'images/semua.png',
+                              'images/widget/semua.png',
                               width: 50,
                               height: 50,
                               color: const Color.fromARGB(255, 0, 0, 0),
