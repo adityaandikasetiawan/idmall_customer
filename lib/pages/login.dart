@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:get/get.dart';
 import 'package:idmall/admin/home_admin.dart';
+import 'package:idmall/guest/dashboard.dart';
 import 'package:idmall/pages/navigation.dart';
 import 'package:idmall/pages/forgotpassword.dart';
 import 'package:idmall/pages/signup.dart';
@@ -9,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:idmall/config/config.dart' as config;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class Login extends StatefulWidget {
@@ -45,7 +48,7 @@ class LoginResponse {
   };
 }
 
-Future<void> loginWithEmailPassword(payload) async{
+Future<dynamic> loginWithEmailPassword(payload) async{
   final body = jsonDecode(payload);
 
   final dio = Dio();
@@ -56,11 +59,11 @@ Future<void> loginWithEmailPassword(payload) async{
     },
   );
 
-  var data = response.data.toString();
+  var data = response.data;
   var httpStatus = response.statusCode;
+  return response;
 
 }
-
 class _LoginState extends State<Login> {
   User? currentUser;
   String email = "", password = "";
@@ -69,6 +72,7 @@ class _LoginState extends State<Login> {
 
   TextEditingController useremailcontroller = TextEditingController();
   TextEditingController userpasswordcontroller = TextEditingController();
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   void dispose() {
@@ -84,56 +88,72 @@ class _LoginState extends State<Login> {
           "password": "${userpasswordcontroller.text}", 
       });
 
-      var response = await loginWithEmailPassword(payload);
-      // await FirebaseAuth.instance.signInWithEmailAndPassword(
-      //   email: useremailcontroller.text,
-      //   password: userpasswordcontroller.text,
-      // );
-      // User? user = FirebaseAuth.instance.currentUser;
-      // print('User after login: $user');
-
-      // setState(() {
-      //   currentUser = user;
-      // });
-
-      // print("response ${response}");
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const NavigationScreen()),
+    var response = await loginWithEmailPassword(payload);
+    print('cek');
+    if (response.statusCode == 200) {
+      var token = response.data['data']['token'];
+      var fullName = response.data['data']['first_name'] + ' ' + response.data['data']['first_name'];
+      var userId = response.data['data']['id'];
+      print(response.data);
+      final SharedPreferences prefs = await _prefs;
+      prefs.setString('token', token);
+      prefs.setString('fullName', fullName);
+      prefs.setString('user_id', userId.toString());
+    }
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const NavigationScreen()),
+      (Route<dynamic> route) => false,
+    );
+  } on DioException catch (e) {
+    if (e.response?.statusCode == 403) {
+      showDialog(
+        context: Get.context!,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: Text("Email atau password salah, silakan coba lagi"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
       );
-    }on DioException catch (e) {
+    } else {
+      showDialog(
+        context: Get.context!,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: Text(e.message!),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
-      if(e.response?.statusCode == 403){
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Error"),
-              content: Text("Email atau password salah, silakan coba lagi"),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("OK"),
-                ),
-              ],
-            );
-          },
-        );
-      }
+    // }on DioException catch (e) {
 
-    //   String errorMessage = 'An error occurred while signing in. Please try again.';
-    //   if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-    //     errorMessage = 'Email or password is incorrect. Please try again.';
-    //     // Tampilkan dialog popup
+    //   if(e.response?.statusCode == 403){
     //     showDialog(
     //       context: context,
     //       builder: (BuildContext context) {
     //         return AlertDialog(
     //           title: const Text("Error"),
-    //           content: Text(errorMessage),
+    //           content: Text("Email atau password salah, silakan coba lagi"),
     //           actions: <Widget>[
     //             TextButton(
     //               onPressed: () {
@@ -146,7 +166,30 @@ class _LoginState extends State<Login> {
     //       },
     //     );
     //   }
-    }
+
+    // //   String errorMessage = 'An error occurred while signing in. Please try again.';
+    // //   if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+    // //     errorMessage = 'Email or password is incorrect. Please try again.';
+    // //     // Tampilkan dialog popup
+    // //     showDialog(
+    // //       context: context,
+    // //       builder: (BuildContext context) {
+    // //         return AlertDialog(
+    // //           title: const Text("Error"),
+    // //           content: Text(errorMessage),
+    // //           actions: <Widget>[
+    // //             TextButton(
+    // //               onPressed: () {
+    // //                 Navigator.of(context).pop();
+    // //               },
+    // //               child: const Text("OK"),
+    // //             ),
+    // //           ],
+    // //         );
+    // //       },
+    // //     );
+    // //   }
+    // }
   }
 //unused
 //   Future<void> userLogin() async {
@@ -206,7 +249,7 @@ class _LoginState extends State<Login> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 50.0),
+                        padding: const EdgeInsets.only(top: 30.0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -243,7 +286,7 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 10),
                       Form(
                         key: _formKey,
                         child: Padding(
@@ -346,35 +389,7 @@ class _LoginState extends State<Login> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 30.0),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: 1.0,
-                                      color: Colors.grey,
-                                      margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                                    ),
-                                  ),
-                                  const Text(
-                                    "Atau",
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 93, 92, 92),
-                                      fontSize: 20.0,
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      height: 1.0,
-                                      color: Colors.grey,
-                                      margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 40.0),
+                              const SizedBox(height: 10.0),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -403,6 +418,53 @@ class _LoginState extends State<Login> {
                                     ),
                                   ),
                                 ],
+                              ),
+                              const SizedBox(height: 30.0),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      height: 1.0,
+                                      color: Colors.grey,
+                                      margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                                    ),
+                                  ),
+                                  const Text(
+                                    "Atau",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 93, 92, 92),
+                                      fontSize: 20.0,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 1.0,
+                                      color: Colors.grey,
+                                      margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 30.0),
+                              OutlinedButton(
+                                style: TextButton.styleFrom(
+                                  fixedSize: Size(MediaQuery.of(context).size.width, 50),
+                                  side: BorderSide(width: 2.0, color: Color.fromARGB(255, 228, 99, 7)),
+                                ),
+                                onPressed: () {
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashboardGuest()));
+                                },
+                                child: Text(
+                                  'Log In as Guest',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    // color: Color.fromARGB(255, 93, 92, 92),
+                                    fontSize: 16.0,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
                               ),
                             ],
                           ),

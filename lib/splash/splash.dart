@@ -72,8 +72,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         Tween<double>(begin: 1.0, end: 32.0).animate(_scale2Controller)
           ..addStatusListener((status) {
             if (status == AnimationStatus.completed) {
-              Navigator.push(
+              Navigator.pushReplacement(
                   context,
+                  // MaterialPageRoute(builder: (builder) => Onboard()));
                   PageTransition(
                       type: PageTransitionType.fade, child: const Onboard()));
             }
@@ -92,7 +93,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           child: Stack(
             children: <Widget>[
               Container(
-                padding: const EdgeInsets.only(top: 100), // Add padding here
+                padding: const EdgeInsets.only(top: 50), // Add padding here
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +103,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       Center(
                         child: SizedBox(
                           width: 200,
-                          height: 200,
                           child: Image.asset("images/splash.png"),
                         ),
                       ),
@@ -115,7 +115,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       Center(
                         child: SizedBox(
                           width: 450, // Adjust width as needed
-                          height: 350, // Adjust height as needed
                           child: Image.asset(
                               "images/idplay.png"), // Replace with your image path
                         ),

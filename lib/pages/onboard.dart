@@ -30,7 +30,6 @@ class _OnboardState extends State<Onboard> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        SystemNavigator.pop();
         return true;
       },
       child: Scaffold(
@@ -84,18 +83,21 @@ class _OnboardState extends State<Onboard> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 275),
+                              const SizedBox(height: 250),
                               AnimatedOpacity(
                                 opacity: currentIndex == i ? 1.0 : 0.0,
                                 duration: const Duration(milliseconds: 500),
-                                child: Center(
-                                  child: Text(
-                                    contents[i].description,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Center(
+                                    child: Text(
+                                      contents[i].description,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -110,7 +112,7 @@ class _OnboardState extends State<Onboard> {
               },
             ),
             Positioned(
-              bottom: 30,
+              bottom: 10,
               left: 0,
               right: 0,
               child: Column(

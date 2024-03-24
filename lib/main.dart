@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:idmall/pages/navigation.dart';
 import 'package:idmall/splash/splash.dart';
 import 'package:idmall/widget/app_constant.dart';
@@ -143,5 +145,13 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+ class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
   }
 }

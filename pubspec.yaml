@@ -62,6 +62,8 @@ dependencies:
   dotted_border: ^2.1.0
   permission_handler: ^11.3.0
   shared_preferences: ^2.2.2
+  dropdown_search: ^5.0.6
+  accordion: ^2.6.0
 
 
 
@@ -108,7 +110,8 @@ flutter:
      - images/reject.png
      - images/splash.png
      - images/idplay.png
-     - images/about3.png
+     - images/
+     - images/widget/
      - images/signup.png
      - images/card2.png
      - images/coverange.png

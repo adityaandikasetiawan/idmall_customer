@@ -9,6 +9,7 @@ import 'package:idmall/service/database.dart';
 import 'package:idmall/service/shared_preference_helper.dart';
 // ignore: unused_import
 import 'package:idmall/widget/button.dart';
+import 'package:idmall/widget/pesanan.dart';
 import 'package:idmall/widget/widget_support.dart';
 import 'package:idmall/widget/notificationpage.dart';
 import 'package:idmall/widget/chatbotpage.dart';
@@ -187,7 +188,7 @@ class _HomeState extends State<Home> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ShoppingCartPage()),
+                                builder: (context) => OrderPage()),
                           );
                         },
                         child: Container(
@@ -214,7 +215,7 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ShoppingCartPage()),
+                                    builder: (context) => OrderPage()),
                               );
                             },
                           ),
@@ -306,7 +307,7 @@ class _HomeState extends State<Home> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset('images/voucher.png',
+                              Image.asset('images/widget/voucher.png',
                                   width: 20,
                                   height: 20), // Menggunakan gambar untuk icon
                               const SizedBox(
@@ -357,12 +358,12 @@ class _HomeState extends State<Home> {
                       padding: const EdgeInsets.all(18.0),
                       child: Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'New Promotions!!!',
+                                  'New Promotions !!!',
                                   style: TextStyle(
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
@@ -382,14 +383,16 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 10.0),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Image.asset(
-                              'images/card2.png',
-                              fit: BoxFit.cover,
-                              width: 150.0,
-                              height: 150.0,
+                          SizedBox(width: 10,),
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: Image.asset(
+                                'images/card2.png',
+                                fit: BoxFit.cover,
+                                width: 150.0,
+                                height: 150.0,
+                              ),
                             ),
                           ),
                         ],
@@ -601,6 +604,7 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
                         'Penawaran Terbaru',
@@ -608,9 +612,6 @@ class _HomeState extends State<Home> {
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      const SizedBox(
-                        width: 150,
                       ),
                       GestureDetector(
                         onTap: () {

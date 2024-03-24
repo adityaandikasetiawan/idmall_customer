@@ -1,17 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:idmall/pages/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   final String title;
   final String price;
   final String imagePath;
+  final String? description;
 
   const DetailPage({
-    Key? key,
+    super.key,
     required this.title,
     required this.price,
     required this.imagePath,
-  }) : super(key: key);
+    this.description,
+  });
 
+  @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  String? token;
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  void initState() {
+    super.initState();
+    getNameUser();
+  }
+
+  Future<Null> getNameUser() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    final SharedPreferences? prefs = await _prefs;
+
+    setState(() {
+      token = prefs?.getString('token');
+    });
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +47,7 @@ class DetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(
-            imagePath,
+            widget.imagePath,
             width: double.infinity,
             fit: BoxFit.cover,
           ),
@@ -32,15 +57,15 @@ class DetailPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  widget.title,
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 8),
                 Text(
-                  price,
+                  'Rp. ' + widget.price.toString(),
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
@@ -56,7 +81,7 @@ class DetailPage extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Tambahkan deskripsi produk di sini...',
+                  widget.description ?? '',
                   style: TextStyle(
                     fontSize: 16,
                   ),
@@ -66,33 +91,62 @@ class DetailPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-  style: ElevatedButton.styleFrom(
-    shadowColor: Colors.orange, // Ubah warna latar belakang tombol menjadi orange
-    backgroundColor: Colors.white, // Ubah warna font menjadi putih
-    side: BorderSide(color: Colors.orange), // Tambahkan garis tepi dengan warna yang sama
-  ),
-  onPressed: () {
-    // Tambahkan logika untuk memasukkan produk ke keranjang di sini
-    // Misalnya, Anda dapat menampilkan pesan atau mengirimkan produk ke keranjang belanja
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Sukses'),
-        content: Text('Produk berhasil dimasukkan ke keranjang.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Tutup'),
-          ),
-        ],
-      ),
-    );
-  },
-  child: Text('Tambah ke Keranjang'),
-),
-
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.orange, // Ubah warna latar belakang tombol menjadi orange
+                        backgroundColor: Colors.white, // Ubah warna font menjadi putih
+                        side: BorderSide(color: Colors.orange), // Tambahkan garis tepi dengan warna yang sama
+                      ),
+                      onPressed: () {
+                        // Tambahkan logika untuk memasukkan produk ke keranjang di sini
+                        // Misalnya, Anda dapat menampilkan pesan atau mengirimkan produk ke keranjang belanja
+                        if (token == null) {
+                          print('belum login');
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Info'),
+                              content: Text('Login terlebih dahulu.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> Login()));
+                                  },
+                                  child: Text('Sign In'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text(
+                                    'Tutup',
+                                    // style: TextStyle(
+                                    //   color: Colors.white
+                                    // ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }else {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Sukses'),
+                              content: Text('Produk berhasil dimasukkan ke keranjang.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Tutup'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                      child: Text('Pesan Sekarang!'),
+                    ),
                   ],
                 ),
               ],
