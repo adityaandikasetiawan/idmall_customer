@@ -5,9 +5,34 @@ import 'package:idmall/pages/login.dart';
 import 'package:idmall/pages/survei.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Account extends StatelessWidget {
+class Account extends StatefulWidget {
   const Account({Key? key}) : super(key: key);
 
+  @override
+  State<Account> createState() => _AccountState();
+}
+
+class _AccountState extends State<Account> {
+  String? fullName;
+  String? token;
+  String? email;
+
+  Future<void> getUser() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+
+    setState(() {
+      fullName = _pref.getString('fullName');
+      token = _pref.getString('token');
+      email = _pref.getString('email');
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUser();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,17 +60,19 @@ class Account extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     children: [
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey, width: 2),
-                        ),
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundImage: AssetImage(
-                              'images/profiles.png'), // Ganti dengan lokasi foto profil Anda
+                      Center(
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.grey, width: 2),
+                          ),
+                          child: CircleAvatar(
+                            radius: 30,
+                            backgroundImage: AssetImage(
+                                'images/profiles.png'), // Ganti dengan lokasi foto profil Anda
+                          ),
                         ),
                       ),
                       SizedBox(width: 20),
@@ -53,21 +80,20 @@ class Account extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text(fullName ?? ''),
                             SizedBox(height: 10),
-                            Text('John Doe'),
-                            SizedBox(height: 10),
-                            Text('johndoe@example.com'),
-                            SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ActivationPage()),
-                                );
-                              },
-                              child: Text('Hubungkan Account'),
-                            ),
+                            Text(email ?? ''),
+                            // SizedBox(height: 20),
+                            // ElevatedButton(
+                            //   onPressed: () {
+                            //     Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //           builder: (context) => ActivationPage()),
+                            //     );
+                            //   },
+                            //   child: Text('Hubungkan Account'),
+                            // ),
                           ],
                         ),
                       ),
@@ -76,58 +102,58 @@ class Account extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              ListTile(
-                leading: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: Icon(Icons.account_circle),
-                ),
-                title: Text('Account'),
-                trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
-                onTap: () {},
-              ),
-              SizedBox(height: 15),
-              ListTile(
-                leading: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: Icon(Icons.location_on),
-                ),
-                title: Text('Alamat'),
-                trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
-                onTap: () {
-                  // Tambahkan logika untuk tombol Alamat
-                },
-              ),
-              SizedBox(height: 15),
-              ListTile(
-                leading: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: Icon(Icons.phone),
-                ),
-                title: Text('Pelanggan'),
-                trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
-                onTap: () {
-                  // Navigasi ke halaman survei
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SurveyForm()),
-                  );
-                },
-              ),
+              // ListTile(
+              //   leading: Container(
+              //     width: 50,
+              //     height: 50,
+              //     decoration: BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       border: Border.all(color: Colors.grey, width: 1),
+              //     ),
+              //     child: Icon(Icons.account_circle),
+              //   ),
+              //   title: Text('Account'),
+              //   trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
+              //   onTap: () {},
+              // ),
+              // SizedBox(height: 15),
+              // ListTile(
+              //   leading: Container(
+              //     width: 50,
+              //     height: 50,
+              //     decoration: BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       border: Border.all(color: Colors.grey, width: 1),
+              //     ),
+              //     child: Icon(Icons.location_on),
+              //   ),
+              //   title: Text('Alamat'),
+              //   trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
+              //   onTap: () {
+              //     // Tambahkan logika untuk tombol Alamat
+              //   },
+              // ),
+              // SizedBox(height: 15),
+              // ListTile(
+              //   leading: Container(
+              //     width: 50,
+              //     height: 50,
+              //     decoration: BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       border: Border.all(color: Colors.grey, width: 1),
+              //     ),
+              //     child: Icon(Icons.phone),
+              //   ),
+              //   title: Text('Pelanggan'),
+              //   trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
+              //   onTap: () {
+              //     // Navigasi ke halaman survei
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => SurveyForm()),
+              //     );
+              //   },
+              // ),
               SizedBox(height: 15),
               ListTile(
                 leading: Container(

@@ -25,6 +25,8 @@ class Coverage extends StatefulWidget {
 }
 
 class _CoverageState extends State<Coverage> {
+  double? latitu;
+  double? longitu;
   late final customMarkers = <Marker>[];
   late final circleMarkers = <CircleMarker>[];
 
@@ -138,6 +140,8 @@ class _CoverageState extends State<Coverage> {
 
   void checkCoverage() async {
     Position? position = await _determinePosition();
+    double? latitude;
+    double? longitude;
     print(position);
     if (position.latitude != 0 && position.latitude != 0) {
       print('a');
@@ -150,48 +154,55 @@ class _CoverageState extends State<Coverage> {
       // customMarkers.add(buildPin(location));
 
       // Perbarui tampilan peta
-      setState(() {
-        customMarkers.add(Marker(
-        point: location,
-        width: 60,
-        height: 60,
-        child: GestureDetector(
-          onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Lokasi anda sekarang"),
-              duration: Duration(seconds: 1),
-              showCloseIcon: true,
+      if (latitu != null && longitu != null) {
+        latitude = latitu;
+        longitude = longitu;
+      }else {
+        setState(() {
+          customMarkers.add(Marker(
+          point: location,
+          width: 60,
+          height: 60,
+          child: GestureDetector(
+            onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Lokasi anda sekarang"),
+                duration: Duration(seconds: 1),
+                showCloseIcon: true,
+              ),
             ),
+            child: const Icon(Icons.location_pin, size: 20, color: Colors.red),
           ),
-          child: const Icon(Icons.location_pin, size: 20, color: Colors.red),
-        ),
-      ));
-      });
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Success'),
-          content: Text('Lokasi Anda tercover'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (builder) => 
-                ProductList(latitude: position.latitude, longitude: position.longitude,)));
-                // FormSurvey(latitude: position.latitude, longitude: position.longitude,)));
-              },
-              child: Text('Lanjutkan'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Batal'),
-            ),
-          ],
-        );
-      },
-    );
+        ));
+        });
+        latitude = position.latitude;
+        longitude = position.longitude;
+      }
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Success'),
+            content: Text('Lokasi Anda tercover'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (builder) => 
+                  ProductList(latitude: latitude!, longitude: longitude!,)));
+                  // FormSurvey(latitude: position.latitude, longitude: position.longitude,)));
+                },
+                child: Text('Lanjutkan'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Batal'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -240,6 +251,7 @@ class _CoverageState extends State<Coverage> {
                           const LatLng(90, 180),
                         ),
                       ),
+                      onTap: _handleTap,
                       interactionOptions: InteractionOptions(
                         enableScrollWheel: true,
                         flags: InteractiveFlag.all,
@@ -291,6 +303,30 @@ class _CoverageState extends State<Coverage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
     );
+  }
+  void _handleTap(TapPosition tapPos, LatLng latlng) {
+    setState(() {
+      latitu = latlng.latitude;
+      longitu = latlng.longitude;
+      customMarkers.clear(); // Menghapus marker sebelumnya
+      customMarkers.add(
+        Marker(
+          point: latlng,
+          width: 60,
+          height: 60,
+          child: GestureDetector(
+            onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Lokasi yang Anda Pilih"),
+                duration: Duration(seconds: 1),
+                showCloseIcon: true,
+              ),
+            ),
+            child: const Icon(Icons.location_pin, size: 20, color: Colors.red),
+          ),
+      ),
+      );
+    });
   }
 }
 

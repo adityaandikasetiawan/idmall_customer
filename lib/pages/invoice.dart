@@ -1,28 +1,74 @@
+import 'dart:io';
+
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
+import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:idmall/config/config.dart' as config;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class Invoice extends StatefulWidget {
   final String code;
-  const Invoice({super.key, required this.code});
+  final int totalPrice;
+  final String taskID;
+  const Invoice({super.key, required this.code, required this.totalPrice, required this.taskID});
 
   @override
   State<Invoice> createState() => _InvoiceState();
 }
 
 class _InvoiceState extends State<Invoice> {
-  static const headerStyle = TextStyle(
-      color: Color(0xffffffff), fontSize: 18, fontWeight: FontWeight.bold);
-  static const contentStyleHeader = TextStyle(
-      color: Color(0xff999999), fontSize: 14, fontWeight: FontWeight.w700);
-  static const contentStyle = TextStyle(
-      color: Color(0xff999999), fontSize: 14, fontWeight: FontWeight.normal);
-  static const loremIpsum =
-      '''Lorem ipsum is typically a corrupted version of 'De finibus bonorum et malorum', a 1st century BC text by the Roman statesman and philosopher Cicero, with words altered, added, and removed to make it nonsensical and improper Latin.''';
-  static const slogan =
-      'Do not forget to play around with all sorts of colors, backgrounds, borders, etc.';
+  Dio dio = Dio();
+  String? token;
+  String? codeAccount;
+  String? bank;
+  int? total;
+  
+  Future<void> getInvoice() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    setState(() {
+      token = _pref.getString('token');
+    });
+    try {
+      // Replace URL with your endpoint
+      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
+                      HttpClient()
+                        ..badCertificateCallback =
+                            (X509Certificate cert, String host, int port) => true;
+      var response = await dio.get('${config.backendBaseUrl}/transaction/${widget.taskID}',
+          // data: dataNya,
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          }));
+
+      // Handle response
+      Map<String,dynamic> result = response.data;
+      if (result['data']['task_id'] == widget.taskID) {
+        print(result);
+        setState(() {
+          codeAccount = result['data']['code'];
+          bank = result['data']['payment_method'];
+          total = result['data']['harga'];
+        });
+      }
+      // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
+    } catch (e) {
+      // Handle error
+      print(e.toString());
+    }
+  }
+
+  
+
+  @override
+  void initState() {
+    super.initState();
+    getInvoice();
+  }
 
   List<Item> _data = generateItems(3);
   @override
@@ -36,28 +82,7 @@ class _InvoiceState extends State<Invoice> {
           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
           child: Column(
             children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.symmetric(vertical: 10),
-                margin: EdgeInsets.symmetric(vertical: 50),
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Column(
-                  children: [
-                    Text('No VA'),
-                    SizedBox(height: 10,),
-                    Text(
-                      '125123124451234',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ContainerWidgetWithRoundedBorder(title: 'No Va:', subtitle: codeAccount ?? '',),
               // ExpansionPanelList(
               //   expansionCallback: (int index, bool isExpanded) {
               //     print(_data[index].isExpanded);
@@ -79,7 +104,11 @@ class _InvoiceState extends State<Invoice> {
               //     );
               //   }).toList(),
               // ),
-              SizedBox(height: 50),
+              SizedBox(height: 15),
+              ContainerWidgetWithRoundedBorder(title: 'Name:', subtitle: bank ?? '',),
+              SizedBox(height: 15,),
+              ContainerWidgetWithRoundedBorder(title: 'Total Payment:', subtitle: "${total.toString()}",),
+              SizedBox(height: 15,),
               ElevatedButton(
                 onPressed: () {
                   showDialog(
@@ -235,6 +264,46 @@ class _InvoiceState extends State<Invoice> {
   //     ),
   //   );
   // }
+}
+
+class ContainerWidgetWithRoundedBorder extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  const ContainerWidgetWithRoundedBorder({
+    super.key, required this.title, required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        await Clipboard.setData(ClipboardData(text: subtitle));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$subtitle disimpan ke Clipboard"),duration: Durations.medium4,));
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        decoration: BoxDecoration(
+          border: Border.all(),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title),
+            SizedBox(height: 10,),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 // class MyInputForm extends StatelessWidget //__
 // {

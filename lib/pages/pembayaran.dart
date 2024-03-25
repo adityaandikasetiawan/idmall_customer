@@ -95,7 +95,7 @@ class PaymentPage extends StatelessWidget {
       child: InkWell(
         onTap: () {
           // Logika untuk metode pembayaran tertentu
-          Navigator.of(context).push(MaterialPageRoute(builder: (builder) =>  Invoice(code: bankName,)));
+          // Navigator.of(context).push(MaterialPageRoute(builder: (builder) =>  Invoice(code: bankName,)));
         },
         child: SizedBox(
           width: cardWidth,
