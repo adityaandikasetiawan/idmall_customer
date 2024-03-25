@@ -402,155 +402,155 @@ class _HomeState extends State<Home> {
                 ),
               ),
 
-              // Three icons
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => PackagesPage()),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.black,
-                            ),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                              ),
-                              BoxShadow(
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                spreadRadius: 7.0,
-                                blurRadius: 12.0,
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Image.asset(
-                              'images/widget/paket.png',
-                              width: 50,
-                              height: 50,
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          'Paket',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => TroublePage()),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.black,
-                            ),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                              ),
-                              BoxShadow(
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                spreadRadius: 7.0,
-                                blurRadius: 12.0,
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Image.asset(
-                              'images/widget/gangguan.png',
-                              width: 50,
-                              height: 50,
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          'Gangguan',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AllPage()),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.black,
-                            ),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                              ),
-                              BoxShadow(
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                spreadRadius: 7.0,
-                                blurRadius: 12.0,
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Image.asset(
-                              'images/widget/semua.png',
-                              width: 50,
-                              height: 50,
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          'Semua',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              // // Three icons
+              // SizedBox(height: 20),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //   children: [
+              //     GestureDetector(
+              //       onTap: () {
+              //         Navigator.push(
+              //           context,
+              //           MaterialPageRoute(builder: (context) => PackagesPage()),
+              //         );
+              //       },
+              //       child: Column(
+              //         children: [
+              //           Container(
+              //             decoration: BoxDecoration(
+              //               shape: BoxShape.circle,
+              //               border: Border.all(
+              //                 color: Colors.black,
+              //               ),
+              //               boxShadow: const [
+              //                 BoxShadow(
+              //                   color: Color.fromARGB(255, 0, 0, 0),
+              //                 ),
+              //                 BoxShadow(
+              //                   color: Color.fromARGB(255, 255, 255, 255),
+              //                   spreadRadius: 7.0,
+              //                   blurRadius: 12.0,
+              //                 ),
+              //               ],
+              //             ),
+              //             child: Padding(
+              //               padding: const EdgeInsets.all(10.0),
+              //               child: Image.asset(
+              //                 'images/widget/paket.png',
+              //                 width: 50,
+              //                 height: 50,
+              //                 color: const Color.fromARGB(255, 0, 0, 0),
+              //               ),
+              //             ),
+              //           ),
+              //           const SizedBox(height: 5),
+              //           const Text(
+              //             'Paket',
+              //             style: TextStyle(
+              //               color: Color.fromARGB(255, 0, 0, 0),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //     GestureDetector(
+              //       onTap: () {
+              //         Navigator.push(
+              //           context,
+              //           MaterialPageRoute(builder: (context) => TroublePage()),
+              //         );
+              //       },
+              //       child: Column(
+              //         children: [
+              //           Container(
+              //             decoration: BoxDecoration(
+              //               shape: BoxShape.circle,
+              //               border: Border.all(
+              //                 color: Colors.black,
+              //               ),
+              //               boxShadow: const [
+              //                 BoxShadow(
+              //                   color: Color.fromARGB(255, 0, 0, 0),
+              //                 ),
+              //                 BoxShadow(
+              //                   color: Color.fromARGB(255, 255, 255, 255),
+              //                   spreadRadius: 7.0,
+              //                   blurRadius: 12.0,
+              //                 ),
+              //               ],
+              //             ),
+              //             child: Padding(
+              //               padding: const EdgeInsets.all(10.0),
+              //               child: Image.asset(
+              //                 'images/widget/gangguan.png',
+              //                 width: 50,
+              //                 height: 50,
+              //                 color: const Color.fromARGB(255, 0, 0, 0),
+              //               ),
+              //             ),
+              //           ),
+              //           const SizedBox(height: 5),
+              //           const Text(
+              //             'Gangguan',
+              //             style: TextStyle(
+              //               color: Color.fromARGB(255, 0, 0, 0),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //     GestureDetector(
+              //       onTap: () {
+              //         Navigator.push(
+              //           context,
+              //           MaterialPageRoute(builder: (context) => AllPage()),
+              //         );
+              //       },
+              //       child: Column(
+              //         children: [
+              //           Container(
+              //             decoration: BoxDecoration(
+              //               shape: BoxShape.circle,
+              //               border: Border.all(
+              //                 color: Colors.black,
+              //               ),
+              //               boxShadow: const [
+              //                 BoxShadow(
+              //                   color: Color.fromARGB(255, 0, 0, 0),
+              //                 ),
+              //                 BoxShadow(
+              //                   color: Color.fromARGB(255, 255, 255, 255),
+              //                   spreadRadius: 7.0,
+              //                   blurRadius: 12.0,
+              //                 ),
+              //               ],
+              //             ),
+              //             child: Padding(
+              //               padding: const EdgeInsets.all(10.0),
+              //               child: Image.asset(
+              //                 'images/widget/semua.png',
+              //                 width: 50,
+              //                 height: 50,
+              //                 color: const Color.fromARGB(255, 0, 0, 0),
+              //               ),
+              //             ),
+              //           ),
+              //           const SizedBox(height: 5),
+              //           const Text(
+              //             'Semua',
+              //             style: TextStyle(
+              //               color: Color.fromARGB(255, 0, 0, 0),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ],
+              // ),
 
               // New Card
               Container(
-                margin: EdgeInsets.symmetric(vertical: 20.0),
+                margin: EdgeInsets.only(bottom: 20.0),
                 child: InkWell(
                   onTap: () {
                     Navigator.push(

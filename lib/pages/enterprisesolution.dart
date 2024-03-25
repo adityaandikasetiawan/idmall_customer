@@ -106,18 +106,22 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    Text(
-                      'Enterprise\nSolution',
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Text(
+                        'Enterprise\nSolution',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     SizedBox(width: 1.0),
-                    Image.asset(
-                      'images/enterprisesolution.png',
-                      width: 235,
-                      height: 235,
+                    Expanded(
+                      child: Image.asset(
+                        'images/enterprisesolution.png',
+                        width: 235,
+                        height: 235,
+                      ),
                     ),
                   ],
                 ),

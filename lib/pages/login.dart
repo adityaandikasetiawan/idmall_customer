@@ -92,12 +92,16 @@ class _LoginState extends State<Login> {
     print('cek');
     if (response.statusCode == 200) {
       var token = response.data['data']['token'];
-      var fullName = response.data['data']['first_name'] + ' ' + response.data['data']['first_name'];
+      var fullName = response.data['data']['first_name'] + ' ' + response.data['data']['last_name'];
       var userId = response.data['data']['id'];
+      var email = response.data['data']['email'];
       print(response.data);
       final SharedPreferences prefs = await _prefs;
       prefs.setString('token', token);
       prefs.setString('fullName', fullName);
+      prefs.setString('firstName', response.data['data']['first_name']);
+      prefs.setString('lastName', response.data['data']['last_name']);
+      prefs.setString('email', email);
       prefs.setString('user_id', userId.toString());
     }
     Navigator.pushAndRemoveUntil(

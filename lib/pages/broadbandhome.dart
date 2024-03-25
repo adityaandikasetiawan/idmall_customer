@@ -153,20 +153,24 @@ class BroadbandHomePage extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Text(
-                    'Broadband\nHome',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      'Broadband\nHome',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   SizedBox(width: 8.0),
-                  Image.asset(
-                    'images/broadbandhome.png', // Ganti dengan path gambar yang diinginkan
-                    width:
-                        235, // Sesuaikan dengan ukuran gambar yang diinginkan
-                    height:
-                        235, // Sesuaikan dengan ukuran gambar yang diinginkan
+                  Expanded(
+                    child: Image.asset(
+                      'images/broadbandhome.png', // Ganti dengan path gambar yang diinginkan
+                      width:
+                          235, // Sesuaikan dengan ukuran gambar yang diinginkan
+                      height:
+                          235, // Sesuaikan dengan ukuran gambar yang diinginkan
+                    ),
                   ),
                 ],
               ),

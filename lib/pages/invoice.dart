@@ -5,7 +5,8 @@ import 'package:get/get.dart';
 
 
 class Invoice extends StatefulWidget {
-  const Invoice({super.key});
+  final String code;
+  const Invoice({super.key, required this.code});
 
   @override
   State<Invoice> createState() => _InvoiceState();
@@ -28,7 +29,7 @@ class _InvoiceState extends State<Invoice> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Accordion Page'),
+        title: Text('Payment'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -57,27 +58,27 @@ class _InvoiceState extends State<Invoice> {
                   ],
                 ),
               ),
-              ExpansionPanelList(
-                expansionCallback: (int index, bool isExpanded) {
-                  print(_data[index].isExpanded);
-                  setState(() {
-                    _data[index].isExpanded = isExpanded;
-                  });
-                },
-                children: _data.map<ExpansionPanel>((Item item) {
-                  return ExpansionPanel(
-                    headerBuilder: (BuildContext context, bool isExpanded) {
-                      return ListTile(
-                        title: Text(item.headerValue),
-                      );
-                    },
-                    body: ListTile(
-                      title: Text(item.expandedValue),
-                    ),
-                    isExpanded: item.isExpanded,
-                  );
-                }).toList(),
-              ),
+              // ExpansionPanelList(
+              //   expansionCallback: (int index, bool isExpanded) {
+              //     print(_data[index].isExpanded);
+              //     setState(() {
+              //       _data[index].isExpanded = isExpanded;
+              //     });
+              //   },
+              //   children: _data.map<ExpansionPanel>((Item item) {
+              //     return ExpansionPanel(
+              //       headerBuilder: (BuildContext context, bool isExpanded) {
+              //         return ListTile(
+              //           title: Text(item.headerValue),
+              //         );
+              //       },
+              //       body: ListTile(
+              //         title: Text(item.expandedValue),
+              //       ),
+              //       isExpanded: item.isExpanded,
+              //     );
+              //   }).toList(),
+              // ),
               SizedBox(height: 50),
               ElevatedButton(
                 onPressed: () {

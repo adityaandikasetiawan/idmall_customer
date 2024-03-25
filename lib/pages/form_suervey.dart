@@ -11,13 +11,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:idmall/models/zip_code.dart';
+import 'package:idmall/config/config.dart' as config;
 
 class FormSurvey extends StatefulWidget {
   final double latitude;
   final double longitude;
   final String tipe;
+  final String price;
 
-  FormSurvey({super.key, required this.latitude, required this.longitude, required this.tipe});
+  FormSurvey({super.key, required this.latitude, required this.longitude, required this.tipe, required this.price});
   @override
   _FormSurveyState createState() => _FormSurveyState();
 }
@@ -30,6 +32,7 @@ class _FormSurveyState extends State<FormSurvey> {
   Dio dio = Dio();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _customerNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _installationAddressController =
       TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -46,6 +49,7 @@ class _FormSurveyState extends State<FormSurvey> {
       email = prefs?.getString('email');
       token = prefs?.getString('token');
       _customerNameController.text = prefs?.getString('fullName') ?? '';
+      _emailController.text = prefs?.getString('email') ?? '';
     });
   }
   
@@ -68,23 +72,36 @@ class _FormSurveyState extends State<FormSurvey> {
     String address = _installationAddressController.text;
     String phone = _phoneNumberController.text;
     String idCard = _idNumberController.text;
+    String email = _emailController.text;
     String formLongitude = widget.longitude.toString();
     String formLatitude = widget.latitude.toString();
     // File? file = _imageFile; // Access the selected file if needed;
     // File? file = _imageFile;
+    var explode = fullName.split(' ');
+    String lastName = explode[explode.length - 1];
+    String firstName = '';
+    for (var i = 0; i < explode.length - 1; i++) {
+      firstName += explode[i] + ' ';
+    }
+    firstName = firstName.substring(0,firstName.length - 1);
     String selectedServiceType = _selectedServiceType ?? '';
     String postalCodeType = _selectedZipCode ?? '';
+    explode = postalCodeType.split('=>');
+    postalCodeType = explode[0].trim();
     Map<String,dynamic> dataNya = {};
+    int priceNya = int.parse(widget.price.replaceAll(RegExp(r'[^0-9]'),''));
     dataNya = {
-      'name': fullName,
-      'email': email,
-      'address': address,
-      'phone': phone,
-      'ktp': idCard,
-      'zipcode': postalCodeType,
-      'service': selectedServiceType,
-      'longitude' : formLongitude,
-      'latitude' : formLatitude,
+      'first_name': firstName.toString(),
+      'last_name': lastName.toString(),
+      'email': email.toString(),
+      'address': address.toString(),
+      'phone': phone.toString(),
+      'ktp': idCard.toString(),
+      'zip_code': postalCodeType.toString(),
+      'services': selectedServiceType.toString(),
+      'longitude' : formLongitude.toString(),
+      'latitude' : formLatitude.toString(),
+      'harga' : widget.price.replaceAll(RegExp(r'[^0-9]'),'').toString()
     };
     FormData formData = FormData.fromMap(dataNya);
 
@@ -94,16 +111,33 @@ class _FormSurveyState extends State<FormSurvey> {
                       HttpClient()
                         ..badCertificateCallback =
                             (X509Certificate cert, String host, int port) => true;
-      var response = await dio.post('$linkLaravelAPI/entri-data/submit',
-          data: formData,
+      var response = await dio.post('${config.backendBaseUrl}/subscription/retail/entri-prospek',
+          data: dataNya,
           options: Options(headers: {
-            HttpHeaders.contentTypeHeader: 'multipart/form-data',
-            HttpHeaders.authorizationHeader: token,
+            HttpHeaders.authorizationHeader: "Bearer $token",
           }));
 
       // Handle response
-      print(jsonDecode(response.data));
-      return Navigator.of(context).pop();
+      Map<String,dynamic> result = response.data;
+      print(result['status']);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(result['status']),
+            content: Text(result['message']),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+                child: Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+      // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
     } catch (e) {
       // Handle error
       print(e.toString());
@@ -124,63 +158,146 @@ class _FormSurveyState extends State<FormSurvey> {
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Form Survey Berlangganan',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Form Pendaftaran Berlangganan',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+          
+              _buildTextField(_customerNameController, 'Nama Customer'),
+              SizedBox(height: 16.0),
+
+              _buildTextField(_emailController, 'Email Customer'),
+              SizedBox(height: 16.0),
+          
+              _buildTextField(_installationAddressController, 'Alamat Lengkap Pemasangan'),
+              SizedBox(height: 16.0),
+              
+              DropdownSearch<String>(
+                asyncItems: (String filter) async {
+                  try {
+                    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
+                  HttpClient()
+                    ..badCertificateCallback =
+                        (X509Certificate cert, String host, int port) => true;
+                    var response = await dio.get(
+                        "$linkLaravelAPI/entri-data/zipcode",
+                        queryParameters: {"chars": filter},
+                    );
+                      // print(jsonDecode(response.data)['status']);
+                    if (jsonDecode(response.data)['status'] == 'success') {
+                      var hasil = jsonDecode(response.data)['data'];
+                      List<String> list = [];
+                      for (var ele in hasil) {
+                        var zipCodeModel = ZipCode.fromJson(ele);
+                        var zipCodeNya = zipCodeModel.zipCode.toString();
+                        var kelurahan = zipCodeModel.district.toString();
+                        var kota = zipCodeModel.city.toString();
+                        var provinsi = zipCodeModel.province.toString();
+                        list.add("$zipCodeNya => $kelurahan, $kota, $provinsi");
+                      }
+                      // print(model[0]);
+                      return list;
+                    }else {
+                      return [];
+                    }
+                  } on DioException catch (e) {
+                    print(e);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Error"),
+                          content: Text(e.message ?? ''),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    return [];
+                  }
+                },
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    labelText: 'Kode Pos',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: 16.0),
-
-            _buildTextField(_customerNameController, 'Nama Customer'),
-            SizedBox(height: 16.0),
-
-            _buildTextField(_installationAddressController, 'Alamat Lengkap Pemasangan'),
-            SizedBox(height: 16.0),
-            
-            _dropdownButtonFormField(_selectedZipCode, 'Kode Pos'),
-            SizedBox(height: 16.0),
-
-            _buildTextField(_phoneNumberController, 'Telepon/ Telepon Seluler'),
-            SizedBox(height: 16.0),
-
-            _buildTextField(_idNumberController, 'Nomor Identitas'),
-            SizedBox(height: 16.0),
-
-            _buildDropdownButtonFormField(),
-            SizedBox(height: 16.0),
-
-            ElevatedButton(
-              onPressed: () {
-                // Handle form submission
-                Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
-              },
-              child: Text(
-                'Submit',
-                style: TextStyle(color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
+                popupProps: const PopupProps.menu(
+                    showSelectedItems: true,
+                    isFilterOnline: true,
+                    showSearchBox: true,
+                    // disabledItemFn: (String s) => s.startsWith('I'),
                 ),
-                minimumSize: Size(double.infinity,
-                    0), // Set minimum size untuk mengisi lebar layar
-                padding: EdgeInsets.symmetric(
-                    vertical: 16.0), // Atur padding vertical
+                items: [],
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedZipCode = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a postal code';
+                  }
+                  return null;
+                },
               ),
-            ),
-          ],
+              SizedBox(height: 16.0),
+          
+              _buildTextField(_phoneNumberController, 'Telepon/ Telepon Seluler'),
+              SizedBox(height: 16.0),
+          
+              _buildTextField(_idNumberController, 'Nomor Identitas'),
+              SizedBox(height: 16.0),
+          
+              _buildDropdownButtonFormField(),
+              SizedBox(height: 16.0),
+          
+              ElevatedButton(
+                onPressed: () {
+                  // Handle form submission
+                  _submitForm(context);
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
+                },
+                child: Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  minimumSize: Size(double.infinity,
+                      0), // Set minimum size untuk mengisi lebar layar
+                  padding: EdgeInsets.symmetric(
+                      vertical: 16.0), // Atur padding vertical
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
