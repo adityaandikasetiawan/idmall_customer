@@ -21,6 +21,7 @@ class FABForm extends StatefulWidget {
 
 class _FABFormState extends State<FABForm> {
   String? token;
+  String? user_id;
   Dio dio = Dio();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _customerNameController = TextEditingController();
@@ -31,7 +32,7 @@ class _FABFormState extends State<FABForm> {
   // final TextEditingController _mobilePhoneController = TextEditingController();
   final TextEditingController _referralCodeController = TextEditingController();
   String? _selectedServiceType;
-  late File _image;
+  late File _imageFile;
   final ImagePicker _picker = ImagePicker();
   bool _agreeToTerms = false;
   String pdfUrl = '${config.backendBaseUrl}/terms-and-condition'; // Ganti URL dengan URL PDF yang diinginkan
@@ -44,6 +45,49 @@ class _FABFormState extends State<FABForm> {
     // TODO: implement initState
     super.initState();
     getCustomerActivation(widget.taskID);
+  }
+
+  Future<void> _submitForm() async {
+    try {
+      var dataNya = {
+        'no_ktp': _idNumberController.text,
+        'ktp': await MultipartFile.fromFile(_imageFile!.path,
+            filename: _imageFile?.path.split('/').last),
+        'task_id': widget.taskID,
+      };
+      
+      FormData formData = FormData.fromMap(dataNya);
+      
+      var response = await dio.post("${config.backendBaseUrl}/subscription/retail/fkb/user/$user_id",
+      data:formData,
+          // queryParameters: {"taskID": taskID},
+          // data: Icons.four_g_mobiledata_outlined,
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          }));
+      var hasil = response.data;
+      var result = hasil['data'];
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(result['status']),
+            content: Text(result['message']),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+                child: Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future getCustomerActivation (taskID) async {
@@ -68,6 +112,7 @@ class _FABFormState extends State<FABForm> {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     setState(() {
       token = _pref.getString('token');
+      user_id = _pref.getString('user_id');
     });
 
     print(taskID);
@@ -132,39 +177,39 @@ class _FABFormState extends State<FABForm> {
               SizedBox(height: 16.0),
               _buildTextField(_idNumberController, 'Nomor Identitas'),
               SizedBox(height: 16.0),
-              Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.0),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedServiceType,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedServiceType = newValue;
-                      });
-                    },
-                    items: <String>[
-                      'idplay Retail Up To 10Mbps',
-                      'idplay Retail Up To 20Mbps',
-                      'idplay Retail Up To 30Mbps',
-                      'idplay Retail Up To 50 Mbps',
-                      'idplay Retail Up To 100Mbps',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    decoration: InputDecoration(
-                      labelText: 'Service Type',
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-              SizedBox(height: 16.0),
+              // // Container(
+              // //     decoration: BoxDecoration(
+              // //       borderRadius: BorderRadius.circular(15.0),
+              // //       border: Border.all(color: Colors.grey),
+              // //     ),
+              // //     child: DropdownButtonFormField<String>(
+              // //       value: _selectedServiceType,
+              // //       onChanged: (String? newValue) {
+              // //         setState(() {
+              // //           _selectedServiceType = newValue;
+              // //         });
+              // //       },
+              // //       items: <String>[
+              // //         'idplay Retail Up To 10Mbps',
+              // //         'idplay Retail Up To 20Mbps',
+              // //         'idplay Retail Up To 30Mbps',
+              // //         'idplay Retail Up To 50 Mbps',
+              // //         'idplay Retail Up To 100Mbps',
+              // //       ].map<DropdownMenuItem<String>>((String value) {
+              // //         return DropdownMenuItem<String>(
+              // //           value: value,
+              // //           child: Text(value),
+              // //         );
+              // //       }).toList(),
+              // //       decoration: InputDecoration(
+              // //         labelText: 'Service Type',
+              // //         contentPadding:
+              // //             EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              // //         border: InputBorder.none,
+              // //       ),
+              // //     ),
+              // //   ),
+              // SizedBox(height: 16.0),
               _buildTextField(_referralCodeController, 'Handler'),
               SizedBox(height: 16.0),
               Row(
@@ -190,6 +235,7 @@ class _FABFormState extends State<FABForm> {
               SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
+              _submitForm();
               // Handle form submission
             },
             child: Text(
@@ -279,10 +325,10 @@ class _FABFormState extends State<FABForm> {
       child: TextButton.icon(
         onPressed: () async {
           final XFile? image =
-              await _picker.pickImage(source: ImageSource.gallery);
+              await _picker.pickImage(source: ImageSource.camera);
           if (image != null) {
             setState(() {
-              _image = File(image.path);
+              _imageFile = File(image.path);
             });
           }
         },

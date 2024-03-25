@@ -23,6 +23,28 @@ class _PaymentToPageState extends State<PaymentToPage> {
   
   Future<List<Map<String,dynamic>>>? list;
 
+  Future<void> checkPM () async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    setState(() {
+      token = _pref.getString('token');
+    });
+      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
+                      HttpClient()
+                        ..badCertificateCallback =
+                            (X509Certificate cert, String host, int port) => true;
+      var response = await dio.get('${config.backendBaseUrl}/transaction/${widget.taskID}',
+          // data: dataNya,
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          }));
+
+      // Handle response
+      Map<String,dynamic> result = response.data;
+      if (result != null) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (builder) => Invoice(code: result['data']['payment_method'], totalPrice: result['data']['harga'], taskID: widget.taskID)));
+      }
+  }
+
 
   Future<List<Map<String,dynamic>>> getPaymentList() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -113,6 +135,7 @@ class _PaymentToPageState extends State<PaymentToPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkPM();
     list = getPaymentList();
   }
 
