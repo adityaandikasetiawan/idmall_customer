@@ -269,7 +269,7 @@ class _FormSurveyState extends State<FormSurvey> {
               _buildTextField(_phoneNumberController, 'Telepon/ Telepon Seluler'),
               SizedBox(height: 16.0),
           
-              _buildTextField(_idNumberController, 'Nomor Identitas'),
+              _buildTextField(_idNumberController, 'Nomor Identitas (NIK/SIM/Passport)'),
               SizedBox(height: 16.0),
           
               _buildDropdownButtonFormField(),

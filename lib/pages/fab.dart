@@ -175,7 +175,7 @@ class _FABFormState extends State<FABForm> {
               SizedBox(height: 16.0),
               _buildKtpUploadField(),
               SizedBox(height: 16.0),
-              _buildTextField(_idNumberController, 'Nomor Identitas'),
+              _buildTextField(_idNumberController, 'Nomor Identitas (NIK/SIM/Passport)'),
               SizedBox(height: 16.0),
               // // Container(
               // //     decoration: BoxDecoration(

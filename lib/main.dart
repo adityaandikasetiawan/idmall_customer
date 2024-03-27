@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:idmall/pages/navigation.dart';
+import 'package:idmall/service/notification_controller.dart';
 import 'package:idmall/service/shared_preference_helper.dart';
 import 'package:idmall/splash/splash.dart';
 import 'package:idmall/widget/app_constant.dart';
@@ -8,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 
 void main() async {
@@ -24,6 +26,26 @@ void main() async {
   ).then((_) {
     print("Firebase initialization completed.");
   });
+  await AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelKey: "basic_channel",
+        channelName: "Basic Notifications",
+        channelDescription: "Basic Notification Channel",
+        defaultColor: Color(0xFF9D50DD),
+        ledColor: Colors.white,
+      )
+    ],
+    channelGroups: [
+      NotificationChannelGroup(channelGroupKey: "basic_channel_group", channelGroupName: "Basip Group")
+    ],
+    debug: true
+  );
+  bool isAllowedToSendNotification = await AwesomeNotifications().isNotificationAllowed();
+  if (!isAllowedToSendNotification) {
+      AwesomeNotifications().requestPermissionToSendNotifications();
+  }
   String? token;
   SharedPreferences? _pref = await SharedPreferences.getInstance();
   token = _pref.getString('token') ?? '';
@@ -33,10 +55,28 @@ void main() async {
   runApp(MyApp(token: token,));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   String token;
   MyApp({super.key, required this.token});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   Widget? awal;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    AwesomeNotifications().setListeners(
+      onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+      onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
+      onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +102,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 251, 251, 251)),
         useMaterial3: true,
       ),
-      home: token == '' ? Splash() : NavigationScreen(),
+      home: widget.token == '' ? Splash() : NavigationScreen(),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:idmall/pages/broadbandbisnis.dart';
 import 'package:idmall/pages/broadbandhome.dart';
@@ -79,60 +80,77 @@ class _NavigationScreenState extends State<NavigationScreen> {
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-                      Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'Kategori',
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
+        return SingleChildScrollView(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Kategori',
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                _buildCard(
+                  title: 'Boardband Home',
+                  description: '5 Product',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 16.0),
+                _buildCard(
+                  title: 'Boardband Bisnis',
+                  description: '4 Product',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 16.0),
+                _buildCard(
+                  title: 'Enterprise Solution',
+                  description: '1 Product',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 16.0),
+                _buildCard(
+                  title: 'Enterprise Solution',
+                  description: '1 Product',
+                  onPressed: () {
+                   AwesomeNotifications().createNotification(
+                    content: NotificationContent(
+                      id: 1,
+                      channelKey: "basic_channel",
+                      title: "Hello World!",
+                      body: "Yeyeyeyeye",
+                    )
+                    );
+                  },
+                ),
+              ],
             ),
-          ),
-                      ),
-                      _buildCard(
-          title: 'Boardband Home',
-          description: '5 Product',
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
-              ),
-            );
-          },
-                      ),
-                      SizedBox(height: 16.0),
-                      _buildCard(
-          title: 'Boardband Bisnis',
-          description: '4 Product',
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
-              ),
-            );
-          },
-                      ),
-                      SizedBox(height: 16.0),
-                      _buildCard(
-          title: 'Enterprise Solution',
-          description: '1 Product',
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
-              ),
-            );
-          },
-                      ),
-            ],
           ),
         );
       },
