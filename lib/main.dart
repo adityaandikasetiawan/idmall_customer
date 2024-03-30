@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:idmall/empty_page.dart';
+import 'package:idmall/notif.dart';
 import 'package:idmall/pages/navigation.dart';
 import 'package:idmall/service/notification_controller.dart';
 import 'package:idmall/service/shared_preference_helper.dart';
@@ -10,22 +13,84 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'firebase_options.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   print("Initializing Firebase...");
   await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: 'AIzaSyDjYUK_k2HYQWgKIZVlxXgxzArHOhY-vsc',
-      appId: '1:654185379501:android:8acee9701047c8ad217824',
-      messagingSenderId: '654185379501',
-      projectId: 'idmall-b34ed',
-      storageBucket: "coffee-b34ed.appspot.com",
-    ),
+    options: DefaultFirebaseOptions.currentPlatform,
   ).then((_) {
     print("Firebase initialization completed.");
   });
+  FirebaseMessaging.instance.getToken().then((value) {
+    print("Token: $value");
+    // csvzsOX1Rtifk2f0xUeUam:APA91bHnZK_XFVE6_2s--UqYcIv7N2pzOgFWXe-xpr5ej7nNrvCMQxIiNhioRhREDUt2zdba5xJOLQxL3tTNX35O_n4g_qcV8UMdexfvlkYdW5OUQPaGDJ499XK2f78ekf-A5ZiITPJl
+  });
+
+  FirebaseMessaging.onMessageOpenedApp.listen(
+    (RemoteMessage message) async {
+      print("onMessageOpened App; $message");
+      // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
+      // push(
+      //   MaterialPageRoute(builder: (builder) => PushNotificationOnAll()),
+      //   arguments: {"message", json.encode(message)},
+      // );
+    }
+  );
+
+  FirebaseMessaging.instance.getInitialMessage().then(
+    (RemoteMessage? message) {
+      if (message != null) {
+        print(message);
+        print(1);
+        // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
+      }
+    }
+  );
+
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true, // Required to display a heads up notification
+    badge: true,
+    sound: true,
+  );
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    // print foreground message here.
+    print("OVER HERE");
+    print('Handling a foreground message ${message.messageId}');
+    print('Notification Message: ${message.data}');
+
+    if (message.notification != null) {
+      print('Message also contained a notification:  ${message.notification}');
+      WidgetsBinding.instance
+            .addPostFrameCallback((_) => 
+      showDialog(
+        context: navigatorKey.currentState!.context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(message.notification?.title as String),
+            content: Text(message.notification?.body as String),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+                child: Text('Close'),
+              ),
+            ],
+          );
+        },
+      ));
+    }
+  });
+
   await AwesomeNotifications().initialize(
     null,
     [
@@ -53,6 +118,12 @@ void main() async {
   Stripe.publishableKey = publishableKey;
 
   runApp(MyApp(token: token,));
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+
+  print("_firebaseMessagingBackgroundHandler: $message");
 }
 
 class MyApp extends StatefulWidget {
@@ -103,6 +174,11 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       home: widget.token == '' ? Splash() : NavigationScreen(),
+      // home: EmptyPage(),
+      navigatorKey: navigatorKey,
+      // routes: {
+      //   '/push-page' : ((context) => PushNotificationOnAll()),
+      // },
     );
   }
 }

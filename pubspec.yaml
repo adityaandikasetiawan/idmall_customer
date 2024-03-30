@@ -69,6 +69,7 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^24.2.8
   awesome_notifications: ^0.9.3+1
   syncfusion_flutter_signaturepad: ^24.2.9
+  firebase_messaging: ^14.7.21
 
 
 

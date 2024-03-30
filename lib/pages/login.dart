@@ -43,6 +43,7 @@ class LoginResponse {
   Map<String, dynamic> toJson() => {
       'email': email,
       'firstName' : firstName,
+      'fullName' : firstName + ' ' + lastName,
       'lastName' : lastName,
       'token': token
   };

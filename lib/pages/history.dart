@@ -88,7 +88,7 @@ class _HistoryListState extends State<HistoryList> {
       // }
       return list;
     }
-    print(jsonDecode(response.data));
+    // print(jsonDecode(response.data));
     return List.empty();
   }
 
@@ -125,7 +125,7 @@ class _HistoryListState extends State<HistoryList> {
                     future: postsFuture,
                     builder: (context, snapshot) {
                       snapshot.connectionState == ConnectionState.done
-                          ? print(snapshot)
+                          ? print('DONE')
                           : print('loading');
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();
