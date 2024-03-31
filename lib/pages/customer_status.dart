@@ -50,7 +50,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
     "TERCOVER",
     "SPK_REQ",
     "SPK",
-    "PENDING PAYMENT",
+    "PENDING_PAYMENT_MOBILE",
     "FAB",
     "ACTIVE_REQ",
     "ACTIVE"
@@ -62,7 +62,8 @@ class _CustomerStatusState extends State<CustomerStatus> {
     "TERCOVER",
     "SPK_REQ",
     "SPK",
-    "PENDING PAYMENT",
+    "FAB",
+    "PENDING_PAYMENT_MOBILE",
     "ACTIVE_REQ",
     "ACTIVE"
   ];
@@ -70,20 +71,24 @@ class _CustomerStatusState extends State<CustomerStatus> {
     "QUOTATION",
     "TERCOVER",
     "SPK_REQ",
+    "FAB",
     "SPK",
-    "PENDING PAYMENT",
+    "PENDING_PAYMENT_MOBILE",
     "ACTIVE_REQ",
     "ACTIVE"
   ];
+  List<String> statusQuot = [
+    "QUOTATION"
+  ];
   List<String> statusPayment = [
     "TERCOVER",
-    "PENDING PAYMENT",
+    "PENDING_PAYMENT_MOBILE",
     "SPK_REQ",
     "SPK",
     "ACTIVE_REQ",
     "ACTIVE"
   ];
-  List<String> statusSPK = ["PENDING PAYMENT", "ACTIVE_REQ", "ACTIVE"];
+  List<String> statusSPK = ["PENDING_PAYMENT_MOBILE", "ACTIVE_REQ", "ACTIVE"];
   List<String> statusReqActive = ["ACTIVE_REQ", "ACTIVE"];
   List<String> statusActive = ["ACTIVE"];
 
@@ -209,7 +214,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
                                       : Colors.black),
                             ),
                           ),
-                          !statusSPK.contains(widget.status)
+                          statusQuot.contains(widget.status)
                               ? TextButton(
                                   onPressed: () {
                                     Navigator.push(
@@ -321,8 +326,10 @@ class _CustomerStatusState extends State<CustomerStatus> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => OrderData(
-                                              taskID: widget.taskid,
+                                        // builder: (context) => OrderData(taskID: widget.taskid,)),
+                                        builder: (context) => UpgradeDowngradeDetail(
+                                              task: widget.taskid,
+                                              sid: '',
                                             )),
                                   );
                                 },
@@ -417,10 +424,8 @@ class StatusTimelineWithExtendedWidget extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  // builder: (context) => OrderData(taskID: widget.taskid,)),
-                                  builder: (context) => UpgradeDowngradeDetail(
-                                        task: widget.taskid,
-                                        sid: '',
+                                  builder: (context) => OrderData(
+                                        taskID: widget.taskid,
                                       )),
                             );
                           },

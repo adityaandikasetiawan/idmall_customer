@@ -1,6 +1,10 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'package:idmall/consts.dart';
 import 'package:idmall/pages/navigation.dart';
+import 'package:idmall/service/coverage_area.dart';
 import 'package:idmall/service/notification_controller.dart';
 import 'package:idmall/splash/splash.dart';
 import 'package:idmall/widget/app_constant.dart';
@@ -11,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
+import 'package:idmall/config/config.dart' as config;
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -22,62 +27,35 @@ void main() async {
   ).then((_) {
     print("Firebase initialization completed.");
   });
-  FirebaseMessaging.instance.getToken().then((value) {
+  String? token;
+  SharedPreferences? _pref = await SharedPreferences.getInstance();
+  token = _pref.getString('token') ?? '';
+  FirebaseMessaging.instance.getToken().then((value) async {
     print("Token: $value");
+
+    if (token != null) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
+                      HttpClient()
+                        ..badCertificateCallback =
+                            (X509Certificate cert, String host, int port) => true;
+      final response = await dio.post(
+        "$linkLaravelAPI/customer/update-device-key",
+        data:{token:value},
+        options: Options(headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        }),
+      );
+      print(response.data['message']);
+    }
     // csvzsOX1Rtifk2f0xUeUam:APA91bHnZK_XFVE6_2s--UqYcIv7N2pzOgFWXe-xpr5ej7nNrvCMQxIiNhioRhREDUt2zdba5xJOLQxL3tTNX35O_n4g_qcV8UMdexfvlkYdW5OUQPaGDJ499XK2f78ekf-A5ZiITPJl
   });
-
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-    print("onMessageOpened App; $message");
-    // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
-    // push(
-    //   MaterialPageRoute(builder: (builder) => PushNotificationOnAll()),
-    //   arguments: {"message", json.encode(message)},
-    // );
-  });
-
-  FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-    if (message != null) {
-      print(message);
-      print(1);
-      // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
-    }
-  });
-
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true, // Required to display a heads up notification
     badge: true,
     sound: true,
   );
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    // print foreground message here.
-    print("OVER HERE");
-    print('Handling a foreground message ${message.messageId}');
-    print('Notification Message: ${message.data}');
-
-    if (message.notification != null) {
-      print('Message also contained a notification:  ${message.notification}');
-      WidgetsBinding.instance.addPostFrameCallback((_) => showDialog(
-            context: navigatorKey.currentState!.context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text(message.notification?.title as String),
-                content: Text(message.notification?.body as String),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                    },
-                    child: Text('Close'),
-                  ),
-                ],
-              );
-            },
-          ));
-    }
-  });
 
   await AwesomeNotifications().initialize(
       null,
@@ -96,20 +74,62 @@ void main() async {
             channelGroupName: "Basip Group")
       ],
       debug: true);
-  bool isAllowedToSendNotification =
-      await AwesomeNotifications().isNotificationAllowed();
-  if (!isAllowedToSendNotification) {
-    AwesomeNotifications().requestPermissionToSendNotifications();
-  }
-  String? token;
-  SharedPreferences? _pref = await SharedPreferences.getInstance();
-  token = _pref.getString('token') ?? '';
 
   Stripe.publishableKey = publishableKey;
 
-  runApp(MyApp(
-    token: token,
-  ));
+  FirebaseMessaging.instance.getInitialMessage().then(
+    (RemoteMessage? message) {
+      if (message != null) {
+        print(message);
+        print(1);
+        // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
+      }
+    }
+  );
+
+  bool isAllowedToSendNotification = await AwesomeNotifications().isNotificationAllowed();
+  if (!isAllowedToSendNotification) {
+      AwesomeNotifications().requestPermissionToSendNotifications();
+  }
+
+  Stripe.publishableKey = publishableKey;
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    // print foreground message here.
+    print("OVER HERE");
+    print('Handling a foreground message ${message.messageId}');
+    print('Notification Message: ${message.data}');
+
+    if (message.notification != null) {
+      print('Message also contained a notification:  ${message.notification}');
+      AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: UniqueKey().hashCode,
+          channelKey: "basic_channel",
+          title: message.notification?.title,
+          body: message.notification?.body,
+        )
+      );
+    }
+  });
+
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+    print("onMessageOpened App; $message");
+    // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
+    // push(
+    //   MaterialPageRoute(builder: (builder) => PushNotificationOnAll()),
+    //   arguments: {"message", json.encode(message)},
+    // );
+  });
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  FirebaseMessaging.onMessageOpenedApp.listen(
+    (RemoteMessage message) async {
+      print("onMessageOpened App; $message");
+      // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
+  });
+
+  runApp(MyApp(token: token,));
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {

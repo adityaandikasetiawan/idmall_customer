@@ -71,15 +71,16 @@ class _HistoryListState extends State<HistoryList> {
       appBar: AppBar(
         title: const Text("History"),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 25,
-          ),
-          child: RefreshIndicator(
-            color: Colors.white,
-            backgroundColor: Colors.blue,
-            onRefresh: getAchievementList,
+      body: RefreshIndicator(
+        color: Colors.white,
+        backgroundColor: Colors.blue,
+        onRefresh: getAchievementList,
+        child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 25,
+            ),
             child: Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +117,6 @@ class _HistoryListState extends State<HistoryList> {
     return ListView.builder(
       shrinkWrap: true,
       primary: false,
-      physics: const AlwaysScrollableScrollPhysics(),
       itemCount: posts.length,
       itemBuilder: (context, index) {
         final post = posts[index];
