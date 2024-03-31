@@ -1,24 +1,31 @@
 class CustomerListAchieve {
-  String name;
+  // String name;
   String taskID;
-  int price;
-  String activeDate;
+  // int price;
+  // String activeDate;
   String status;
-  String serviceCode;
+  // String serviceCode;
   String serviceName;
 
-  CustomerListAchieve({required this.name, required this.taskID,required this.price,required this.activeDate, required this.status, required this.serviceCode, required this.serviceName});
+  CustomerListAchieve({
+    // required this.name,
+    required this.taskID,
+    // required this.price,
+    // required this.activeDate,
+    required this.status,
+    // required this.serviceCode,
+    required this.serviceName,
+  });
 
   factory CustomerListAchieve.fromJson(Map<String, dynamic> json) {
-    // if (json['id'] == null) return null;
     return CustomerListAchieve(
-      name: json["name"],
-      taskID: json["taskID"] as String,
-      price: json["price"],
-      activeDate: json["activeDate"] ?? '',
-      status: json["status"] ?? '',
-      serviceCode: json["serviceCode"] ?? '',
-      serviceName: json["serviceName"] ?? '',
+      // name: json["name"],
+      taskID: json["Task_ID"] as String,
+      // price: json["price"],
+      // activeDate: json["activeDate"] ?? '',
+      status: json["Status"] ?? '',
+      // serviceCode: json["serviceCode"] ?? '',
+      serviceName: json["Sub_Product"] ?? '',
     );
   }
 

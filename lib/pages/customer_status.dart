@@ -43,6 +43,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
   String? activationDate;
 
   List<String> statusCreated = [
+    "QUOTATION",
     "ON SURVEY",
     "PENGAJUAN",
     "DESKTOP SURVEY",
@@ -55,6 +56,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
     "ACTIVE"
   ];
   List<String> statusSurvey = [
+    "QUOTATION",
     "ON SURVEY",
     "DESKTOP SURVEY",
     "TERCOVER",
@@ -65,6 +67,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
     "ACTIVE"
   ];
   List<String> statusFAB = [
+    "QUOTATION",
     "TERCOVER",
     "SPK_REQ",
     "SPK",
@@ -159,13 +162,13 @@ class _CustomerStatusState extends State<CustomerStatus> {
                 isFirst: false,
                 isLast: false,
                 beforeLineStyle: LineStyle(
-                  color: statusPayment.contains(widget.status)
+                  color: statusFAB.contains(widget.status)
                       ? Colors.deepOrange.shade400
                       : Colors.deepOrange.shade100,
                 ),
                 indicatorStyle: IndicatorStyle(
                   width: 40,
-                  color: statusPayment.contains(widget.status)
+                  color: statusFAB.contains(widget.status)
                       ? Colors.deepOrange.shade400
                       : Colors.deepOrange.shade100,
                   iconStyle: IconStyle(
@@ -179,7 +182,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
                       margin: EdgeInsets.all(20),
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: statusPayment.contains(widget.status)
+                        color: statusFAB.contains(widget.status)
                             ? Colors.deepOrange.shade400
                             : Colors.deepOrange.shade200,
                         borderRadius: BorderRadius.circular(10),
@@ -190,9 +193,9 @@ class _CustomerStatusState extends State<CustomerStatus> {
                         children: [
                           ListTile(
                             title: Text(
-                              'FAB',
+                              'Pengisian Form',
                               style: TextStyle(
-                                  color: statusPayment.contains(widget.status)
+                                  color: statusFAB.contains(widget.status)
                                       ? Colors.white
                                       : Colors.black),
                             ),
@@ -201,7 +204,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
                                   ? "FAB Date : ${fabDate}"
                                   : '',
                               style: TextStyle(
-                                  color: statusPayment.contains(widget.status)
+                                  color: statusFAB.contains(widget.status)
                                       ? Colors.white
                                       : Colors.black),
                             ),

@@ -1,11 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:idmall/empty_page.dart';
-import 'package:idmall/notif.dart';
 import 'package:idmall/pages/navigation.dart';
 import 'package:idmall/service/notification_controller.dart';
-import 'package:idmall/service/shared_preference_helper.dart';
 import 'package:idmall/splash/splash.dart';
 import 'package:idmall/widget/app_constant.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
 
@@ -32,30 +27,25 @@ void main() async {
     // csvzsOX1Rtifk2f0xUeUam:APA91bHnZK_XFVE6_2s--UqYcIv7N2pzOgFWXe-xpr5ej7nNrvCMQxIiNhioRhREDUt2zdba5xJOLQxL3tTNX35O_n4g_qcV8UMdexfvlkYdW5OUQPaGDJ499XK2f78ekf-A5ZiITPJl
   });
 
-  FirebaseMessaging.onMessageOpenedApp.listen(
-    (RemoteMessage message) async {
-      print("onMessageOpened App; $message");
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+    print("onMessageOpened App; $message");
+    // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
+    // push(
+    //   MaterialPageRoute(builder: (builder) => PushNotificationOnAll()),
+    //   arguments: {"message", json.encode(message)},
+    // );
+  });
+
+  FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    if (message != null) {
+      print(message);
+      print(1);
       // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
-      // push(
-      //   MaterialPageRoute(builder: (builder) => PushNotificationOnAll()),
-      //   arguments: {"message", json.encode(message)},
-      // );
     }
-  );
-
-  FirebaseMessaging.instance.getInitialMessage().then(
-    (RemoteMessage? message) {
-      if (message != null) {
-        print(message);
-        print(1);
-        // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
-      }
-    }
-  );
-
+  });
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  
+
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true, // Required to display a heads up notification
     badge: true,
@@ -69,47 +59,47 @@ void main() async {
 
     if (message.notification != null) {
       print('Message also contained a notification:  ${message.notification}');
-      WidgetsBinding.instance
-            .addPostFrameCallback((_) => 
-      showDialog(
-        context: navigatorKey.currentState!.context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(message.notification?.title as String),
-            content: Text(message.notification?.body as String),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
-                child: Text('Close'),
-              ),
-            ],
-          );
-        },
-      ));
+      WidgetsBinding.instance.addPostFrameCallback((_) => showDialog(
+            context: navigatorKey.currentState!.context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(message.notification?.title as String),
+                content: Text(message.notification?.body as String),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
+                    child: Text('Close'),
+                  ),
+                ],
+              );
+            },
+          ));
     }
   });
 
   await AwesomeNotifications().initialize(
-    null,
-    [
-      NotificationChannel(
-        channelKey: "basic_channel",
-        channelName: "Basic Notifications",
-        channelDescription: "Basic Notification Channel",
-        defaultColor: Color(0xFF9D50DD),
-        ledColor: Colors.white,
-      )
-    ],
-    channelGroups: [
-      NotificationChannelGroup(channelGroupKey: "basic_channel_group", channelGroupName: "Basip Group")
-    ],
-    debug: true
-  );
-  bool isAllowedToSendNotification = await AwesomeNotifications().isNotificationAllowed();
+      null,
+      [
+        NotificationChannel(
+          channelKey: "basic_channel",
+          channelName: "Basic Notifications",
+          channelDescription: "Basic Notification Channel",
+          defaultColor: Color(0xFF9D50DD),
+          ledColor: Colors.white,
+        )
+      ],
+      channelGroups: [
+        NotificationChannelGroup(
+            channelGroupKey: "basic_channel_group",
+            channelGroupName: "Basip Group")
+      ],
+      debug: true);
+  bool isAllowedToSendNotification =
+      await AwesomeNotifications().isNotificationAllowed();
   if (!isAllowedToSendNotification) {
-      AwesomeNotifications().requestPermissionToSendNotifications();
+    AwesomeNotifications().requestPermissionToSendNotifications();
   }
   String? token;
   SharedPreferences? _pref = await SharedPreferences.getInstance();
@@ -117,7 +107,9 @@ void main() async {
 
   Stripe.publishableKey = publishableKey;
 
-  runApp(MyApp(token: token,));
+  runApp(MyApp(
+    token: token,
+  ));
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -126,6 +118,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("_firebaseMessagingBackgroundHandler: $message");
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatefulWidget {
   String token;
   MyApp({super.key, required this.token});
@@ -142,9 +135,12 @@ class _MyAppState extends State<MyApp> {
     // TODO: implement initState
     AwesomeNotifications().setListeners(
       onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-      onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
-      onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
-      onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
+      onNotificationCreatedMethod:
+          NotificationController.onNotificationCreatedMethod,
+      onNotificationDisplayedMethod:
+          NotificationController.onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod:
+          NotificationController.onDismissActionReceivedMethod,
     );
     super.initState();
   }
@@ -170,7 +166,8 @@ class _MyAppState extends State<MyApp> {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 251, 251, 251)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 251, 251, 251)),
         useMaterial3: true,
       ),
       home: widget.token == '' ? Splash() : NavigationScreen(),
@@ -182,12 +179,12 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
 class CheckSharedPreferences extends StatefulWidget {
   const CheckSharedPreferences({super.key});
 
   @override
-  _CheckSharedPreferencesState createState() =>
-      _CheckSharedPreferencesState();
+  _CheckSharedPreferencesState createState() => _CheckSharedPreferencesState();
 }
 
 class _CheckSharedPreferencesState extends State<CheckSharedPreferences> {
@@ -226,10 +223,13 @@ class _CheckSharedPreferencesState extends State<CheckSharedPreferences> {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 251, 251, 251)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 251, 251, 251)),
         useMaterial3: true,
       ),
-      home: valueFromSharedPreferences == '' ? const Splash() : const NavigationScreen(),
+      home: valueFromSharedPreferences == ''
+          ? const Splash()
+          : const NavigationScreen(),
     );
   }
 }
@@ -322,10 +322,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
- class MyHttpOverrides extends HttpOverrides{
+class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext? context){
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }

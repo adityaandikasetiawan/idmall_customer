@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:idmall/pages/helpcenter.dart';
-import 'package:idmall/pages/activation.dart';
 import 'package:idmall/pages/login.dart';
-import 'package:idmall/pages/survei.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Account extends StatefulWidget {
-  const Account({Key? key}) : super(key: key);
+  const Account({super.key});
 
   @override
   State<Account> createState() => _AccountState();
@@ -18,6 +16,7 @@ class _AccountState extends State<Account> {
   String? email;
 
   Future<void> getUser() async {
+    // ignore: no_leading_underscores_for_local_identifiers
     SharedPreferences _pref = await SharedPreferences.getInstance();
 
     setState(() {
@@ -26,13 +25,14 @@ class _AccountState extends State<Account> {
       email = _pref.getString('email');
     });
   }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getUser();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,11 +49,11 @@ class _AccountState extends State<Account> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Profile',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Card(
                 elevation: 3,
                 child: Padding(
@@ -68,20 +68,20 @@ class _AccountState extends State<Account> {
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.grey, width: 2),
                           ),
-                          child: CircleAvatar(
+                          child: const CircleAvatar(
                             radius: 30,
                             backgroundImage: AssetImage(
                                 'images/profiles.png'), // Ganti dengan lokasi foto profil Anda
                           ),
                         ),
                       ),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(fullName ?? ''),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Text(email ?? ''),
                             // SizedBox(height: 20),
                             // ElevatedButton(
@@ -101,7 +101,7 @@ class _AccountState extends State<Account> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // ListTile(
               //   leading: Container(
               //     width: 50,
@@ -154,7 +154,7 @@ class _AccountState extends State<Account> {
               //     );
               //   },
               // ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               ListTile(
                 leading: Container(
                   width: 50,
@@ -163,18 +163,20 @@ class _AccountState extends State<Account> {
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.grey, width: 1),
                   ),
-                  child: Icon(Icons.help),
+                  child: const Icon(Icons.help),
                 ),
-                title: Text('Help Center'),
-                trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
+                title: const Text('Help Center'),
+                trailing:
+                    const Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HelpCenterPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const HelpCenterPage()),
                   );
                 },
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               ListTile(
                 leading: Container(
                   width: 50,
@@ -183,15 +185,16 @@ class _AccountState extends State<Account> {
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.grey, width: 1),
                   ),
-                  child: Icon(Icons.settings),
+                  child: const Icon(Icons.settings),
                 ),
-                title: Text('Settings'),
-                trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
+                title: const Text('Settings'),
+                trailing:
+                    const Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
                 onTap: () {
                   // Tambahkan logika untuk tombol Settings
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Align(
                 alignment: Alignment.center,
                 child: ElevatedButton(
@@ -199,7 +202,7 @@ class _AccountState extends State<Account> {
                     _logout(context);
                     // Tambahkan logika untuk tombol Logout
                   },
-                  child: Text(
+                  child: const Text(
                     'Logout',
                     style: TextStyle(
                         fontSize: 16,
@@ -208,7 +211,7 @@ class _AccountState extends State<Account> {
                   ),
                 ),
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
             ],
           ),
         ),
@@ -216,15 +219,23 @@ class _AccountState extends State<Account> {
     );
   }
 }
-void _logout(BuildContext context) async {
-    // Menghapus data dari SharedPreferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
-    await prefs.remove('firstName'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
-    await prefs.remove('lastName'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
-    await prefs.remove('user_id'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
-    await prefs.remove('fullName'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
 
-    // Navigasi kembali ke halaman login atau halaman lain yang sesuai
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (builder) => Login()));
-  }
+void _logout(BuildContext context) async {
+  // Menghapus data dari SharedPreferences
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove(
+      'token'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
+  await prefs.remove(
+      'firstName'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
+  await prefs.remove(
+      'lastName'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
+  await prefs.remove(
+      'user_id'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
+  await prefs.remove(
+      'fullName'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
+
+  // Navigasi kembali ke halaman login atau halaman lain yang sesuai
+  // ignore: use_build_context_synchronously
+  Navigator.of(context)
+      .pushReplacement(MaterialPageRoute(builder: (builder) => const Login()));
+}

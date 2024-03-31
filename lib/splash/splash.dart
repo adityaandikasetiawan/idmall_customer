@@ -3,7 +3,7 @@ import 'package:idmall/pages/onboard.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'fade_animation.dart';
-import 'package:onboard/onboard.dart'; // Make sure to import the Onboard screen
+// Make sure to import the Onboard screen
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -83,10 +83,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SingleChildScrollView(
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
@@ -135,7 +133,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(50),
-                                  color: Color.fromARGB(255, 51, 92, 213)
+                                  color: const Color.fromARGB(255, 51, 92, 213)
                                       .withOpacity(.4),
                                 ),
                                 child: InkWell(

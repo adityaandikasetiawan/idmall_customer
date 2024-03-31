@@ -1,29 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 // ignore: unused_import
 import 'package:idmall/pages/details.dart';
 import 'package:idmall/pages/login.dart';
 // ignore: unused_import
 import 'package:idmall/service/database.dart';
-import 'package:idmall/service/shared_preference_helper.dart';
 // ignore: unused_import
 import 'package:idmall/widget/button.dart';
 import 'package:idmall/widget/widget_support.dart';
-import 'package:idmall/widget/notificationpage.dart';
-import 'package:idmall/widget/chatbotpage.dart';
-import 'package:idmall/widget/shoppingchartpage.dart';
-import 'package:idmall/pages/allmenu.dart';
-import 'package:idmall/pages/gangguan.dart';
-import 'package:idmall/pages/packagepage.dart';
 import 'package:idmall/pages/promo.dart';
 import 'package:idmall/pages/coverange.dart';
 import 'package:idmall/widget/penawaranterbaru.dart';
 
 class DashboardGuest extends StatefulWidget {
-  const DashboardGuest({Key? key}) : super(key: key);
+  const DashboardGuest({super.key});
 
   @override
   State<DashboardGuest> createState() => _DashboardGuestState();
@@ -71,7 +60,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 250, 250, 255),
+      backgroundColor: const Color.fromARGB(255, 250, 250, 255),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Container(
@@ -92,7 +81,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
                           ),
                         ),
                         TextSpan(
-                          text: "${name ?? "Guest"}",
+                          text: name ?? "Guest",
                           style: const TextStyle(
                             fontSize: 18,
                             color: Color.fromARGB(
@@ -108,15 +97,17 @@ class _DashboardGuestState extends State<DashboardGuest> {
                     children: [
                       ElevatedButton(
                         style: TextButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 228, 99, 7),
+                          backgroundColor:
+                              const Color.fromARGB(255, 228, 99, 7),
                         ),
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Login()),
+                            MaterialPageRoute(
+                                builder: (context) => const Login()),
                           );
                         },
-                        child: Text(
+                        child: const Text(
                           'Sign In',
                           style: TextStyle(
                             color: Colors.white,
@@ -149,7 +140,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
                       padding: const EdgeInsets.all(18.0),
                       child: Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -174,7 +165,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Expanded(
@@ -201,7 +192,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Coverage()),
+                      MaterialPageRoute(builder: (context) => const Coverage()),
                     );
                   },
                   child: Card(
@@ -215,7 +206,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
                       padding: const EdgeInsets.all(18.0),
                       child: Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -296,7 +287,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailPage(
+                                builder: (context) => const DetailPage(
                                   title: 'IdPlay Home',
                                   price: 'Rp. 179.000',
                                   imagePath: 'images/promo1.png',
@@ -308,7 +299,8 @@ class _DashboardGuestState extends State<DashboardGuest> {
                             title: 'IdPlay Home',
                             price: 'Rp. 179.000',
                             imagePath: 'images/promo1.png',
-                            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                            backgroundColor:
+                                const Color.fromARGB(255, 255, 255, 255),
                           ),
                         ),
                         const SizedBox(
@@ -319,7 +311,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailPage(
+                                builder: (context) => const DetailPage(
                                   title: 'IdPlay Home',
                                   price: 'Rp. 230.000',
                                   imagePath: 'images/promo2.png',
@@ -331,7 +323,8 @@ class _DashboardGuestState extends State<DashboardGuest> {
                             title: 'IdPlay Home',
                             price: 'Rp. 230.000',
                             imagePath: 'images/promo2.png',
-                            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                            backgroundColor:
+                                const Color.fromARGB(255, 255, 255, 255),
                           ),
                         ),
                         const SizedBox(
@@ -342,7 +335,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailPage(
+                                builder: (context) => const DetailPage(
                                   title: 'IdPlay Home',
                                   price: 'Rp. 270.000',
                                   imagePath: 'images/promo3.png',
@@ -354,7 +347,8 @@ class _DashboardGuestState extends State<DashboardGuest> {
                             title: 'IdPlay Home',
                             price: 'Rp. 270.000',
                             imagePath: 'images/promo3.png',
-                            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                            backgroundColor:
+                                const Color.fromARGB(255, 255, 255, 255),
                           ),
                         ),
                       ],
@@ -425,8 +419,7 @@ class CardWidgetWithIcon extends StatelessWidget {
   final String value;
 
   const CardWidgetWithIcon(
-      {Key? key, required this.icon, required this.text, required this.value})
-      : super(key: key);
+      {super.key, required this.icon, required this.text, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -438,7 +431,7 @@ class CardWidgetWithIcon extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               text,
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
           ],
         ),
