@@ -30,12 +30,14 @@ class Data {
   String? email;
   String? firstName;
   String? lastName;
+  String? token;
 
   Data({
     this.userId,
     this.email,
     this.firstName,
-    this.lastName
+    this.lastName,
+    this.token
   });
 
   @override

@@ -28,25 +28,29 @@ void main() async {
     print("Firebase initialization completed.");
   });
   String? token;
+  String? fcm_token;
   SharedPreferences? _pref = await SharedPreferences.getInstance();
   token = _pref.getString('token') ?? '';
   FirebaseMessaging.instance.getToken().then((value) async {
     print("Token: $value");
 
-    if (token != null) {
-      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-                      HttpClient()
-                        ..badCertificateCallback =
-                            (X509Certificate cert, String host, int port) => true;
-      final response = await dio.post(
-        "$linkLaravelAPI/customer/update-device-key",
-        data:{token:value},
-        options: Options(headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token"
-        }),
-      );
-      print(response.data['message']);
+    if (value != null) {
+      _pref.setString('fcm_token', value);
+      if (token != null) {
+        (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
+                        HttpClient()
+                          ..badCertificateCallback =
+                              (X509Certificate cert, String host, int port) => true;
+        final response = await dio.post(
+          "$linkLaravelAPI/customer/update-device-key",
+          data:{"token":value},
+          options: Options(headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token"
+          }),
+        );
+        print(response);
+      }
     }
     // csvzsOX1Rtifk2f0xUeUam:APA91bHnZK_XFVE6_2s--UqYcIv7N2pzOgFWXe-xpr5ej7nNrvCMQxIiNhioRhREDUt2zdba5xJOLQxL3tTNX35O_n4g_qcV8UMdexfvlkYdW5OUQPaGDJ499XK2f78ekf-A5ZiITPJl
   });
@@ -74,8 +78,6 @@ void main() async {
             channelGroupName: "Basip Group")
       ],
       debug: true);
-
-  Stripe.publishableKey = publishableKey;
 
   FirebaseMessaging.instance.getInitialMessage().then(
     (RemoteMessage? message) {

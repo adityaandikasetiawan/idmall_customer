@@ -7,6 +7,7 @@ import 'package:idmall/service/database.dart';
 import 'package:idmall/service/shared_preference_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:random_string/random_string.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widget/widget_support.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:dio/dio.dart';
@@ -37,7 +38,9 @@ class _SignUpState extends State<SignUp> {
   bool _isPasswordVisible = false;
   bool _isRepeatPasswordVisible = false;
 
-  Future<Signup?> registerUser() async {
+  Future<Signup?> registerUser(_prefs) async {
+    final SharedPreferences prefs = await _prefs;
+    final fcm_token = prefs.getString('fcm_token');
     final dio = Dio();
     final response = await dio.post("${config.backendBaseUrl}/user/register",
         data: {
@@ -45,6 +48,7 @@ class _SignUpState extends State<SignUp> {
           "last_name": lastNameController.text,
           "email": emailController.text,
           "password": passwordController.text,
+          "fcm_token" : fcm_token,
         },
     );
 
@@ -58,13 +62,14 @@ class _SignUpState extends State<SignUp> {
 
   registration() async {
     if (_formKey.currentState?.validate() ?? false) {
+      final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
       try {
         // await FirebaseAuth.instance.createUserWithEmailAndPassword(
         //   email: emailController.text,
         //   password: passwordController.text,
         // );
 
-        var response  = await registerUser();
+        var response  = await registerUser(_prefs);
 
         print("return from registerUser() ${response}");
 
@@ -84,13 +89,25 @@ class _SignUpState extends State<SignUp> {
           "Id": uid,
         };
 
-        await SharedPreferenceHelper().clearAllPreferences();
-        await DatabaseMethods().addUserDetail(addUserInfo, uid);
-        await SharedPreferenceHelper().saveUserName(
-            firstNameController.text + " " + lastNameController.text);
-        await SharedPreferenceHelper().saveUserEmail(emailController.text);
-        await SharedPreferenceHelper().saveUserUId(uid);
-        await SharedPreferenceHelper().saveUserWallet('0');
+        // await SharedPreferenceHelper().clearAllPreferences();
+        // await DatabaseMethods().addUserDetail(addUserInfo, uid);
+        // await SharedPreferenceHelper().saveUserName(
+        //     firstNameController.text + " " + lastNameController.text);
+        // await SharedPreferenceHelper().saveUserEmail(emailController.text);
+        // await SharedPreferenceHelper().saveUserUId(uid);
+        // await SharedPreferenceHelper().saveUserWallet('0');
+        final SharedPreferences prefs = await _prefs;
+        var token = response?.data?.token;
+        var firstName = (response?.data?.firstName  ?? '');
+        var lastName = (response?.data?.lastName  ?? '');
+        var fullName = (response?.data?.firstName  ?? '') + ' ' + (response?.data?.lastName ?? '');
+        // var userId = response?.data?.;
+        var email = response?.data?.email;
+        // prefs.setString('token', (token ?? ''));
+        // prefs.setString('fullName', fullName);
+        // prefs.setString('firstName', firstName);
+        // prefs.setString('lastName', lastName);
+        // prefs.setString('email', (email ?? ''));
 
         print('id saat daftar: ${await SharedPreferenceHelper().getIdUser()}');
         print(
@@ -99,23 +116,23 @@ class _SignUpState extends State<SignUp> {
             'email saat daftar: ${await SharedPreferenceHelper().getEmailUser()}');
 
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const NavigationScreen()));
-      } on FirebaseAuthException catch (e) {
+            MaterialPageRoute(builder: (context) => const Login()));
+      } on DioException catch (e) {
         print('Firebase Auth Exception: $e');
 
-        if (e.code == 'email-already-in-use') {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            backgroundColor: Colors.red,
-            content: Text(
-              "Email already exists. Please use a different email.",
-              style: TextStyle(fontSize: 18.0, fontFamily: 'Poppins'),
-            ),
-          ));
-        } else if (e.code == 'network-request-failed') {
-          print('Network request failed: Check internet connection.');
-        } else {
-          print('Error signing up: ${e.message}');
-        }
+        // if (e.code == 'email-already-in-use') {
+        //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        //     backgroundColor: Colors.red,
+        //     content: Text(
+        //       "Email already exists. Please use a different email.",
+        //       style: TextStyle(fontSize: 18.0, fontFamily: 'Poppins'),
+        //     ),
+        //   ));
+        // } else if (e.code == 'network-request-failed') {
+        //   print('Network request failed: Check internet connection.');
+        // } else {
+        //   print('Error signing up: ${e.message}');
+        // }
       } catch (error) {
         print('Unexpected error: $error');
       }
