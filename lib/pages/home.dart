@@ -339,7 +339,7 @@ class _HomeState extends State<Home> {
 
               // New Promotion Card
               Container(
-                margin: const EdgeInsets.symmetric(vertical: 20.0),
+                margin: const EdgeInsets.symmetric(vertical: 5.0),
                 child: Card(
                   elevation: 4.0,
                   shape: RoundedRectangleBorder(
@@ -383,7 +383,7 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
-                          SizedBox(width: 10,),
+                          SizedBox(width: 15,),
                           Expanded(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20.0),
