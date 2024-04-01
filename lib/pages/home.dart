@@ -179,7 +179,7 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => PaymentMethod()),
+                                    builder: (context) => ChatbotPage()),
                               );
                             },
                           ),

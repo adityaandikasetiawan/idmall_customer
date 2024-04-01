@@ -3,6 +3,7 @@ import 'package:idmall/pages/activation.dart';
 import 'package:idmall/pages/fab.dart';
 import 'package:idmall/pages/fab_testing.dart';
 import 'package:idmall/pages/order_data.dart';
+import 'package:idmall/pages/pembayaran_testing.dart';
 import 'package:idmall/pages/upgrade_downgrade_detail.dart';
 import 'package:idmall/widget/pesanan.dart';
 import 'package:idmall/widget/status_timeline.dart';
@@ -418,9 +419,8 @@ class StatusTimelineWithExtendedWidget extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   // builder: (context) => OrderData(taskID: widget.taskid,)),
-                                  builder: (context) => UpgradeDowngradeDetail(
-                                        task: widget.taskid,
-                                        sid: '',
+                                  builder: (context) => PaymentMethod(
+                                        taskid: widget.taskid,
                                       )),
                             );
                           },
