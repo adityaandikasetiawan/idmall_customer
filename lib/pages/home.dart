@@ -5,6 +5,8 @@ import 'package:get/get_core/src/get_main.dart';
 // ignore: unused_import
 import 'package:idmall/pages/details.dart';
 import 'package:idmall/pages/fab_testing.dart';
+import 'package:idmall/pages/pembayaran.dart';
+import 'package:idmall/pages/pembayaran_testing.dart';
 // ignore: unused_import
 import 'package:idmall/service/database.dart';
 import 'package:idmall/service/shared_preference_helper.dart';
@@ -150,7 +152,7 @@ class _HomeState extends State<Home> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ChatbotPage()),
+                                builder: (context) => PaymentPage()),
                           );
                         },
                         child: Container(

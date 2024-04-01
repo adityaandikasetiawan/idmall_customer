@@ -3,6 +3,7 @@ import 'package:idmall/pages/activation.dart';
 import 'package:idmall/pages/fab.dart';
 import 'package:idmall/pages/fab_testing.dart';
 import 'package:idmall/pages/order_data.dart';
+import 'package:idmall/pages/pembayaran_testing.dart';
 import 'package:idmall/pages/upgrade_downgrade_detail.dart';
 import 'package:idmall/widget/pesanan.dart';
 import 'package:idmall/widget/status_timeline.dart';
@@ -77,9 +78,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
     "ACTIVE_REQ",
     "ACTIVE"
   ];
-  List<String> statusQuot = [
-    "QUOTATION"
-  ];
+  List<String> statusQuot = ["QUOTATION"];
   List<String> statusPayment = [
     "TERCOVER",
     "PENDING_PAYMENT_MOBILE",
@@ -327,7 +326,8 @@ class _CustomerStatusState extends State<CustomerStatus> {
                                     context,
                                     MaterialPageRoute(
                                         // builder: (context) => OrderData(taskID: widget.taskid,)),
-                                        builder: (context) => UpgradeDowngradeDetail(
+                                        builder: (context) =>
+                                            UpgradeDowngradeDetail(
                                               task: widget.taskid,
                                               sid: '',
                                             )),
@@ -424,9 +424,11 @@ class StatusTimelineWithExtendedWidget extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => OrderData(
-                                        taskID: widget.taskid,
-                                      )),
+                                // builder: (context) => OrderData(taskID: widget.taskid,)),
+                                builder: (context) => PaymentMethod(
+                                  taskid: widget.taskid,
+                                ),
+                              ),
                             );
                           },
                           child: Text('Lanjut'))

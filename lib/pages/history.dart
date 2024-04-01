@@ -62,6 +62,8 @@ class _HistoryListState extends State<HistoryList> {
     } else {
       return List.empty();
     }
+
+    setState(() {});
   }
 
   @override

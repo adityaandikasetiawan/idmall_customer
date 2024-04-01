@@ -1,0 +1,297 @@
+import 'package:flutter/material.dart';
+
+import 'package:dio/dio.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:idmall/models/payment_method.dart';
+import 'package:idmall/models/payment_method_model.dart';
+import 'package:idmall/pages/invoice.dart';
+import 'package:idmall/pages/invoice_testing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:idmall/config/config.dart' as config;
+import 'package:intl/intl.dart';
+
+class PaymentMethod extends StatefulWidget {
+  final String taskid;
+  const PaymentMethod({
+    super.key,
+    required this.taskid,
+  });
+
+  @override
+  State<PaymentMethod> createState() => _PaymentMethodState();
+}
+
+class _PaymentMethodState extends State<PaymentMethod> {
+  @override
+  void initState() {
+    super.initState();
+    getPaymentMethod();
+    getCart();
+  }
+
+  List<PaymentMethodModel> paymentMethodListBank = [];
+  List<PaymentMethodModelOutlet> paymentMethodListOutlet = [];
+  final oCcy = new NumberFormat("#,##0", "en_US");
+  String? vat;
+  String? monthly_price;
+  String? total;
+  String? installation_fee;
+
+  Future<void> getPaymentMethod() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token') ?? "";
+    final dio = Dio();
+    final response = await dio.get(
+      "${config.backendBaseUrl}/payment-method",
+      options: Options(headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      }),
+    );
+    for (var ele in response.data['data']['bank']) {
+      paymentMethodListBank.add(PaymentMethodModel.fromJson(ele));
+    }
+    for (var ele2 in response.data['data']['outlet']) {
+      paymentMethodListOutlet.add(PaymentMethodModelOutlet.fromJson(ele2));
+    }
+
+    setState(() {});
+  }
+
+  Future<void> getCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token') ?? "";
+    final dio = Dio();
+    final response2 = await dio.get(
+      "${config.backendBaseUrl}/transaction/ca/${widget.taskid}",
+      options: Options(headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      }),
+    );
+    var result2 = response2.data['data'][0];
+    setState(() {
+      vat = oCcy.format(result2['vat']).replaceAll(",", ".");
+      monthly_price = oCcy.format(result2['Monthly_Price']);
+      total = oCcy.format(result2['total']);
+      installation_fee = result2['Installation'] != null
+          ? oCcy.format(result2['Installation']).replaceAll(",", ".")
+          : '0';
+    });
+  }
+
+  Future<bool> createTransaction(bankCode, paymentType) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token') ?? "";
+    final dio = Dio();
+    final response3 = await dio.post(
+      "${config.backendBaseUrl}/transaction/ca/${widget.taskid}",
+      data: {
+        "task_id": widget.taskid,
+        "payment_method_code": bankCode,
+        "payment_type": paymentType,
+        "total_payment": total
+      },
+      options: Options(headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      }),
+    );
+
+    if (response3.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Pembayaran',
+          style: TextStyle(fontSize: 16.0), // Ubah ukuran font menjadi 16px
+        ),
+        centerTitle: true, // Posisikan judul ke tengah
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Pesanan:'),
+                  Text(
+                    '${monthly_price}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Pajak(11%):'),
+                  Text(
+                    '${vat}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Biaya Instalasi:'),
+                  Text(
+                    '${installation_fee}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${total}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8.0),
+              Divider(),
+              SizedBox(height: 8.0),
+              Text(
+                'Metode Pembayaran:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20.0),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: paymentMethodListBank.length,
+                itemBuilder: (context, index) {
+                  return buildPaymentMethodCard(
+                    paymentMethodListBank[index].iconURL,
+                    paymentMethodListBank[index].code,
+                    paymentMethodListBank[index].name,
+                    "Bank",
+                    context,
+                    cardWidth: MediaQuery.of(context).size.width,
+                    cardHeight: 120,
+                    imageWidth: 80,
+                    imageHeight: 80,
+                  );
+                },
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: paymentMethodListOutlet.length,
+                itemBuilder: (context, index) {
+                  return buildPaymentMethodCard(
+                    paymentMethodListOutlet[index].iconURL,
+                    paymentMethodListOutlet[index].code,
+                    paymentMethodListOutlet[index].name,
+                    "Outlet",
+                    context,
+                    cardWidth: MediaQuery.of(context).size.width,
+                    cardHeight: 120,
+                    imageWidth: 80,
+                    imageHeight: 80,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPaymentMethodCard(String imagePath, String bankCode,
+      String bankName, String typePayment, context,
+      {required double cardWidth,
+      required double cardHeight,
+      required double imageWidth,
+      required double imageHeight}) {
+    return Card(
+      elevation: 2,
+      child: InkWell(
+        onTap: () async {
+          try {
+            final prefs = await SharedPreferences.getInstance();
+            final String token = prefs.getString('token') ?? "";
+            final dio = Dio();
+            final response3 = await dio.post(
+              "${config.backendBaseUrl}/transaction/create",
+              data: {
+                "task_id": widget.taskid,
+                "payment_method_code": bankCode,
+                "payment_type": typePayment,
+                "total_payment": total
+              },
+              options: Options(headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer $token"
+              }),
+            );
+
+            if (response3.statusCode == 200) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (builder) => InvoicePage(
+                    taskid: widget.taskid,
+                    bankName: bankName,
+                    total: total!,
+                    typePayment: typePayment,
+                  ),
+                ),
+              );
+            }
+          } catch (e) {
+            print(e);
+          }
+        },
+        child: SizedBox(
+          width: cardWidth,
+          height: cardHeight,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Image.network(
+                    imagePath,
+                    width: imageWidth,
+                    height: imageHeight,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                SizedBox(
+                  width: 100,
+                ),
+                Expanded(
+                  child: Text(
+                    bankName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
