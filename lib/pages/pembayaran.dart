@@ -1,7 +1,23 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:idmall/pages/invoice.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:idmall/config/config.dart' as config;
 
 class PaymentPage extends StatelessWidget {
+  Future<void> getPaymentMethod() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token') ?? "";
+    final dio = Dio();
+    final response = await dio.get(
+      "${config.backendBaseUrl}/payment-method",
+      options: Options(headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,18 +73,72 @@ class PaymentPage extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 20.0),
-              buildPaymentMethodCard('images/bank/bca.png', 'Bank BCA', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/mandiri.png', 'Bank Mandiri', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/bni.png', 'Bank BNI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/bri.png', 'Bank BRI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/BSI.png', 'Bank BSI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/permata.png', 'Bank Permata', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/cimb.png', 'Bank CIMB', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/DBS.png', 'Bank DBS', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/BJB.png', 'Bank BJB', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/sampoerna.png', 'Bank Sampoerna', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/alfamart.png', 'Alfamart', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/indomart.png', 'Indomart', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              buildPaymentMethodCard('images/bank/bca.png', 'Bank BCA', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard(
+                  'images/bank/mandiri.png', 'Bank Mandiri', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard('images/bank/bni.png', 'Bank BNI', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard('images/bank/bri.png', 'Bank BRI', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard('images/bank/BSI.png', 'Bank BSI', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard(
+                  'images/bank/permata.png', 'Bank Permata', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard(
+                  'images/bank/cimb.png', 'Bank CIMB', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard('images/bank/DBS.png', 'Bank DBS', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard('images/bank/BJB.png', 'Bank BJB', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard(
+                  'images/bank/sampoerna.png', 'Bank Sampoerna', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard(
+                  'images/bank/alfamart.png', 'Alfamart', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
+              buildPaymentMethodCard(
+                  'images/bank/indomart.png', 'Indomart', context,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  cardHeight: 120,
+                  imageWidth: 50,
+                  imageHeight: 50),
               // SizedBox(height: 20.0),
               // SizedBox(
               //   width: double.infinity,
@@ -89,7 +159,11 @@ class PaymentPage extends StatelessWidget {
     );
   }
 
-  Widget buildPaymentMethodCard(String imagePath, String bankName, context,{required double cardWidth, required double cardHeight, required double imageWidth, required double imageHeight}) {
+  Widget buildPaymentMethodCard(String imagePath, String bankName, context,
+      {required double cardWidth,
+      required double cardHeight,
+      required double imageWidth,
+      required double imageHeight}) {
     return Card(
       elevation: 2,
       child: InkWell(
@@ -112,7 +186,9 @@ class PaymentPage extends StatelessWidget {
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(width: 100,),
+                SizedBox(
+                  width: 100,
+                ),
                 Expanded(
                   child: Text(
                     bankName,

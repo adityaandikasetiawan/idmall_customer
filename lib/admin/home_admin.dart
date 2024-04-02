@@ -16,7 +16,6 @@ class HomeAdmin extends StatefulWidget {
 }
 
 class _AdminLoginState extends State<HomeAdmin> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,9 +80,11 @@ class _AdminLoginState extends State<HomeAdmin> {
               const SizedBox(height: 50.0),
               GestureDetector(
                 onTap: () async {
-                  QuerySnapshot orderSnapshot = await FirebaseFirestore.instance.collection('orders').get();
-        
-                  List<Map<String, dynamic>> orderList = orderSnapshot.docs.map((DocumentSnapshot doc) {
+                  QuerySnapshot orderSnapshot = await FirebaseFirestore.instance
+                      .collection('orders')
+                      .get();
+
+                  orderSnapshot.docs.map((DocumentSnapshot doc) {
                     return {
                       'quantity': doc['quantity'],
                       'name': doc['name'],
@@ -136,9 +137,11 @@ class _AdminLoginState extends State<HomeAdmin> {
               const SizedBox(height: 50.0),
               GestureDetector(
                 onTap: () async {
-                  QuerySnapshot orderSnapshot = await FirebaseFirestore.instance.collection('orders').get();
-        
-                  List<Map<String, dynamic>> orderList = orderSnapshot.docs.map((DocumentSnapshot doc) {
+                  QuerySnapshot orderSnapshot = await FirebaseFirestore.instance
+                      .collection('orders')
+                      .get();
+
+                  orderSnapshot.docs.map((DocumentSnapshot doc) {
                     return {
                       'quantity': doc['quantity'],
                       'name': doc['name'],
@@ -234,60 +237,66 @@ class _AdminLoginState extends State<HomeAdmin> {
                   ),
                 ),
               ),
-        const SizedBox(height: 50.0),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const RejectedOrder(),
-              ),
-            );
-          },
-          child: Material(
-            elevation: 10.0,
-            borderRadius: BorderRadius.circular(10),
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
+              const SizedBox(height: 50.0),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RejectedOrder(),
+                    ),
+                  );
+                },
+                child: Material(
+                  elevation: 10.0,
                   borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Image.asset(
-                        "images/reject.png",
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Image.asset(
+                              "images/reject.png",
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          const SizedBox(width: 30.0),
+                          const Text(
+                            "Rejected Order",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 30.0),
-                    const Text(
-                      "Rejected Order",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 40.0),
-        ElevatedButton(
-          onPressed: () {
-         Navigator.push(context, MaterialPageRoute(builder: (context)=> const Login()));
-          },
-          child: Text('Sign Out', style: AppWidget.semibold2TextFeildStyle(),),
-          ),
-              const SizedBox(height: 40.0,)
+              const SizedBox(height: 40.0),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Login()));
+                },
+                child: Text(
+                  'Sign Out',
+                  style: AppWidget.semibold2TextFeildStyle(),
+                ),
+              ),
+              const SizedBox(
+                height: 40.0,
+              )
             ],
           ),
         ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:idmall/pages/activation.dart';
 import 'package:idmall/pages/fab.dart';
+import 'package:idmall/pages/fab_testing.dart';
 import 'package:idmall/pages/order_data.dart';
+import 'package:idmall/pages/pembayaran_testing.dart';
 import 'package:idmall/pages/upgrade_downgrade_detail.dart';
 import 'package:idmall/widget/pesanan.dart';
 import 'package:idmall/widget/status_timeline.dart';
@@ -42,44 +44,50 @@ class _CustomerStatusState extends State<CustomerStatus> {
   String? activationDate;
 
   List<String> statusCreated = [
+    "QUOTATION",
     "ON SURVEY",
     "PENGAJUAN",
     "DESKTOP SURVEY",
     "TERCOVER",
     "SPK_REQ",
     "SPK",
-    "PENDING PAYMENT",
+    "PENDING_PAYMENT_MOBILE",
     "FAB",
     "ACTIVE_REQ",
     "ACTIVE"
   ];
   List<String> statusSurvey = [
+    "QUOTATION",
     "ON SURVEY",
     "DESKTOP SURVEY",
     "TERCOVER",
     "SPK_REQ",
     "SPK",
-    "PENDING PAYMENT",
+    "FAB",
+    "PENDING_PAYMENT_MOBILE",
     "ACTIVE_REQ",
     "ACTIVE"
   ];
   List<String> statusFAB = [
+    "QUOTATION",
     "TERCOVER",
     "SPK_REQ",
+    "FAB",
     "SPK",
-    "PENDING PAYMENT",
+    "PENDING_PAYMENT_MOBILE",
     "ACTIVE_REQ",
     "ACTIVE"
   ];
+  List<String> statusQuot = ["QUOTATION"];
   List<String> statusPayment = [
     "TERCOVER",
-    "PENDING PAYMENT",
+    "PENDING_PAYMENT_MOBILE",
     "SPK_REQ",
     "SPK",
     "ACTIVE_REQ",
     "ACTIVE"
   ];
-  List<String> statusSPK = ["PENDING PAYMENT", "ACTIVE_REQ", "ACTIVE"];
+  List<String> statusSPK = ["PENDING_PAYMENT_MOBILE", "ACTIVE_REQ", "ACTIVE"];
   List<String> statusReqActive = ["ACTIVE_REQ", "ACTIVE"];
   List<String> statusActive = ["ACTIVE"];
 
@@ -158,11 +166,15 @@ class _CustomerStatusState extends State<CustomerStatus> {
                 isFirst: false,
                 isLast: false,
                 beforeLineStyle: LineStyle(
-                  color: statusPayment.contains(widget.status) ? Colors.deepOrange.shade400 : Colors.deepOrange.shade100,
+                  color: statusFAB.contains(widget.status)
+                      ? Colors.deepOrange.shade400
+                      : Colors.deepOrange.shade100,
                 ),
                 indicatorStyle: IndicatorStyle(
                   width: 40,
-                  color: statusPayment.contains(widget.status) ? Colors.deepOrange.shade400 : Colors.deepOrange.shade100,
+                  color: statusFAB.contains(widget.status)
+                      ? Colors.deepOrange.shade400
+                      : Colors.deepOrange.shade100,
                   iconStyle: IconStyle(
                     iconData: Icons.done,
                     color: Colors.white,
@@ -174,7 +186,9 @@ class _CustomerStatusState extends State<CustomerStatus> {
                       margin: EdgeInsets.all(20),
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color:  statusPayment.contains(widget.status) ? Colors.deepOrange.shade400 : Colors.deepOrange.shade200,
+                        color: statusFAB.contains(widget.status)
+                            ? Colors.deepOrange.shade400
+                            : Colors.deepOrange.shade200,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -183,27 +197,35 @@ class _CustomerStatusState extends State<CustomerStatus> {
                         children: [
                           ListTile(
                             title: Text(
-                              'FAB',
-                              style:
-                                  TextStyle(color:  statusPayment.contains(widget.status) ? Colors.white : Colors.black),
+                              'Pengisian Form',
+                              style: TextStyle(
+                                  color: statusFAB.contains(widget.status)
+                                      ? Colors.white
+                                      : Colors.black),
                             ),
                             subtitle: Text(
-                              statusFAB.contains(widget.status) ? "FAB Date : ${fabDate}" : '',
-                              style:
-                                  TextStyle(color: statusPayment.contains(widget.status) ? Colors.white : Colors.black),
+                              statusFAB.contains(widget.status)
+                                  ? "FAB Date : ${fabDate}"
+                                  : '',
+                              style: TextStyle(
+                                  color: statusFAB.contains(widget.status)
+                                      ? Colors.white
+                                      : Colors.black),
                             ),
                           ),
-                          !statusSPK.contains(widget.status) ?
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => FABForm(taskID: widget.taskid,)),
-                                );
-                            },
-                            child: Text('Lanjut')
-                          ) : Container(),
+                          statusQuot.contains(widget.status)
+                              ? TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => FABTesting(
+                                                taskID: widget.taskid,
+                                              )),
+                                    );
+                                  },
+                                  child: Text('Lanjut'))
+                              : Container(),
                         ],
                       ),
                     ),
@@ -221,7 +243,13 @@ class _CustomerStatusState extends State<CustomerStatus> {
             //       : "",
             // ),
             //SPK
-            StatusTimelineWithExtendedWidget(statusSPK: statusSPK, widget: widget, statusFAB: statusFAB, spkDate: spkDate,statusReqActive: [],),
+            StatusTimelineWithExtendedWidget(
+              statusSPK: statusSPK,
+              widget: widget,
+              statusFAB: statusFAB,
+              spkDate: spkDate,
+              statusReqActive: [],
+            ),
             //Req Active
             StatusTimeline(
               isFirst: false,
@@ -244,11 +272,15 @@ class _CustomerStatusState extends State<CustomerStatus> {
               isFirst: false,
               isLast: false,
               beforeLineStyle: LineStyle(
-                color: statusActive.contains(widget.status) ? Colors.deepOrange.shade400 : Colors.deepOrange.shade100,
+                color: statusActive.contains(widget.status)
+                    ? Colors.deepOrange.shade400
+                    : Colors.deepOrange.shade100,
               ),
               indicatorStyle: IndicatorStyle(
                 width: 40,
-                color: statusActive.contains(widget.status) ? Colors.deepOrange.shade400 : Colors.deepOrange.shade100,
+                color: statusActive.contains(widget.status)
+                    ? Colors.deepOrange.shade400
+                    : Colors.deepOrange.shade100,
                 iconStyle: IconStyle(
                   iconData: Icons.done,
                   color: Colors.white,
@@ -260,7 +292,9 @@ class _CustomerStatusState extends State<CustomerStatus> {
                     margin: EdgeInsets.all(20),
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color:  statusActive.contains(widget.status) ? Colors.deepOrange.shade400 : Colors.deepOrange.shade200,
+                      color: statusActive.contains(widget.status)
+                          ? Colors.deepOrange.shade400
+                          : Colors.deepOrange.shade200,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
@@ -270,26 +304,37 @@ class _CustomerStatusState extends State<CustomerStatus> {
                         ListTile(
                           title: Text(
                             'Active',
-                            style:
-                                TextStyle(color:  statusActive.contains(widget.status) ? Colors.white : Colors.black),
+                            style: TextStyle(
+                                color: statusActive.contains(widget.status)
+                                    ? Colors.white
+                                    : Colors.black),
                           ),
                           subtitle: Text(
-                            statusActive.contains(widget.status) ? "Active Date : ${activationDate}" : '',
-                            style:
-                                TextStyle(color: statusActive.contains(widget.status) ? Colors.white : Colors.black),
+                            statusActive.contains(widget.status)
+                                ? "Active Date : ${activationDate}"
+                                : '',
+                            style: TextStyle(
+                                color: statusActive.contains(widget.status)
+                                    ? Colors.white
+                                    : Colors.black),
                           ),
                         ),
-                        statusActive.contains(widget.status) ?
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => OrderData(taskID: widget.taskid,)),
-                              );
-                          },
-                          child: Text('Lanjut')
-                        ) : Container(),
+                        statusActive.contains(widget.status)
+                            ? TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        // builder: (context) => OrderData(taskID: widget.taskid,)),
+                                        builder: (context) =>
+                                            UpgradeDowngradeDetail(
+                                              task: widget.taskid,
+                                              sid: '',
+                                            )),
+                                  );
+                                },
+                                child: Text('Lanjut'))
+                            : Container(),
                       ],
                     ),
                   ),
@@ -326,11 +371,15 @@ class StatusTimelineWithExtendedWidget extends StatelessWidget {
         isFirst: false,
         isLast: false,
         beforeLineStyle: LineStyle(
-          color: statusSPK.contains(widget.status) ? Colors.deepOrange.shade400 : Colors.deepOrange.shade100,
+          color: statusSPK.contains(widget.status)
+              ? Colors.deepOrange.shade400
+              : Colors.deepOrange.shade100,
         ),
         indicatorStyle: IndicatorStyle(
           width: 40,
-          color: statusSPK.contains(widget.status) ? Colors.deepOrange.shade400 : Colors.deepOrange.shade100,
+          color: statusSPK.contains(widget.status)
+              ? Colors.deepOrange.shade400
+              : Colors.deepOrange.shade100,
           iconStyle: IconStyle(
             iconData: Icons.done,
             color: Colors.white,
@@ -342,7 +391,9 @@ class StatusTimelineWithExtendedWidget extends StatelessWidget {
               margin: EdgeInsets.all(20),
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color:  statusSPK.contains(widget.status) ? Colors.deepOrange.shade400 : Colors.deepOrange.shade200,
+                color: statusSPK.contains(widget.status)
+                    ? Colors.deepOrange.shade400
+                    : Colors.deepOrange.shade200,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
@@ -352,27 +403,36 @@ class StatusTimelineWithExtendedWidget extends StatelessWidget {
                   ListTile(
                     title: Text(
                       'Payment',
-                      style:
-                          TextStyle(color:  statusSPK.contains(widget.status) ? Colors.white : Colors.black),
+                      style: TextStyle(
+                          color: statusSPK.contains(widget.status)
+                              ? Colors.white
+                              : Colors.black),
                     ),
                     subtitle: Text(
-                      statusFAB.contains(widget.status) ? "Paid Date : ${spkDate}" : '',
-                      style:
-                          TextStyle(color: statusSPK.contains(widget.status) ? Colors.white : Colors.black),
+                      statusFAB.contains(widget.status)
+                          ? "Paid Date : ${spkDate}"
+                          : '',
+                      style: TextStyle(
+                          color: statusSPK.contains(widget.status)
+                              ? Colors.white
+                              : Colors.black),
                     ),
                   ),
-                  !statusReqActive.contains(widget.status) ?
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              // builder: (context) => OrderData(taskID: widget.taskid,)),
-                              builder: (context) => UpgradeDowngradeDetail(task: widget.taskid, sid: '',)),
-                        );
-                    },
-                    child: Text('Lanjut')
-                  ): Container(),
+                  !statusReqActive.contains(widget.status)
+                      ? TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                // builder: (context) => OrderData(taskID: widget.taskid,)),
+                                builder: (context) => PaymentMethod(
+                                  taskid: widget.taskid,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text('Lanjut'))
+                      : Container(),
                 ],
               ),
             ),

@@ -1,9 +1,13 @@
+// ignore_for_file: unused_import
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ActivationPage extends StatefulWidget {
+  const ActivationPage({super.key});
+
   @override
   _ActivationPageState createState() => _ActivationPageState();
 }
@@ -14,10 +18,8 @@ class _ActivationPageState extends State<ActivationPage> {
       TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _idNumberController = TextEditingController();
-  final TextEditingController _mobilePhoneController = TextEditingController();
   final TextEditingController _referralCodeController = TextEditingController();
   String? _selectedServiceType;
-  late File _image;
   final ImagePicker _picker = ImagePicker();
   bool _agreeToTerms = false;
 
@@ -25,14 +27,14 @@ class _ActivationPageState extends State<ActivationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Activation'),
+        title: const Text('Activation'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -45,22 +47,22 @@ class _ActivationPageState extends State<ActivationPage> {
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildTextField(_customerNameController, 'Nama Customer'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildTextField(
                 _installationAddressController, 'Alamat Pemasangan'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildTextField(_phoneNumberController, 'Telepon/ Telepon Seluler'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildKtpUploadField(),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildTextField(_idNumberController, 'Nomor Identitas'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildDropdownButtonFormField(),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildTextField(_referralCodeController, 'Handler'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Row(
               children: [
                 Checkbox(
@@ -75,31 +77,32 @@ class _ActivationPageState extends State<ActivationPage> {
                     });
                   },
                 ),
-                Text(
+                const Text(
                   'I agree to terms & conditions',
                   style: TextStyle(fontSize: 14.0),
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
-ElevatedButton(
-  onPressed: () {
-    // Handle form submission
-  },
-  child: Text(
-    'Submit',
-    style: TextStyle(color: Colors.white),
-  ),
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Colors.orange,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(15.0),
-    ),
-    minimumSize: Size(double.infinity, 0), // Set minimum size untuk mengisi lebar layar
-    padding: EdgeInsets.symmetric(vertical: 16.0), // Atur padding vertical
-  ),
-),
-
+            const SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                // Handle form submission
+              },
+              child: const Text(
+                'Submit',
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                minimumSize: const Size(double.infinity,
+                    0), // Set minimum size untuk mengisi lebar layar
+                padding: const EdgeInsets.symmetric(
+                    vertical: 16.0), // Atur padding vertical
+              ),
+            ),
           ],
         ),
       ),
@@ -117,7 +120,7 @@ ElevatedButton(
         decoration: InputDecoration(
           labelText: labelText,
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           border: InputBorder.none,
         ),
       ),
@@ -149,7 +152,7 @@ ElevatedButton(
             child: Text(value),
           );
         }).toList(),
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           labelText: 'Service Type',
           contentPadding:
               EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -174,13 +177,11 @@ ElevatedButton(
           final XFile? image =
               await _picker.pickImage(source: ImageSource.gallery);
           if (image != null) {
-            setState(() {
-              _image = File(image.path);
-            });
+            setState(() {});
           }
         },
-        icon: Icon(Icons.upload_file), // Change icon to your preference
-        label: Text('Upload ID'), // Change label to your preference
+        icon: const Icon(Icons.upload_file), // Change icon to your preference
+        label: const Text('Upload ID'), // Change label to your preference
       ),
     );
   }
@@ -190,8 +191,8 @@ ElevatedButton(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Terms & Conditions'),
-          content: SingleChildScrollView(
+          title: const Text('Terms & Conditions'),
+          content: const SingleChildScrollView(
             child: Text(
               // Your agreement content here
               'By clicking "I agree", you agree to the terms and conditions...',
@@ -202,7 +203,7 @@ ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
+              child: const Text('Close'),
             ),
             TextButton(
               onPressed: () {
@@ -212,7 +213,7 @@ ElevatedButton(
                 // Then proceed with further actions.
                 Navigator.of(context).pop();
               },
-              child: Text('I Agree'),
+              child: const Text('I Agree'),
             ),
           ],
         );
@@ -222,7 +223,7 @@ ElevatedButton(
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: ActivationPage(),
   ));
 }

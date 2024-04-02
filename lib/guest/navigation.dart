@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:idmall/guest/dashboard.dart';
-import 'package:idmall/pages/home.dart';
 import 'package:idmall/pages/kategori.dart';
 import 'package:idmall/pages/pelaporan.dart';
 import 'package:idmall/pages/account.dart';
@@ -19,7 +18,7 @@ class _NavigationGuestState extends State<NavigationGuest> {
 
   List<Widget> pages = [
     const DashboardGuest(),
-    CategoryPage(),
+    const CategoryPage(),
     const PelaporanPage(),
     const Account(),
   ];
@@ -63,56 +62,56 @@ class _NavigationGuestState extends State<NavigationGuest> {
             padding: const EdgeInsets.all(
                 8), // Sesuaikan ukuran padding inner circle sesuai kebutuhan
             child: IconButton(
-  onPressed: () {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 100, // Sesuaikan tinggi bottom sheet sesuai kebutuhan
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: <Widget>[
-              IconButton(
-                onPressed: () {
-                  // Aksi yang diinginkan saat ikon pertama ditekan
-                },
-                icon: Icon(Icons.favorite),
-                color: Colors.red,
-                iconSize: 40,
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                      height:
+                          100, // Sesuaikan tinggi bottom sheet sesuai kebutuhan
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          IconButton(
+                            onPressed: () {
+                              // Aksi yang diinginkan saat ikon pertama ditekan
+                            },
+                            icon: const Icon(Icons.favorite),
+                            color: Colors.red,
+                            iconSize: 40,
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              // Aksi yang diinginkan saat ikon kedua ditekan
+                            },
+                            icon: const Icon(Icons.star),
+                            color: Colors.yellow,
+                            iconSize: 40,
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              // Aksi yang diinginkan saat ikon ketiga ditekan
+                            },
+                            icon: const Icon(Icons.share),
+                            color: Colors.blue,
+                            iconSize: 40,
+                          ),
+                          // Lanjutkan menambahkan ikon-ikon lainnya sesuai kebutuhan
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+              icon: Image.asset(
+                'images/splash.png', // Ubah 'your_image.png' sesuai dengan nama dan lokasi gambar Anda
+                height: 60,
+                width: 60,
               ),
-              IconButton(
-                onPressed: () {
-                  // Aksi yang diinginkan saat ikon kedua ditekan
-                },
-                icon: Icon(Icons.star),
-                color: Colors.yellow,
-                iconSize: 40,
-              ),
-              IconButton(
-                onPressed: () {
-                  // Aksi yang diinginkan saat ikon ketiga ditekan
-                },
-                icon: Icon(Icons.share),
-                color: Colors.blue,
-                iconSize: 40,
-              ),
-              // Lanjutkan menambahkan ikon-ikon lainnya sesuai kebutuhan
-            ],
-          ),
-        );
-      },
-    );
-  },
-  icon: Image.asset(
-    'images/splash.png', // Ubah 'your_image.png' sesuai dengan nama dan lokasi gambar Anda
-    height: 60,
-    width: 60,
-  ),
-  padding: EdgeInsets.zero, // Hilangkan padding dari IconButton
-  splashRadius: 30, // Ukuran radius efek splash saat tombol ditekan
-  color: Colors.white, // Warna ikon
-),
-
+              padding: EdgeInsets.zero, // Hilangkan padding dari IconButton
+              splashRadius: 30, // Ukuran radius efek splash saat tombol ditekan
+              color: Colors.white, // Warna ikon
+            ),
           ),
         ),
       ),

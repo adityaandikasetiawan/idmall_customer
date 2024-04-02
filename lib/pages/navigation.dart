@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:idmall/pages/broadbandbisnis.dart';
 import 'package:idmall/pages/broadbandhome.dart';
 import 'package:idmall/pages/enterprisesolution.dart';
+import 'package:idmall/pages/help_center_category.dart';
 import 'package:idmall/pages/helpcenter.dart';
 import 'package:idmall/pages/history.dart';
 import 'package:idmall/pages/home.dart';
@@ -27,6 +28,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     const Home(),
     const HistoryList(),
     const HelpCenterPage(),
+    // const HelpCenterCategory(),
     // const PelaporanPage(),
     const Account(),
   ];
@@ -36,6 +38,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     _pref.remove('fullName');
     _pref.remove('user_id');
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,96 +79,97 @@ class _NavigationScreenState extends State<NavigationScreen> {
             padding: const EdgeInsets.all(
                 8), // Sesuaikan ukuran padding inner circle sesuai kebutuhan
             child: IconButton(
-  onPressed: () {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Kategori',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                _buildCard(
-                  title: 'Boardband Home',
-                  description: '5 Product',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return SingleChildScrollView(
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Kategori',
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            _buildCard(
+                              title: 'Boardband Home',
+                              description: '5 Product',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 16.0),
+                            _buildCard(
+                              title: 'Boardband Bisnis',
+                              description: '4 Product',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 16.0),
+                            _buildCard(
+                              title: 'Enterprise Solution',
+                              description: '1 Product',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 16.0),
+                            _buildCard(
+                              title: 'Enterprise Solution',
+                              description: '1 Product',
+                              onPressed: () {
+                                AwesomeNotifications().createNotification(
+                                    content: NotificationContent(
+                                  id: 1,
+                                  channelKey: "basic_channel",
+                                  title: "Hello World!",
+                                  body: "Yeyeyeyeye",
+                                ));
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
-                ),
-                SizedBox(height: 16.0),
-                _buildCard(
-                  title: 'Boardband Bisnis',
-                  description: '4 Product',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 16.0),
-                _buildCard(
-                  title: 'Enterprise Solution',
-                  description: '1 Product',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 16.0),
-                _buildCard(
-                  title: 'Enterprise Solution',
-                  description: '1 Product',
-                  onPressed: () {
-                   AwesomeNotifications().createNotification(
-                    content: NotificationContent(
-                      id: 1,
-                      channelKey: "basic_channel",
-                      title: "Hello World!",
-                      body: "Yeyeyeyeye",
-                    )
-                    );
-                  },
-                ),
-              ],
+                );
+              },
+              icon: Image.asset(
+                'images/splash.png', // Ubah 'your_image.png' sesuai dengan nama dan lokasi gambar Anda
+                height: 60,
+                width: 60,
+              ),
+              padding: EdgeInsets.zero, // Hilangkan padding dari IconButton
+              splashRadius: 30, // Ukuran radius efek splash saat tombol ditekan
+              color: Colors.white, // Warna ikon
             ),
-          ),
-        );
-      },
-    );
-  },
-  icon: Image.asset(
-    'images/splash.png', // Ubah 'your_image.png' sesuai dengan nama dan lokasi gambar Anda
-    height: 60,
-    width: 60,
-  ),
-  padding: EdgeInsets.zero, // Hilangkan padding dari IconButton
-  splashRadius: 30, // Ukuran radius efek splash saat tombol ditekan
-  color: Colors.white, // Warna ikon
-),
-
           ),
         ),
       ),
@@ -189,13 +193,18 @@ class _NavigationScreenState extends State<NavigationScreen> {
         elevation: 0,
         onTap: (index) {
           setState(() {
+            print(index);
             pageIndex = index;
           });
         },
       ),
     );
   }
-  Widget _buildCard({required String title, required String description, required VoidCallback onPressed}) {
+
+  Widget _buildCard(
+      {required String title,
+      required String description,
+      required VoidCallback onPressed}) {
     return Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(

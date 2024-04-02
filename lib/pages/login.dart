@@ -43,25 +43,40 @@ class LoginResponse {
   Map<String, dynamic> toJson() => {
       'email': email,
       'firstName' : firstName,
+      'fullName' : firstName + ' ' + lastName,
       'lastName' : lastName,
       'token': token
   };
 }
 
 Future<dynamic> loginWithEmailPassword(payload) async{
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final SharedPreferences prefs = await _prefs;
+  final fcm_token = prefs.getString('fcm_token');
   final body = jsonDecode(payload);
-
   final dio = Dio();
-  final response = await dio.post('${config.backendBaseUrl}/user/login',
-    data: {
-      "email" : body["email"],
-      "password" : body["password"],
-    },
-  );
-
-  var data = response.data;
-  var httpStatus = response.statusCode;
-  return response;
+  if (fcm_token != null) {
+    final response = await dio.post('${config.backendBaseUrl}/user/login',
+      data: {
+        "email" : body["email"],
+        "password" : body["password"],
+        "fcm_token" : fcm_token
+      },
+    );
+    var data = response.data;
+    var httpStatus = response.statusCode;
+    return response;
+  }else {
+    final response = await dio.post('${config.backendBaseUrl}/user/login',
+      data: {
+        "email" : body["email"],
+        "password" : body["password"]
+      },
+    );
+    var data = response.data;
+    var httpStatus = response.statusCode;
+    return response;
+  }
 
 }
 class _LoginState extends State<Login> {

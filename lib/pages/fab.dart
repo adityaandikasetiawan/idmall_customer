@@ -35,7 +35,8 @@ class _FABFormState extends State<FABForm> {
   late File _imageFile;
   final ImagePicker _picker = ImagePicker();
   bool _agreeToTerms = false;
-  String pdfUrl = '${config.backendBaseUrl}/terms-and-condition'; // Ganti URL dengan URL PDF yang diinginkan
+  String pdfUrl =
+      '${config.backendBaseUrl}/terms-and-condition'; // Ganti URL dengan URL PDF yang diinginkan
   bool isLoading = true;
   int totalPages = 0;
   Uint8List? pdfBytes;
@@ -55,11 +56,12 @@ class _FABFormState extends State<FABForm> {
             filename: _imageFile?.path.split('/').last),
         'task_id': widget.taskID,
       };
-      
+
       FormData formData = FormData.fromMap(dataNya);
-      
-      var response = await dio.post("${config.backendBaseUrl}/subscription/retail/fkb/user/$user_id",
-      data:formData,
+
+      var response = await dio.post(
+          "${config.backendBaseUrl}/subscription/retail/fkb/user/$user_id",
+          data: formData,
           // queryParameters: {"taskID": taskID},
           // data: Icons.four_g_mobiledata_outlined,
           options: Options(headers: {
@@ -90,14 +92,14 @@ class _FABFormState extends State<FABForm> {
     }
   }
 
-  Future getCustomerActivation (taskID) async {
+  Future getCustomerActivation(taskID) async {
     (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
         HttpClient()
           ..badCertificateCallback =
               (X509Certificate cert, String host, int port) => true;
     var response = await dio.get(
-        pdfUrl,
-        options: Options(responseType: ResponseType.bytes),
+      pdfUrl,
+      options: Options(responseType: ResponseType.bytes),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -116,9 +118,7 @@ class _FABFormState extends State<FABForm> {
     });
 
     print(taskID);
-    
 
-    
     response = await dio.get("$linkLaravelAPI/customer/fab",
         queryParameters: {"taskID": taskID},
         options: Options(headers: {
@@ -127,14 +127,13 @@ class _FABFormState extends State<FABForm> {
     var hasil = response.data;
     if (hasil['status'] == 'success') {
       setState(() {
-        _customerNameController.text =  hasil['data']['name'];
-        _installationAddressController.text =  hasil['data']['address'];
-        _phoneNumberController.text =  hasil['data']['phone'];
-        _idNumberController.text =  hasil['data']['ktp'];
-        _selectedServiceType=  hasil['data']['serviceName'];
+        _customerNameController.text = hasil['data']['name'];
+        _installationAddressController.text = hasil['data']['address'];
+        _phoneNumberController.text = hasil['data']['phone'];
+        _idNumberController.text = hasil['data']['ktp'];
+        // _selectedServiceType = hasil['data']['serviceName'] ?? "";
       });
-      
-    }else {
+    } else {
       print(hasil);
     }
   }
@@ -171,11 +170,13 @@ class _FABFormState extends State<FABForm> {
               _buildTextField(
                   _installationAddressController, 'Alamat Pemasangan'),
               SizedBox(height: 16.0),
-              _buildTextField(_phoneNumberController, 'Telepon/ Telepon Seluler'),
+              _buildTextField(
+                  _phoneNumberController, 'Telepon/ Telepon Seluler'),
               SizedBox(height: 16.0),
               _buildKtpUploadField(),
               SizedBox(height: 16.0),
-              _buildTextField(_idNumberController, 'Nomor Identitas (NIK/SIM/Passport)'),
+              _buildTextField(
+                  _idNumberController, 'Nomor Identitas (NIK/SIM/Passport)'),
               SizedBox(height: 16.0),
               // // Container(
               // //     decoration: BoxDecoration(
@@ -233,25 +234,22 @@ class _FABFormState extends State<FABForm> {
                 ],
               ),
               SizedBox(height: 16.0),
-          ElevatedButton(
-            onPressed: () {
-              _submitForm();
-              // Handle form submission
-            },
-            child: Text(
-              'Submit',
-              style: TextStyle(color: Colors.white),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
+              ElevatedButton(
+                onPressed: () {
+                  _submitForm();
+                  // Handle form submission
+                },
+                child: Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                ),
               ),
-              minimumSize: Size(double.infinity, 0), // Set minimum size untuk mengisi lebar layar
-              padding: EdgeInsets.symmetric(vertical: 16.0), // Atur padding vertical
-            ),
-          ),
-          
             ],
           ),
         ),
@@ -277,40 +275,40 @@ class _FABFormState extends State<FABForm> {
     );
   }
 
-  Widget _buildDropdownButtonFormField() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15.0),
-        border: Border.all(color: Colors.grey),
-      ),
-      child: DropdownButtonFormField<String>(
-        value: _selectedServiceType,
-        onChanged: (String? newValue) {
-          setState(() {
-            _selectedServiceType = newValue;
-          });
-        },
-        items: <String>[
-          'idplay Retail Up To 10Mbps',
-          'idplay Retail Up To 20Mbps',
-          'idplay Retail Up To 30Mbps',
-          'idplay Retail Up To 50 Mbps',
-          'idplay Retail Up To 100Mbps',
-        ].map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        decoration: InputDecoration(
-          labelText: 'Service Type',
-          contentPadding:
-              EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          border: InputBorder.none,
-        ),
-      ),
-    );
-  }
+  // Widget _buildDropdownButtonFormField() {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(15.0),
+  //       border: Border.all(color: Colors.grey),
+  //     ),
+  //     child: DropdownButtonFormField<String>(
+  //       value: _selectedServiceType,
+  //       onChanged: (String? newValue) {
+  //         setState(() {
+  //           _selectedServiceType = newValue;
+  //         });
+  //       },
+  //       items: <String>[
+  //         'idplay Retail Up To 10Mbps',
+  //         'idplay Retail Up To 20Mbps',
+  //         'idplay Retail Up To 30Mbps',
+  //         'idplay Retail Up To 50Mbps',
+  //         'idplay Retail Up To 100Mbps',
+  //       ].map<DropdownMenuItem<String>>((String value) {
+  //         return DropdownMenuItem<String>(
+  //           value: value,
+  //           child: Text(value),
+  //         );
+  //       }).toList(),
+  //       decoration: InputDecoration(
+  //         labelText: 'Service Type',
+  //         contentPadding:
+  //             EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+  //         border: InputBorder.none,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildKtpUploadField() {
     return Container(
@@ -347,11 +345,12 @@ class _FABFormState extends State<FABForm> {
           content: SingleChildScrollView(
             child: SizedBox(
               height: 500,
+              width: MediaQuery.of(context).size.width,
               child: SfPdfViewer.network(
                 "${config.backendBaseUrl}/terms-and-condition",
                 canShowPaginationDialog: true,
-                pageSpacing:2,
-                ),
+                pageSpacing: 2,
+              ),
             ),
           ),
           actions: <Widget>[

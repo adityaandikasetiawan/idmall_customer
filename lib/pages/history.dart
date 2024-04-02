@@ -1,13 +1,5 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'dart:ffi';
-import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
-import 'package:idmall/consts.dart';
 import 'package:idmall/models/customer_list..dart';
 import 'package:idmall/pages/customer_status.dart';
 import 'package:intl/intl.dart';
@@ -23,7 +15,6 @@ class HistoryList extends StatefulWidget {
 
 class _HistoryListState extends State<HistoryList> {
   DateTime now = DateTime.now();
-  String? token;
   String? userID;
   String? total_active;
   final oCcy = NumberFormat("#,##0", "en_US");
@@ -35,6 +26,7 @@ class _HistoryListState extends State<HistoryList> {
   void initState() {
     super.initState();
     getNameUser();
+    getAchievementList();
   }
 
   Future<Null> getNameUser() async {
@@ -42,135 +34,78 @@ class _HistoryListState extends State<HistoryList> {
     final SharedPreferences? prefs = await _prefs;
 
     setState(() {
-      token = prefs?.getString('token');
       userID = prefs?.getString('email');
     });
   }
 
-  static Future<List<CustomerListAchieve>> getAchievementList(
-      dio, now, token, dateFormatter, userID) async {
+  Future<List<CustomerListAchieve>> getAchievementList() async {
     WidgetsFlutterBinding.ensureInitialized();
-    final date = dateFormatter.format(now);
+    dateFormatter.format(now);
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token') ?? "";
+    List<CustomerListAchieve> list = [];
 
-    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-        HttpClient()
-          ..badCertificateCallback =
-              (X509Certificate cert, String host, int port) => true;
-    var response = await dio.get("$linkLaravelAPI/customer/history-list",
-        queryParameters: {"date": date},
-        options: Options(headers: {
-          HttpHeaders.authorizationHeader: token,
-        }));
-    if (jsonDecode(response.data)['status'] == 'success') {
-      var hasil = jsonDecode(response.data)['data'];
-      var user = hasil[userID];
-      // for (var ele in user) {
-      //   print(ele);
-      // }
-      // print(hasil);
-      // print(model[0]);
-      // print(user);
-      // user = user.map((e) => CustomerListAchieve.fromJson(e)).toList();
-      //   print(user);
-      List<CustomerListAchieve> list = [];
-      // for (var i = 0; i < user.length; i++) {
-      //   list.add(CustomerListAchieve.fromJson(user[i]));
-      // }
-        // print(user);
-        user.forEach((key, ele) {
-          list.add(CustomerListAchieve.fromJson(ele));
-        });
-      // for (var ele in user) {
-      //   //   // var name = productModel.name.toString();
-      //   //   // var taskID = productModel.taskID.toString();
-      //   //   // var price = productModel.price.toString();
-      //   list.add(CustomerListAchieve.fromJson(ele));
-      // }
+    final response = await dio.get(
+      "${config.backendBaseUrl}/transaction/history",
+      options: Options(headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      }),
+    );
+    print(response.data['data']);
+    if (response.data['status'] == 'success') {
+      var hasil = response.data['data'];
+      for (var ele in hasil) {
+        list.add(CustomerListAchieve.fromJson(ele));
+      }
       return list;
+    } else {
+      return List.empty();
     }
-    print(jsonDecode(response.data));
-    return List.empty();
+
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    Future<List<CustomerListAchieve>> postsFuture =
-        getAchievementList(dio, now, token, dateFormatter, userID);
-    // Future<List<CustomerListAchieve>> postsFuture = getAchievementList();
+    Future<List<CustomerListAchieve>> postsFuture = getAchievementList();
     return Scaffold(
       appBar: AppBar(
         title: const Text("History"),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 25,
-          ),
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // const SizedBox(
-                //   height: 20,
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //     children: [
-                //       Text("LIST CUSTOMER"),
-                //     ],
-                //   ),
-                // ),
-                SizedBox(
-                  // height: 600,
-                  child: FutureBuilder<List<CustomerListAchieve>>(
-                    future: postsFuture,
-                    builder: (context, snapshot) {
-                      snapshot.connectionState == ConnectionState.done
-                          ? print(snapshot)
-                          : print('loading');
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasData) {
-                        final posts = snapshot.data!;
-                        return buildPosts(posts);
-                      } else {
-                        return const Text("No data available");
-                      }
-                    },
+      body: RefreshIndicator(
+        color: Colors.white,
+        backgroundColor: Colors.blue,
+        onRefresh: getAchievementList,
+        child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 25,
+            ),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    // height: 600,
+                    child: FutureBuilder<List<CustomerListAchieve>>(
+                      future: postsFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasData) {
+                          final posts = snapshot.data!;
+                          return buildPosts(posts);
+                        } else {
+                          return const Text("No data available");
+                        }
+                      },
+                    ),
                   ),
-                ),
-                // Card(
-                //   child: ListView.builder(
-                //     shrinkWrap: true,
-                //     itemCount: _listCustomer?.length,
-                //     itemBuilder: (BuildContext context, int index) {
-                //       return ListTile(
-                //         onTap: () {
-                //           debugPrint('Contoh');
-                //         },
-                //         leading: const Column(
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           children: [
-                //             Icon(
-                //               Icons.account_box_rounded,
-                //               size: 40,
-                //             ),
-                //           ],
-                //         ),
-                //         isThreeLine: true,
-                //         title: Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           mainAxisSize: MainAxisSize.min,
-                //           children: [
-                //             Text(_listCustomer?[index]['name'] ?? ''),
-                //             Text(_listCustomer?[index]['taskID'] ?? ''),
-                //           ],
-                //         ),
-                //         subtitle: Text(_listCustomer?[index]['activeDate'] ?? ''),
-                //       );
-                //     }
-                //   )
-                // ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -184,7 +119,6 @@ class _HistoryListState extends State<HistoryList> {
     return ListView.builder(
       shrinkWrap: true,
       primary: false,
-      physics: NeverScrollableScrollPhysics(),
       itemCount: posts.length,
       itemBuilder: (context, index) {
         final post = posts[index];
@@ -195,8 +129,9 @@ class _HistoryListState extends State<HistoryList> {
             children: <Widget>[
               ListTile(
                 onTap: () {
-                  debugPrint('Contoh');
-                  Navigator.of(context).push(MaterialPageRoute(builder:  (builder) => CustomerStatus(status: post.status, taskid: post.taskID)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (builder) => CustomerStatus(
+                          status: post.status, taskid: post.taskID)));
                 },
                 leading: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -217,7 +152,7 @@ class _HistoryListState extends State<HistoryList> {
                     Text("Product: " + post.serviceName.toString()),
                   ],
                 ),
-                subtitle: Text(post.activeDate),
+                subtitle: Text(""),
               ),
             ],
           ),

@@ -22,30 +22,23 @@ class _HistoryAddState extends State<HistoryAdd> {
   String? id;
   String? userId;
 
-
   @override
   void initState() {
     super.initState();
     initializeData();
   }
 
-
   Future<void> initializeData() async {
     id = await SharedPreferenceHelper().getIdUser();
 
     if (id != null) {
       orderListFuture = DatabaseMethods().getOrderListForAllUsers();
-      print(await orderListFuture);
-    } else {
-      print("ID is null");
-    }
+    } else {}
 
     if (mounted) {
       setState(() {});
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +46,8 @@ class _HistoryAddState extends State<HistoryAdd> {
       backgroundColor: const Color(0xff343456),
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('Order Confirmation', style: AppWidget.HeadlineTextFeildStyle()),
+        title: Text('Order Confirmation',
+            style: AppWidget.HeadlineTextFeildStyle()),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
@@ -68,25 +62,23 @@ class _HistoryAddState extends State<HistoryAdd> {
               child: Text("Error: ${snapshot.error}"),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
-              child: Text(
-                ""
-              ),
+            return const Center(
+              child: Text(""),
             );
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> orderData = snapshot.data![index];
-                List<Map<String, dynamic>> currentOrderList = List<Map<String, dynamic>>.from(orderData['orderList']);
+                List<Map<String, dynamic>> currentOrderList =
+                    List<Map<String, dynamic>>.from(orderData['orderList']);
                 return OrderItemWidget(
                   orderList: currentOrderList,
-                  removeItemCallback: () => removeOrder(id!, orderData['orderId'], currentOrderList),
+                  removeItemCallback: () =>
+                      removeOrder(id!, orderData['orderId'], currentOrderList),
                   orderAcceptedCallback: () => orderAccepted(orderData),
                   orderRejectedCallback: () => orderRejected(orderData),
                 );
-
-
               },
             );
           }
@@ -95,27 +87,19 @@ class _HistoryAddState extends State<HistoryAdd> {
     );
   }
 
-
-
-  void removeOrder(String userId, List<Map<String, dynamic>> orderList, List<dynamic> itemsToRemove) async {
+  void removeOrder(String userId, List<Map<String, dynamic>> orderList,
+      List<dynamic> itemsToRemove) async {
     try {
-      if (userId.isNotEmpty ) {
-        print('Before removal: $orderList');
-        print('After removal: $orderList');
-
+      if (userId.isNotEmpty) {
         await DatabaseMethods().removeOrder(userId, orderList, itemsToRemove);
-      } else {
-        print("Invalid userId or itemsToRemove: userId=$userId, itemsToRemove=$itemsToRemove");
-      }
-    } catch (e) {
-      print('Error removing items from Firestore: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
-
 
   void orderAccepted(Map<String, dynamic> orderData) async {
     String? userId = orderData['userId'];
-    List<Map<String, dynamic>> itemsToRemove = List<Map<String, dynamic>>.from(orderData['orderList'] ?? []);
+    List<Map<String, dynamic>> itemsToRemove =
+        List<Map<String, dynamic>>.from(orderData['orderList'] ?? []);
 
     if (userId != null && userId.isNotEmpty) {
       orderData['timestamp'] = FieldValue.serverTimestamp();
@@ -128,19 +112,18 @@ class _HistoryAddState extends State<HistoryAdd> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: CupertinoColors.activeGreen,
-          content: Text('Order has been received', style: TextStyle(fontSize: 16.0, fontFamily: 'Poppins', color: Colors.white)),
+          content: Text('Order has been received',
+              style: TextStyle(
+                  fontSize: 16.0, fontFamily: 'Poppins', color: Colors.white)),
         ),
       );
-    } else {
-      print("Invalid userId or itemsToRemove: userId=$userId, itemsToRemove=$itemsToRemove");
-    }
+    } else {}
   }
-
-
 
   void orderRejected(Map<String, dynamic> orderData) async {
     String? userId = orderData['userId'];
-    List<Map<String, dynamic>> itemsToRemove = List<Map<String, dynamic>>.from(orderData['orderList'] ?? []);
+    List<Map<String, dynamic>> itemsToRemove =
+        List<Map<String, dynamic>>.from(orderData['orderList'] ?? []);
     if (userId != null && userId.isNotEmpty) {
       await DatabaseMethods().RejectedOrder(orderData);
 
@@ -148,17 +131,17 @@ class _HistoryAddState extends State<HistoryAdd> {
         removeOrder(userId, orderList, itemsToRemove);
       });
 
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: CupertinoColors.systemRed,
-          content: Text('Order Canceled', style: TextStyle(fontSize: 16.0, fontFamily: 'Poppins', color: Colors.white)),
+          content: Text('Order Canceled',
+              style: TextStyle(
+                  fontSize: 16.0, fontFamily: 'Poppins', color: Colors.white)),
         ),
       );
-    } else {
-      print("Invalid userId: userId=$userId");
-    }
+    } else {}
   }
-
 }
 
 class OrderItemWidget extends StatefulWidget {
@@ -167,7 +150,8 @@ class OrderItemWidget extends StatefulWidget {
   final Function() orderAcceptedCallback;
   final Function() orderRejectedCallback;
 
-  const OrderItemWidget({super.key, 
+  const OrderItemWidget({
+    super.key,
     required this.orderList,
     required this.removeItemCallback,
     required this.orderAcceptedCallback,
@@ -175,6 +159,7 @@ class OrderItemWidget extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _OrderItemWidgetState createState() => _OrderItemWidgetState();
 }
 
@@ -184,11 +169,11 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
-      ),
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+        ),
         child: Visibility(
           visible: widget.orderList.isNotEmpty,
           child: Column(
@@ -196,7 +181,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
             children: [
               const SizedBox(height: 20.0),
               if (widget.orderList.isEmpty)
-                Text(
+                const Text(
                   "Oops, tidak ada item",
                   style: TextStyle(fontSize: 16, color: Colors.red),
                 )
@@ -205,8 +190,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     for (int itemIndex = 0;
-                    itemIndex < widget.orderList.length;
-                    itemIndex++)
+                        itemIndex < widget.orderList.length;
+                        itemIndex++)
                       OrderListItem(
                         orderItem: widget.orderList[itemIndex],
                         removeItemCallback: widget.removeItemCallback,
@@ -216,7 +201,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                       children: [
                         GestureDetector(
                           onTap: () => handleOrderAccepted(context),
-                          child: const Icon(Icons.check_circle, color: Colors.green),
+                          child: const Icon(Icons.check_circle,
+                              color: Colors.green),
                         ),
                         const SizedBox(width: 60.0),
                         GestureDetector(
@@ -231,10 +217,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                 ),
             ],
           ),
-        )
-    );
+        ));
   }
-
 
   void handleOrderAccepted(BuildContext context) {
     setState(() {
@@ -295,15 +279,12 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
   }
 }
 
-
-
-
-
 class OrderListItem extends StatelessWidget {
   final dynamic orderItem;
   final Function() removeItemCallback;
 
-  const OrderListItem({super.key,
+  const OrderListItem({
+    super.key,
     required this.orderItem,
     required this.removeItemCallback,
   });
@@ -322,11 +303,11 @@ class OrderListItem extends StatelessWidget {
             width: 120,
             child: orderItem['image'] != null
                 ? Image.network(
-              orderItem['image'],
-              height: 120,
-              width: 120,
-              fit: BoxFit.cover,
-            )
+                    orderItem['image'],
+                    height: 120,
+                    width: 120,
+                    fit: BoxFit.cover,
+                  )
                 : Container(),
           ),
           Expanded(
@@ -338,8 +319,11 @@ class OrderListItem extends StatelessWidget {
                   '${orderItem['quantity'] ?? 'No Quantity'}x | ${orderItem['name'] ?? 'No Name'}',
                   style: AppWidget.Headline2TextFeildStyle(),
                 ),
-                const SizedBox(height: 20.0,),
-                Text('Name User:${orderItem['name user']},\nTable Number:${orderItem['table number']}'),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                Text(
+                    'Name User:${orderItem['name user']},\nTable Number:${orderItem['table number']}'),
                 const SizedBox(height: 20.0),
               ],
             ),

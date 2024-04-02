@@ -224,7 +224,7 @@ class _PaymentToPageState extends State<PaymentToPage> {
                               if (index== 1) {
                                 print(dataNya1);
                               }
-                              return buildPaymentNew('images/bank/bca.png', dataNya1[index1]['name'] ?? '', context, dataNya1[index1]['code'] ?? '',index == 0 ? 'bank' : 'outlet');
+                              return buildPaymentNew(dataNya1[index1]['icon_url'], dataNya1[index1]['name'] ?? '', context, dataNya1[index1]['code'] ?? '',index == 0 ? 'bank' : 'outlet');
                             },
                           );
                           // buildPaymentMethodCard('images/bank/bca.png', snapshot.data['name'], context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50);
@@ -237,18 +237,18 @@ class _PaymentToPageState extends State<PaymentToPage> {
                 ),
               ),
               // getPaymentList(context) ?? Container(),
-              buildPaymentMethodCard('images/bank/bca.png', 'Bank BCA', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/mandiri.png', 'Bank Mandiri', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/bni.png', 'Bank BNI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/bri.png', 'Bank BRI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/BSI.png', 'Bank BSI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/permata.png', 'Bank Permata', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/cimb.png', 'Bank CIMB', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/DBS.png', 'Bank DBS', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/BJB.png', 'Bank BJB', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/sampoerna.png', 'Bank Sampoerna', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/alfamart.png', 'Alfamart', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              buildPaymentMethodCard('images/bank/indomart.png', 'Indomart', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/bca.png', 'Bank BCA', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/mandiri.png', 'Bank Mandiri', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/bni.png', 'Bank BNI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/bri.png', 'Bank BRI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/BSI.png', 'Bank BSI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/permata.png', 'Bank Permata', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/cimb.png', 'Bank CIMB', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/DBS.png', 'Bank DBS', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/BJB.png', 'Bank BJB', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/sampoerna.png', 'Bank Sampoerna', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/alfamart.png', 'Alfamart', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
+              // buildPaymentMethodCard('images/bank/indomart.png', 'Indomart', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
               // SizedBox(height: 20.0),
               // SizedBox(
               //   width: double.infinity,
@@ -285,7 +285,7 @@ class _PaymentToPageState extends State<PaymentToPage> {
             child: Row(
               children: [
                 Expanded(
-                  child: Image.asset(
+                  child: Image.network(
                     imagePath,
                     width: 50,
                     height: 50,
