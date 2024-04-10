@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:idmall/pages/helpcenter.dart';
 import 'package:idmall/pages/login.dart';
+import 'package:idmall/pages/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Account extends StatefulWidget {
@@ -192,6 +193,11 @@ class _AccountState extends State<Account> {
                     const Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
                 onTap: () {
                   // Tambahkan logika untuk tombol Settings
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingChangePasswordPage()),
+                  );
                 },
               ),
               const SizedBox(height: 20),
