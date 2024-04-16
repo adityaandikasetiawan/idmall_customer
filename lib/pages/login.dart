@@ -54,6 +54,7 @@ Future<dynamic> loginWithEmailPassword(payload) async {
   final fcm_token = prefs.getString('fcm_token');
   final body = jsonDecode(payload);
   final dio = Dio();
+  print("$payload");
   if (fcm_token != null) {
     final response = await dio.post(
       '${config.backendBaseUrl}/user/login',
@@ -67,6 +68,7 @@ Future<dynamic> loginWithEmailPassword(payload) async {
     var httpStatus = response.statusCode;
     return response;
   } else {
+
     final response = await dio.post(
       '${config.backendBaseUrl}/user/login',
       data: {"email": body["email"], "password": body["password"]},
