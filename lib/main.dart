@@ -36,14 +36,14 @@ void main() async {
 
     if (value != null) {
       _pref.setString('fcm_token', value);
-      if (token != null) {
+      if (token != null && token != '') {
         (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-                        HttpClient()
-                          ..badCertificateCallback =
-                              (X509Certificate cert, String host, int port) => true;
+            HttpClient()
+              ..badCertificateCallback =
+                  (X509Certificate cert, String host, int port) => true;
         final response = await dio.post(
           "$linkLaravelAPI/customer/update-device-key",
-          data:{"token":value},
+          data: {"token": value},
           options: Options(headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer $token"
@@ -79,40 +79,21 @@ void main() async {
       ],
       debug: true);
 
-  FirebaseMessaging.instance.getInitialMessage().then(
-    (RemoteMessage? message) {
-      if (message != null) {
-        print(message);
-        print(1);
-        // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
-      }
+  FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    if (message != null) {
+      print(message);
+      print(1);
+      // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
     }
-  );
+  });
 
-  bool isAllowedToSendNotification = await AwesomeNotifications().isNotificationAllowed();
+  bool isAllowedToSendNotification =
+      await AwesomeNotifications().isNotificationAllowed();
   if (!isAllowedToSendNotification) {
-      AwesomeNotifications().requestPermissionToSendNotifications();
+    AwesomeNotifications().requestPermissionToSendNotifications();
   }
 
   Stripe.publishableKey = publishableKey;
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    // print foreground message here.
-    print("OVER HERE");
-    print('Handling a foreground message ${message.messageId}');
-    print('Notification Message: ${message.data}');
-
-    if (message.notification != null) {
-      print('Message also contained a notification:  ${message.notification}');
-      AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: UniqueKey().hashCode,
-          channelKey: "basic_channel",
-          title: message.notification?.title,
-          body: message.notification?.body,
-        )
-      );
-    }
-  });
 
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
     print("onMessageOpened App; $message");
@@ -125,13 +106,31 @@ void main() async {
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  FirebaseMessaging.onMessageOpenedApp.listen(
-    (RemoteMessage message) async {
-      print("onMessageOpened App; $message");
-      // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+    print("onMessageOpened App; $message");
+    // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
   });
 
-  runApp(MyApp(token: token,));
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    // print foreground message here.
+    print("OVER HERE");
+    print('Handling a foreground message ${message.messageId}');
+    print('Notification Message: ${message.data}');
+
+    if (message.notification != null) {
+      print('Message also contained a notification:  ${message.notification}');
+      AwesomeNotifications().createNotification(
+          content: NotificationContent(
+        id: UniqueKey().hashCode,
+        channelKey: "basic_channel",
+        title: message.notification?.title,
+        body: message.notification?.body,
+      ));
+    }
+  });
+  runApp(MyApp(
+    token: token,
+  ));
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {

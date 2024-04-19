@@ -213,7 +213,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
                                       : Colors.black),
                             ),
                           ),
-                          statusQuot.contains(widget.status)
+                          statusFAB.contains(widget.status)
                               ? TextButton(
                                   onPressed: () {
                                     Navigator.push(
