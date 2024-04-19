@@ -1,8 +1,11 @@
+
 import 'package:flutter/material.dart';
+import 'package:idmall/config/config.dart';
 import 'package:idmall/pages/helpcenter.dart';
 import 'package:idmall/pages/login.dart';
 import 'package:idmall/pages/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -15,16 +18,55 @@ class _AccountState extends State<Account> {
   String? fullName;
   String? token;
   String? email;
+  String? is_email_verified = "0";
 
   Future<void> getUser() async {
     // ignore: no_leading_underscores_for_local_identifiers
     SharedPreferences _pref = await SharedPreferences.getInstance();
 
+
+
     setState(() {
       fullName = _pref.getString('fullName');
       token = _pref.getString('token');
       email = _pref.getString('email');
+      is_email_verified = _pref.getString('is_email_verified');
     });
+  }
+
+  Future<void> verifyEmailAddress() async{
+    Dio dio = Dio();
+    var headers = {"Authorization": "Bearer $token"};
+    Response response = await dio.post("${backendBaseUrl}/send-verification-email",
+    data:{
+      "target_email": email,
+    },
+      options: Options(
+        headers: headers,
+      )
+    );
+
+    if(response.statusCode == 200){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("success"),
+            content: Text("Berhasil mengirimkan email, silahkan cek kotak masuk email anda"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    }
+    print("$response");
+
   }
 
   @override
@@ -32,6 +74,8 @@ class _AccountState extends State<Account> {
     // TODO: implement initState
     super.initState();
     getUser();
+    print("This is from pref");
+
   }
 
   @override
@@ -84,6 +128,21 @@ class _AccountState extends State<Account> {
                             Text(fullName ?? ''),
                             const SizedBox(height: 10),
                             Text(email ?? ''),
+                            Column(
+                              children: [
+                                if(is_email_verified == "1")
+                                  Text("Terverifikasi")
+                                else...[
+                                  Text("Belum verifikasi"),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 16)),
+                                    onPressed: verifyEmailAddress,
+                                    child: const Text('Verifikasi'),
+                                  ),
+                                ]
+                              ]
+                            ),
+
                             // SizedBox(height: 20),
                             // ElevatedButton(
                             //   onPressed: () {
