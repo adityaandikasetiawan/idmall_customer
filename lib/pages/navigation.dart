@@ -1,21 +1,26 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:idmall/pages/broadbandbisnis.dart';
 import 'package:idmall/pages/broadbandhome.dart';
 import 'package:idmall/pages/enterprisesolution.dart';
-import 'package:idmall/pages/help_center_category.dart';
 import 'package:idmall/pages/helpcenter.dart';
 import 'package:idmall/pages/history.dart';
 import 'package:idmall/pages/home.dart';
-import 'package:idmall/pages/kategori.dart';
-import 'package:idmall/pages/pelaporan.dart';
 import 'package:idmall/pages/account.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:idmall/config/config.dart' as config;
 
 class NavigationScreen extends StatefulWidget {
-  const NavigationScreen({super.key});
+  final String? customerID;
+  final String? status;
+  const NavigationScreen({
+    super.key,
+    this.customerID,
+    this.status,
+  });
 
   @override
   State<NavigationScreen> createState() => _NavigationScreenState();
@@ -23,15 +28,67 @@ class NavigationScreen extends StatefulWidget {
 
 class _NavigationScreenState extends State<NavigationScreen> {
   int pageIndex = 0;
+  String? _customerid, _status; // Menggunakan late untuk menginisialisasi nanti
+  late List<Widget> pages = [];
 
-  List<Widget> pages = [
-    const Home(),
-    const HistoryList(),
-    const HelpCenterPage(),
-    // const HelpCenterCategory(),
-    // const PelaporanPage(),
-    const Account(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    getDetailCustomer().then((_) {
+      setState(() {
+        pages = [
+          const Home(),
+          HistoryList(
+            customerId: _customerid,
+            status: _status,
+          ),
+          const HelpCenterPage(),
+          // const HelpCenterCategory(),
+          // const PelaporanPage(),
+          const Account(),
+        ];
+      });
+    });
+  }
+
+  Future<void> getDetailCustomer() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token') ?? "";
+    final dio = Dio();
+    final response = await dio.get(
+      "${config.backendBaseUrl}/customer/billing/latest",
+      options: Options(headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      }),
+    );
+    print(response.data['data']['Task_ID']);
+    setState(() {
+      _customerid = response.data['data']['Task_ID'];
+      _status = response.data['data']['Status'];
+    });
+  }
+
+  // late List<Widget> pages;
+
+  // @override
+  // void didChangeDependencies() {
+  //   print(_customerid);
+  //   super.didChangeDependencies();
+  //   // Initialize pages after _customerid is available
+  //   pages = [
+  //     const Home(),
+  //     HistoryList(
+  //       customerId: _customerid,
+  //       status: _status,
+  //     ),
+  //     const HelpCenterPage(),
+  //     // const HelpCenterCategory(),
+  //     // const PelaporanPage(),
+  //     const Account(),
+  //   ];
+  // }
+
   Future<void> logout() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     _pref.remove('token');

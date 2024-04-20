@@ -11,7 +11,11 @@ class PaymentToPage extends StatefulWidget {
   final int? totalPrice;
   final String taskID;
   final double ppn;
-  const PaymentToPage({super.key, required this.totalPrice, required this.taskID, required this.ppn});
+  const PaymentToPage(
+      {super.key,
+      required this.totalPrice,
+      required this.taskID,
+      required this.ppn});
 
   @override
   State<PaymentToPage> createState() => _PaymentToPageState();
@@ -20,36 +24,41 @@ class PaymentToPage extends StatefulWidget {
 class _PaymentToPageState extends State<PaymentToPage> {
   Dio dio = Dio();
   String? token;
-  
-  Future<List<Map<String,dynamic>>>? list;
 
-  Future<void> checkPM () async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
+  Future<List<Map<String, dynamic>>>? list;
+
+  Future<void> checkPM() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
-      token = _pref.getString('token');
+      token = pref.getString('token');
     });
-      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-                      HttpClient()
-                        ..badCertificateCallback =
-                            (X509Certificate cert, String host, int port) => true;
-      var response = await dio.get('${config.backendBaseUrl}/transaction/${widget.taskID}',
-          // data: dataNya,
-          options: Options(headers: {
-            HttpHeaders.authorizationHeader: "Bearer $token",
-          }));
+    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
+        HttpClient()
+          ..badCertificateCallback =
+              (X509Certificate cert, String host, int port) => true;
+    var response =
+        await dio.get('${config.backendBaseUrl}/transaction/${widget.taskID}',
+            // data: dataNya,
+            options: Options(headers: {
+              HttpHeaders.authorizationHeader: "Bearer $token",
+            }));
 
-      // Handle response
-      Map<String,dynamic> result = response.data;
-      if (result != null) {
-        Navigator.of(context).push(MaterialPageRoute(builder: (builder) => Invoice(code: result['data']['payment_method'], totalPrice: result['data']['harga'], taskID: widget.taskID)));
-      }
+    // Handle response
+    Map<String, dynamic> result = response.data;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (builder) => Invoice(
+            code: result['data']['payment_method'],
+            totalPrice: result['data']['harga'],
+            taskID: widget.taskID),
+      ),
+    );
   }
 
-
-  Future<List<Map<String,dynamic>>> getPaymentList() async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
+  Future<List<Map<String, dynamic>>> getPaymentList() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
-      token = _pref.getString('token');
+      token = pref.getString('token');
     });
     (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
         HttpClient()
@@ -61,14 +70,11 @@ class _PaymentToPageState extends State<PaymentToPage> {
         }));
     var hasil = response.data;
     if (hasil['message'] == 'success') {
-      List<Map<String,dynamic>> list = [];
-      List list1 = [];
+      List<Map<String, dynamic>> list = [];
       var data = hasil['data'];
       data.forEach((key, ele) {
         print(ele);
-          list.add({
-            key: ele
-          });
+        list.add({key: ele});
         // for (var elem in ele) {
         //   // elem.forEach((keys, eleme) {
         //   // });
@@ -76,34 +82,35 @@ class _PaymentToPageState extends State<PaymentToPage> {
       });
       print(list[1]);
       return list;
-      
-    }else {
+    } else {
       return List.empty();
     }
   }
 
-  Future<void> _submitForm(String taskID, String payment_method_code, String payment_type, double total_payment) async{
+  Future<void> _submitForm(String taskID, String payment_method_code,
+      String payment_type, double total_payment) async {
     var dataNya = {
       'task_id': taskID,
-      'payment_method_code' : payment_method_code,
-      'payment_type' : payment_type.toUpperCase(),
-      'total_payment' : total_payment,
+      'payment_method_code': payment_method_code,
+      'payment_type': payment_type.toUpperCase(),
+      'total_payment': total_payment,
     };
     print(dataNya);
     try {
       // Replace URL with your endpoint
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-                      HttpClient()
-                        ..badCertificateCallback =
-                            (X509Certificate cert, String host, int port) => true;
-      var response = await dio.post('${config.backendBaseUrl}/transaction/create',
-          data: dataNya,
-          options: Options(headers: {
-            HttpHeaders.authorizationHeader: "Bearer $token",
-          }));
+          HttpClient()
+            ..badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
+      var response =
+          await dio.post('${config.backendBaseUrl}/transaction/create',
+              data: dataNya,
+              options: Options(headers: {
+                HttpHeaders.authorizationHeader: "Bearer $token",
+              }));
 
       // Handle response
-      Map<String,dynamic> result = response.data;
+      Map<String, dynamic> result = response.data;
       print(result['status']);
       showDialog(
         context: context,
@@ -116,7 +123,12 @@ class _PaymentToPageState extends State<PaymentToPage> {
                 onPressed: () {
                   // Navigator.of(context).popUntil((route) => route.isFirst);
                   // Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(builder: (builder) =>  Invoice(code: payment_method_code, totalPrice: widget.totalPrice!, taskID: widget.taskID,)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (builder) => Invoice(
+                            code: payment_method_code,
+                            totalPrice: widget.totalPrice!,
+                            taskID: widget.taskID,
+                          )));
                 },
                 child: Text('Close'),
               ),
@@ -141,7 +153,7 @@ class _PaymentToPageState extends State<PaymentToPage> {
 
   @override
   Widget build(BuildContext context) {
-    var price = (widget.totalPrice!/1.11).round();
+    var price = (widget.totalPrice! / 1.11).round();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -197,44 +209,50 @@ class _PaymentToPageState extends State<PaymentToPage> {
               SizedBox(height: 20.0),
               SizedBox(
                 child: FutureBuilder(
-                  future: list,
-                  builder: (context, snapshot) {
-                    snapshot.connectionState == ConnectionState.done
+                    future: list,
+                    builder: (context, snapshot) {
+                      snapshot.connectionState == ConnectionState.done
                           ? print('oke')
                           : print('loading');
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    }else
-                    if (snapshot.hasData) {
-                      final List<Map<String,dynamic>> dataNya = snapshot.data!;
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        primary: false,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: dataNya.length,
-                        itemBuilder: (context, index) {
-                          var dataNya1 = index == 0 ? dataNya[index]['bank'] : dataNya[index]['outlet'];
-                          // dataNya1 = dataNya[index];
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            primary: false,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: dataNya1.length,
-                            itemBuilder: (context, index1) {
-                              if (index== 1) {
-                                print(dataNya1);
-                              }
-                              return buildPaymentNew(dataNya1[index1]['icon_url'], dataNya1[index1]['name'] ?? '', context, dataNya1[index1]['code'] ?? '',index == 0 ? 'bank' : 'outlet');
-                            },
-                          );
-                          // buildPaymentMethodCard('images/bank/bca.png', snapshot.data['name'], context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50);
-                        },
-                      );
-                    }else {
-                      return Text('no data available');
-                    }
-                  }
-                ),
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasData) {
+                        final List<Map<String, dynamic>> dataNya =
+                            snapshot.data!;
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          primary: false,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: dataNya.length,
+                          itemBuilder: (context, index) {
+                            var dataNya1 = index == 0
+                                ? dataNya[index]['bank']
+                                : dataNya[index]['outlet'];
+                            // dataNya1 = dataNya[index];
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              primary: false,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: dataNya1.length,
+                              itemBuilder: (context, index1) {
+                                if (index == 1) {
+                                  print(dataNya1);
+                                }
+                                return buildPaymentNew(
+                                    dataNya1[index1]['icon_url'],
+                                    dataNya1[index1]['name'] ?? '',
+                                    context,
+                                    dataNya1[index1]['code'] ?? '',
+                                    index == 0 ? 'bank' : 'outlet');
+                              },
+                            );
+                            // buildPaymentMethodCard('images/bank/bca.png', snapshot.data['name'], context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50);
+                          },
+                        );
+                      } else {
+                        return Text('no data available');
+                      }
+                    }),
               ),
               // getPaymentList(context) ?? Container(),
               // buildPaymentMethodCard('images/bank/bca.png', 'Bank BCA', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
@@ -269,13 +287,15 @@ class _PaymentToPageState extends State<PaymentToPage> {
     );
   }
 
-  Widget buildPaymentNew(String imagePath, String bankName, context, String code, String type) {
+  Widget buildPaymentNew(
+      String imagePath, String bankName, context, String code, String type) {
     return Card(
       elevation: 2,
       child: InkWell(
         onTap: () async {
           // Logika untuk metode pembayaran tertentu
-          await _submitForm(widget.taskID, code, type, widget.totalPrice!.toDouble());
+          await _submitForm(
+              widget.taskID, code, type, widget.totalPrice!.toDouble());
         },
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
@@ -292,7 +312,9 @@ class _PaymentToPageState extends State<PaymentToPage> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(width: 50,),
+                SizedBox(
+                  width: 50,
+                ),
                 Expanded(
                   child: Text(
                     bankName,
@@ -309,7 +331,11 @@ class _PaymentToPageState extends State<PaymentToPage> {
     );
   }
 
-  Widget buildPaymentMethodCard(String imagePath, String bankName, context, {required double cardWidth, required double cardHeight, required double imageWidth, required double imageHeight}) {
+  Widget buildPaymentMethodCard(String imagePath, String bankName, context,
+      {required double cardWidth,
+      required double cardHeight,
+      required double imageWidth,
+      required double imageHeight}) {
     return Card(
       elevation: 2,
       child: InkWell(
@@ -332,7 +358,9 @@ class _PaymentToPageState extends State<PaymentToPage> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(width: 100,),
+                SizedBox(
+                  width: 100,
+                ),
                 Expanded(
                   child: Text(
                     bankName,

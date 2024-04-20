@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:idmall/models/payment_method.dart';
 import 'package:idmall/models/payment_method_model.dart';
-import 'package:idmall/pages/invoice.dart';
 import 'package:idmall/pages/invoice_testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;

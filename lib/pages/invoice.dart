@@ -10,12 +10,16 @@ import 'package:get/get.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class Invoice extends StatefulWidget {
   final String code;
   final int totalPrice;
   final String taskID;
-  const Invoice({super.key, required this.code, required this.totalPrice, required this.taskID});
+  const Invoice({
+    super.key,
+    required this.code,
+    required this.totalPrice,
+    required this.taskID,
+  });
 
   @override
   State<Invoice> createState() => _InvoiceState();
@@ -27,7 +31,7 @@ class _InvoiceState extends State<Invoice> {
   String? codeAccount;
   String? bank;
   int? total;
-  
+
   Future<void> getInvoice() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     setState(() {
@@ -36,17 +40,17 @@ class _InvoiceState extends State<Invoice> {
     try {
       // Replace URL with your endpoint
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-                      HttpClient()
-                        ..badCertificateCallback =
-                            (X509Certificate cert, String host, int port) => true;
-      var response = await dio.get('${config.backendBaseUrl}/transaction/${widget.taskID}',
-          // data: dataNya,
-          options: Options(headers: {
-            HttpHeaders.authorizationHeader: "Bearer $token",
-          }));
+          HttpClient()
+            ..badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
+      var response =
+          await dio.get('${config.backendBaseUrl}/transaction/${widget.taskID}',
+              options: Options(headers: {
+                HttpHeaders.authorizationHeader: "Bearer $token",
+              }));
 
       // Handle response
-      Map<String,dynamic> result = response.data;
+      Map<String, dynamic> result = response.data;
       if (result['data']['task_id'] == widget.taskID) {
         print(result);
         setState(() {
@@ -61,8 +65,6 @@ class _InvoiceState extends State<Invoice> {
       print(e.toString());
     }
   }
-
-  
 
   @override
   void initState() {
@@ -82,7 +84,10 @@ class _InvoiceState extends State<Invoice> {
           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
           child: Column(
             children: [
-              ContainerWidgetWithRoundedBorder(title: 'No Va:', subtitle: codeAccount ?? '',),
+              ContainerWidgetWithRoundedBorder(
+                title: 'No Va:',
+                subtitle: codeAccount ?? '',
+              ),
               // ExpansionPanelList(
               //   expansionCallback: (int index, bool isExpanded) {
               //     print(_data[index].isExpanded);
@@ -105,48 +110,59 @@ class _InvoiceState extends State<Invoice> {
               //   }).toList(),
               // ),
               SizedBox(height: 15),
-              ContainerWidgetWithRoundedBorder(title: 'Name:', subtitle: bank ?? '',),
-              SizedBox(height: 15,),
-              ContainerWidgetWithRoundedBorder(title: 'Total Payment:', subtitle: "${total.toString()}",),
-              SizedBox(height: 15,),
+              ContainerWidgetWithRoundedBorder(
+                title: 'Name:',
+                subtitle: bank ?? '',
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              ContainerWidgetWithRoundedBorder(
+                title: 'Total Payment:',
+                subtitle: "${total.toString()}",
+              ),
+              SizedBox(
+                height: 15,
+              ),
               ElevatedButton(
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder:  (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Success'),
-                      content: SingleChildScrollView(
-                        child: Text(
-                          // Your agreement content here
-                          'Pembayaran sudah selesai dilakukan',
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Success'),
+                        content: SingleChildScrollView(
+                          child: Text(
+                            // Your agreement content here
+                            'Pembayaran sudah selesai dilakukan',
+                          ),
                         ),
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            // Navigator.of(context).pop();
-                            // Navigator.of(context).pop();
-                            // Navigator.of(context).pop();
-                            // Navigator.of(context).pop();
-                            Navigator.of(context).popUntil((route) => route.isFirst);
-                          },
-                          child: Text('Close'),
-                        ),
-                        // TextButton(
-                        //   onPressed: () {
-                        //     // Add your logic for handling agreement acceptance
-                        //     // For example, you can set a variable to indicate agreement acceptance
-                        //     // _agreeToTerms = true;
-                        //     // Then proceed with further actions.
-                        //     Navigator.of(context).pop();
-                        //   },
-                        //   child: Text('I Agree'),
-                        // ),
-                      ],
-                    );
-                  },
-                );
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              // Navigator.of(context).pop();
+                              // Navigator.of(context).pop();
+                              // Navigator.of(context).pop();
+                              // Navigator.of(context).pop();
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isFirst);
+                            },
+                            child: Text('Close'),
+                          ),
+                          // TextButton(
+                          //   onPressed: () {
+                          //     // Add your logic for handling agreement acceptance
+                          //     // For example, you can set a variable to indicate agreement acceptance
+                          //     // _agreeToTerms = true;
+                          //     // Then proceed with further actions.
+                          //     Navigator.of(context).pop();
+                          //   },
+                          //   child: Text('I Agree'),
+                          // ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: Text('Check Payment Status'),
               )
@@ -270,7 +286,9 @@ class ContainerWidgetWithRoundedBorder extends StatelessWidget {
   final String title;
   final String subtitle;
   const ContainerWidgetWithRoundedBorder({
-    super.key, required this.title, required this.subtitle,
+    super.key,
+    required this.title,
+    required this.subtitle,
   });
 
   @override
@@ -278,7 +296,10 @@ class ContainerWidgetWithRoundedBorder extends StatelessWidget {
     return InkWell(
       onTap: () async {
         await Clipboard.setData(ClipboardData(text: subtitle));
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$subtitle disimpan ke Clipboard"),duration: Durations.medium4,));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("$subtitle disimpan ke Clipboard"),
+          duration: Durations.medium4,
+        ));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -291,13 +312,12 @@ class ContainerWidgetWithRoundedBorder extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(title),
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             Text(
               subtitle,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
         ),

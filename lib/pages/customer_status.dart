@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:idmall/pages/activation.dart';
-import 'package:idmall/pages/fab.dart';
 import 'package:idmall/pages/fab_testing.dart';
-import 'package:idmall/pages/order_data.dart';
 import 'package:idmall/pages/pembayaran_testing.dart';
 import 'package:idmall/pages/upgrade_downgrade_detail.dart';
-import 'package:idmall/widget/pesanan.dart';
 import 'package:idmall/widget/status_timeline.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-import 'package:idmall/widget/event_card.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class CustomerStatus extends StatefulWidget {
@@ -325,15 +320,16 @@ class _CustomerStatusState extends State<CustomerStatus> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        // builder: (context) => OrderData(taskID: widget.taskid,)),
-                                        builder: (context) =>
-                                            UpgradeDowngradeDetail(
-                                              task: widget.taskid,
-                                              sid: '',
-                                            )),
+                                      // builder: (context) => OrderData(taskID: widget.taskid,)),
+                                      builder: (context) =>
+                                          UpgradeDowngradeDetail(
+                                        task: widget.taskid,
+                                        sid: '',
+                                      ),
+                                    ),
                                   );
                                 },
-                                child: Text('Lanjut'))
+                                child: Text('Upgrade'))
                             : Container(),
                       ],
                     ),

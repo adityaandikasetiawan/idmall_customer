@@ -15,25 +15,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
-import 'package:idmall/config/config.dart' as config;
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  print("Initializing Firebase...");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  ).then((_) {
-    print("Firebase initialization completed.");
-  });
+  ).then((_) {});
   String? token;
-  String? fcm_token;
   SharedPreferences? _pref = await SharedPreferences.getInstance();
   token = _pref.getString('token') ?? '';
   FirebaseMessaging.instance.getToken().then((value) async {
-    print("Token: $value");
-
     if (value != null) {
       _pref.setString('fcm_token', value);
       if (token != null && token != '') {
@@ -49,7 +42,6 @@ void main() async {
             "Authorization": "Bearer $token"
           }),
         );
-        print(response);
       }
     }
     // csvzsOX1Rtifk2f0xUeUam:APA91bHnZK_XFVE6_2s--UqYcIv7N2pzOgFWXe-xpr5ej7nNrvCMQxIiNhioRhREDUt2zdba5xJOLQxL3tTNX35O_n4g_qcV8UMdexfvlkYdW5OUQPaGDJ499XK2f78ekf-A5ZiITPJl
@@ -81,8 +73,6 @@ void main() async {
 
   FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
     if (message != null) {
-      print(message);
-      print(1);
       // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
     }
   });
@@ -96,7 +86,6 @@ void main() async {
   Stripe.publishableKey = publishableKey;
 
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-    print("onMessageOpened App; $message");
     // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
     // push(
     //   MaterialPageRoute(builder: (builder) => PushNotificationOnAll()),
@@ -107,18 +96,13 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-    print("onMessageOpened App; $message");
     // Navigator.of(navigatorKey.currentState!.context).pushNamed('/push-page', arguments: {"message", json.encode(message.data)});
   });
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     // print foreground message here.
-    print("OVER HERE");
-    print('Handling a foreground message ${message.messageId}');
-    print('Notification Message: ${message.data}');
 
     if (message.notification != null) {
-      print('Message also contained a notification:  ${message.notification}');
       AwesomeNotifications().createNotification(
           content: NotificationContent(
         id: UniqueKey().hashCode,
@@ -135,8 +119,6 @@ void main() async {
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-
-  print("_firebaseMessagingBackgroundHandler: $message");
 }
 
 // ignore: must_be_immutable

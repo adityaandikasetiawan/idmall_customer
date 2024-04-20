@@ -1,5 +1,6 @@
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
+
 import 'dart:convert';
-import 'package:get/get.dart';
 import 'package:idmall/admin/home_admin.dart';
 import 'package:idmall/guest/dashboard.dart';
 import 'package:idmall/pages/navigation.dart';
@@ -7,9 +8,7 @@ import 'package:idmall/pages/forgotpassword.dart';
 import 'package:idmall/pages/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
-import 'dart:convert';
 import 'package:idmall/config/config.dart' as config;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,19 +41,18 @@ class LoginResponse {
   Map<String, dynamic> toJson() => {
         'email': email,
         'firstName': firstName,
-        'fullName': firstName + ' ' + lastName,
+        'fullName': '$firstName $lastName',
         'lastName': lastName,
         'token': token
       };
 }
 
 Future<dynamic> loginWithEmailPassword(payload) async {
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  final SharedPreferences prefs = await _prefs;
+  final Future<SharedPreferences> prefs0 = SharedPreferences.getInstance();
+  final SharedPreferences prefs = await prefs0;
   final fcm_token = prefs.getString('fcm_token');
   final body = jsonDecode(payload);
   final dio = Dio();
-  print("$payload");
   if (fcm_token != null) {
     final response = await dio.post(
       '${config.backendBaseUrl}/user/login',
@@ -64,24 +62,19 @@ Future<dynamic> loginWithEmailPassword(payload) async {
         "fcm_token": fcm_token
       },
     );
-    var data = response.data;
-    var httpStatus = response.statusCode;
     return response;
   } else {
-
     final response = await dio.post(
       '${config.backendBaseUrl}/user/login',
       data: {"email": body["email"], "password": body["password"]},
     );
-    var data = response.data;
-    var httpStatus = response.statusCode;
     return response;
   }
 }
 
 class _LoginState extends State<Login> {
   User? currentUser;
-  String email = "", password = "";
+  String email = "", password = "", taskid = "", status = "", fullName = "";
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -99,31 +92,45 @@ class _LoginState extends State<Login> {
   Future<void> userLogin() async {
     try {
       var payload = json.encode({
-        "email": "${useremailcontroller.text}",
-        "password": "${userpasswordcontroller.text}",
+        "email": useremailcontroller.text,
+        "password": userpasswordcontroller.text,
       });
 
       var response = await loginWithEmailPassword(payload);
-      print('cek');
       if (response.statusCode == 200) {
         var token = response.data['data']['token'];
-        var fullName = response.data['data']['first_name'] +
-            ' ' +
-            response.data['data']['last_name'];
+        if (response.data['data']['first_name'] != null) {
+          fullName = response.data['data']['first_name'] +
+              ' ' +
+              response.data['data']['last_name'];
+        } else {
+          fullName = response.data['data']['name'];
+        }
+
+        if (response.data['data']['subscription_status'] != null) {
+          status = response.data['data']['subscription_status'];
+        } else {
+          status = response.data['data']['status'];
+        }
         var userId = response.data['data']['id'];
         var email = response.data['data']['email'];
-        print(response.data);
+        taskid = response.data['data']['task_id'] ?? "";
         final SharedPreferences prefs = await _prefs;
         prefs.setString('token', token);
         prefs.setString('fullName', fullName);
-        prefs.setString('firstName', response.data['data']['first_name']);
-        prefs.setString('lastName', response.data['data']['last_name']);
+        prefs.setString('firstName', response.data['data']['first_name'] ?? "");
+        prefs.setString('lastName', response.data['data']['last_name'] ?? "");
         prefs.setString('email', email);
         prefs.setString('user_id', userId.toString());
       }
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const NavigationScreen()),
+        MaterialPageRoute(
+          builder: (context) => NavigationScreen(
+            customerID: taskid,
+            status: status,
+          ),
+        ),
         (Route<dynamic> route) => false,
       );
     } on DioException catch (e) {
@@ -133,7 +140,8 @@ class _LoginState extends State<Login> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text("Warning"),
-              content: Text("Email atau password salah, silakan coba lagi"),
+              content:
+                  const Text("Email atau password salah, silakan coba lagi"),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -260,274 +268,263 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: [
-              Container(
-                child: Container(
-                  child: Column(
+        child: Column(
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                margin:
-                                    const EdgeInsets.only(top: 120.0, left: 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Selamat Datang di IdMall",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20.0,
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              margin: const EdgeInsets.only(right: 20.0),
-                              child: Image.asset(
-                                'images/signup.png',
-                                height: 200,
-                                width: 200,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Form(
-                        key: _formKey,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 120.0, left: 20),
+                          child: const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextFormField(
-                                controller: useremailcontroller,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please Enter Email';
-                                  }
-                                  return null;
-                                },
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                ),
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.email,
-                                      color: Color.fromARGB(255, 93, 92, 92)),
-                                  hintText: 'Email',
-                                  hintStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 93, 92, 92)),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 15.0, horizontal: 20.0),
+                              Text(
+                                "Selamat Datang di IdMall",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20.0,
+                                  fontFamily: 'Poppins',
                                 ),
                               ),
-                              const SizedBox(height: 20),
-                              TextFormField(
-                                controller: userpasswordcontroller,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Tolong Masukkan Password';
-                                  }
-                                  return null;
-                                },
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                ),
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.lock,
-                                      color: Color.fromARGB(255, 93, 92, 92)),
-                                  hintText: 'Password',
-                                  hintStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 93, 92, 92)),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 15.0, horizontal: 20.0),
-                                ),
-                              ),
-                              const SizedBox(height: 10.0),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ForgotPassword()));
-                                },
-                                child: Container(
-                                  alignment: Alignment.topRight,
-                                  child: Text(
-                                    "Lupa Password?",
-                                    style: TextStyle(
-                                      color:
-                                          const Color.fromARGB(255, 228, 99, 7),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14.0,
-                                      fontFamily: 'Poppins',
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 30.0),
-                              GestureDetector(
-                                onTap: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    String enteredEmail =
-                                        useremailcontroller.text;
-                                    String enteredPassword =
-                                        userpasswordcontroller.text;
-
-                                    if (enteredEmail == 'admin' &&
-                                        enteredPassword == 'admin') {
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const HomeAdmin()));
-                                    } else {
-                                      userLogin();
-                                    }
-                                  }
-                                },
-                                child: Material(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  color: Color.fromARGB(255, 228, 99, 7),
-                                  child: const SizedBox(
-                                    width: 400.0,
-                                    height: 50.0,
-                                    child: Center(
-                                      child: Text(
-                                        "Sign In",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18.0,
-                                          fontFamily: 'Poppins',
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    "Tidak Memiliki Akun?",
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 93, 92, 92),
-                                      fontSize: 14.0,
-                                      fontFamily: 'Poppins',
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5.0),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const SignUp()));
-                                      print("Sign Up tapped!");
-                                    },
-                                    child: const Text(
-                                      "Daftar",
-                                      style: TextStyle(
-                                        color: Color.fromARGB(255, 228, 99, 7),
-                                        fontSize: 14.0,
-                                        fontFamily: 'Poppins',
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 30.0),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: 1.0,
-                                      color: Colors.grey,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 10.0),
-                                    ),
-                                  ),
-                                  const Text(
-                                    "Atau",
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 93, 92, 92),
-                                      fontSize: 20.0,
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      height: 1.0,
-                                      color: Colors.grey,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 10.0),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 30.0),
-                              OutlinedButton(
-                                style: TextButton.styleFrom(
-                                  fixedSize: Size(
-                                      MediaQuery.of(context).size.width, 50),
-                                  side: BorderSide(
-                                      width: 2.0,
-                                      color: Color.fromARGB(255, 228, 99, 7)),
-                                ),
-                                onPressed: () {
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const DashboardGuest()));
-                                },
-                                child: Text(
-                                  'Log In as Guest',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    // color: Color.fromARGB(255, 93, 92, 92),
-                                    fontSize: 16.0,
-                                    fontFamily: 'Poppins',
-                                  ),
-                                ),
-                              ),
+                              SizedBox(height: 20),
                             ],
                           ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.only(right: 20.0),
+                        child: Image.asset(
+                          'images/signup.png',
+                          height: 200,
+                          width: 200,
                         ),
                       ),
                     ],
                   ),
                 ),
-              )
-            ],
-          ),
+                const SizedBox(height: 10),
+                Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: useremailcontroller,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please Enter Email';
+                            }
+                            return null;
+                          },
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.email,
+                                color: Color.fromARGB(255, 93, 92, 92)),
+                            hintText: 'Email',
+                            hintStyle: const TextStyle(
+                                color: Color.fromARGB(255, 93, 92, 92)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 15.0, horizontal: 20.0),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          controller: userpasswordcontroller,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Tolong Masukkan Password';
+                            }
+                            return null;
+                          },
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.lock,
+                                color: Color.fromARGB(255, 93, 92, 92)),
+                            hintText: 'Password',
+                            hintStyle: const TextStyle(
+                                color: Color.fromARGB(255, 93, 92, 92)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 15.0, horizontal: 20.0),
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ForgotPassword()));
+                          },
+                          child: Container(
+                            alignment: Alignment.topRight,
+                            child: const Text(
+                              "Lupa Password?",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 228, 99, 7),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14.0,
+                                fontFamily: 'Poppins',
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 30.0),
+                        GestureDetector(
+                          onTap: () async {
+                            if (_formKey.currentState!.validate()) {
+                              String enteredEmail = useremailcontroller.text;
+                              String enteredPassword =
+                                  userpasswordcontroller.text;
+
+                              if (enteredEmail == 'admin' &&
+                                  enteredPassword == 'admin') {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomeAdmin()));
+                              } else {
+                                userLogin();
+                              }
+                            }
+                          },
+                          child: Material(
+                            borderRadius: BorderRadius.circular(20.0),
+                            color: const Color.fromARGB(255, 228, 99, 7),
+                            child: const SizedBox(
+                              width: 400.0,
+                              height: 50.0,
+                              child: Center(
+                                child: Text(
+                                  "Sign In",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18.0,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Tidak Memiliki Akun?",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 93, 92, 92),
+                                fontSize: 14.0,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                            const SizedBox(width: 5.0),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const SignUp()));
+                              },
+                              child: const Text(
+                                "Daftar",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 228, 99, 7),
+                                  fontSize: 14.0,
+                                  fontFamily: 'Poppins',
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 30.0),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 1.0,
+                                color: Colors.grey,
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                              ),
+                            ),
+                            const Text(
+                              "Atau",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 93, 92, 92),
+                                fontSize: 20.0,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: 1.0,
+                                color: Colors.grey,
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 30.0),
+                        OutlinedButton(
+                          style: TextButton.styleFrom(
+                            fixedSize:
+                                Size(MediaQuery.of(context).size.width, 50),
+                            side: const BorderSide(
+                                width: 2.0,
+                                color: Color.fromARGB(255, 228, 99, 7)),
+                          ),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const DashboardGuest()));
+                          },
+                          child: const Text(
+                            'Log In as Guest',
+                            style: TextStyle(
+                              color: Colors.black,
+                              // color: Color.fromARGB(255, 93, 92, 92),
+                              fontSize: 16.0,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
       ),
     );

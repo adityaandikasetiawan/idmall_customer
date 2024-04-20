@@ -20,7 +20,7 @@ class NotificationsPage extends StatelessWidget {
           centerTitle: true,
           bottom: TabBar(
             tabs: [
-              Tab(text: 'Promosi'),
+              Tab(text: 'Pembayaran'),
               Tab(text: 'Status Bar'),
             ],
             indicatorColor:

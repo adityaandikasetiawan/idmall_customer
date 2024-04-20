@@ -199,10 +199,11 @@ class _FABTestingState extends State<FABTesting> {
                       onPressed: () {
                         ScaffoldMessenger.of(context)
                             .hideCurrentMaterialBanner();
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const NavigationScreen()),
+                            builder: (context) => const NavigationScreen(),
+                          ),
                         );
                       },
                     )
