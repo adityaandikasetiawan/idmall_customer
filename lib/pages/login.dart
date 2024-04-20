@@ -122,6 +122,7 @@ class _LoginState extends State<Login> {
         prefs.setString('lastName', response.data['data']['last_name'] ?? "");
         prefs.setString('email', email);
         prefs.setString('user_id', userId.toString());
+        prefs.setString('is_email_verified', response.data['data']['is_email_verified'].toString());
       }
       Navigator.pushAndRemoveUntil(
         context,
