@@ -1,10 +1,10 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:idmall/pages/bantuan/bantuan.dart';
 import 'package:idmall/pages/broadbandbisnis.dart';
 import 'package:idmall/pages/broadbandhome.dart';
 import 'package:idmall/pages/enterprisesolution.dart';
-import 'package:idmall/pages/helpcenter.dart';
 import 'package:idmall/pages/history.dart';
 import 'package:idmall/pages/home.dart';
 import 'package:idmall/pages/account.dart';
@@ -42,7 +42,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             customerId: _customerid,
             status: _status,
           ),
-          const HelpCenterPage(),
+          Bantuan(),
           // const HelpCenterCategory(),
           // const PelaporanPage(),
           const Account(),

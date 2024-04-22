@@ -8,4 +8,12 @@ class ODPList {
     required this.latitude,
     required this.longitude,
   });
+
+  factory ODPList.fromJson(Map<String, dynamic> json) {
+    return ODPList(
+      odp_name: json['POP_Name'] ?? "",
+      latitude: json['Latitude'] ?? "0",
+      longitude: json['Longitude'] ?? "0",
+    );
+  }
 }
