@@ -265,7 +265,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
             // ),SizedBox(
             TimelineTile(
               isFirst: false,
-              isLast: false,
+              isLast: true,
               beforeLineStyle: LineStyle(
                 color: statusActive.contains(widget.status)
                     ? Colors.deepOrange.shade400

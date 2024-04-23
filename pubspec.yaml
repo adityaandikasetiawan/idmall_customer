@@ -74,6 +74,8 @@ dependencies:
   flutter_typeahead: ^5.2.0
   location: ^6.0.1
   google_places_flutter: ^2.0.8
+  intl: ^0.19.0
+  image: ^4.1.7
 
 
 
@@ -155,6 +157,8 @@ flutter:
      - images/bank/mandiri.png
      - images/bank/permata.png
      - images/bank/sampoerna.png
+     - images/bb_green_mint.jpg
+     - images/bb_red_orange.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

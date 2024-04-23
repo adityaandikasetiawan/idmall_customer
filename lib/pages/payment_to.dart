@@ -73,14 +73,8 @@ class _PaymentToPageState extends State<PaymentToPage> {
       List<Map<String, dynamic>> list = [];
       var data = hasil['data'];
       data.forEach((key, ele) {
-        print(ele);
         list.add({key: ele});
-        // for (var elem in ele) {
-        //   // elem.forEach((keys, eleme) {
-        //   // });
-        // }
       });
-      print(list[1]);
       return list;
     } else {
       return List.empty();
@@ -95,7 +89,6 @@ class _PaymentToPageState extends State<PaymentToPage> {
       'payment_type': payment_type.toUpperCase(),
       'total_payment': total_payment,
     };
-    print(dataNya);
     try {
       // Replace URL with your endpoint
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
@@ -211,9 +204,6 @@ class _PaymentToPageState extends State<PaymentToPage> {
                 child: FutureBuilder(
                     future: list,
                     builder: (context, snapshot) {
-                      snapshot.connectionState == ConnectionState.done
-                          ? print('oke')
-                          : print('loading');
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return CircularProgressIndicator();
                       } else if (snapshot.hasData) {
@@ -235,9 +225,6 @@ class _PaymentToPageState extends State<PaymentToPage> {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: dataNya1.length,
                               itemBuilder: (context, index1) {
-                                if (index == 1) {
-                                  print(dataNya1);
-                                }
                                 return buildPaymentNew(
                                     dataNya1[index1]['icon_url'],
                                     dataNya1[index1]['name'] ?? '',
@@ -254,32 +241,6 @@ class _PaymentToPageState extends State<PaymentToPage> {
                       }
                     }),
               ),
-              // getPaymentList(context) ?? Container(),
-              // buildPaymentMethodCard('images/bank/bca.png', 'Bank BCA', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/mandiri.png', 'Bank Mandiri', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/bni.png', 'Bank BNI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/bri.png', 'Bank BRI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/BSI.png', 'Bank BSI', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/permata.png', 'Bank Permata', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/cimb.png', 'Bank CIMB', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/DBS.png', 'Bank DBS', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/BJB.png', 'Bank BJB', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/sampoerna.png', 'Bank Sampoerna', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/alfamart.png', 'Alfamart', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // buildPaymentMethodCard('images/bank/indomart.png', 'Indomart', context, cardWidth: MediaQuery.of(context).size.width, cardHeight: 120, imageWidth: 50, imageHeight: 50),
-              // SizedBox(height: 20.0),
-              // SizedBox(
-              //   width: double.infinity,
-              //   child: ElevatedButton(
-              //     onPressed: () {
-              //       // Logika untuk lanjutkan pembayaran
-              //     },
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: Colors.orange,
-              //     ),
-              //     child: Text('Lanjutkan'),
-              //   ),
-              // ),
             ],
           ),
         ),

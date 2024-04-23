@@ -63,103 +63,107 @@ class _InvoicePageState extends State<InvoicePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'Detail Pembayaran',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 16),
-              ListTile(
-                title: Text('Metode Pembayaran'),
-                subtitle: Text(widget.typePayment == "BANK"
-                    ? "Virtual Account"
-                    : "Outlet"),
-              ),
-              ListTile(
-                title: Text('Bank'),
-                subtitle: Text(widget.bankName),
-              ),
-              ListTile(
-                title: Text('Nomor Rekening'),
-                subtitle: Text(widget.taskid),
-              ),
-              ListTile(
-                title: Text('Total Pembayaran'),
-                subtitle: Text('Rp. ${widget.total}'),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Tata Cara Pembayaran',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          child: SingleChildScrollView(
+            child: Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    '1. Lakukan transfer sejumlah total pembayaran ke rekening yang tertera.',
+                    'Detail Pembayaran',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    textAlign: TextAlign.left,
+                  ),
+                  SizedBox(height: 16),
+                  ListTile(
+                    title: Text('Metode Pembayaran'),
+                    subtitle: Text(widget.typePayment == "BANK"
+                        ? "Virtual Account"
+                        : "Outlet"),
+                  ),
+                  ListTile(
+                    title: Text('Bank'),
+                    subtitle: Text(widget.bankName),
+                  ),
+                  ListTile(
+                    title: Text('Nomor Rekening'),
+                    subtitle: Text(widget.taskid),
+                  ),
+                  ListTile(
+                    title: Text('Total Pembayaran'),
+                    subtitle: Text('Rp. ${widget.total}'),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Tata Cara Pembayaran',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '1. Lakukan transfer sejumlah total pembayaran ke rekening yang tertera.',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '2. Sertakan nomor invoice pada deskripsi transfer.',
+                        style: TextStyle(fontSize: 16),
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '3. Setelah melakukan pembayaran, tunggu hingga konfirmasi pembayaran diterima.',
+                        style: TextStyle(fontSize: 16),
+                        textAlign: TextAlign.left,
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Waktu Pembayaran Tersisa:',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Text(
-                    '2. Sertakan nomor invoice pada deskripsi transfer.',
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.left,
+                    '${(_secondsRemaining ~/ 3600).toString().padLeft(2, '0')} : ${((_secondsRemaining % 3600) ~/ 60).toString().padLeft(2, '0')} : ${(_secondsRemaining % 60).toString().padLeft(2, '0')}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    '3. Setelah melakukan pembayaran, tunggu hingga konfirmasi pembayaran diterima.',
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.left,
+                  SizedBox(
+                    height: 10,
+                  ),
+                  // ElevatedButton(
+                  //   onPressed: () {},
+                  //   child: Text("Batalkan Pembayaran"),
+                  // ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (builder) => NavigationScreen(),
+                        ),
+                      );
+                    },
+                    child: Text("Kembali ke beranda"),
                   )
                 ],
               ),
-              SizedBox(height: 16),
-              Text(
-                'Waktu Pembayaran Tersisa:',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                '${(_secondsRemaining ~/ 3600).toString().padLeft(2, '0')} : ${((_secondsRemaining % 3600) ~/ 60).toString().padLeft(2, '0')} : ${(_secondsRemaining % 60).toString().padLeft(2, '0')}',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                onPressed: () {},
-                child: Text("Batalkan Pembayaran"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (builder) => NavigationScreen(),
-                    ),
-                  );
-                },
-                child: Text("Kembali ke beranda"),
-              )
-            ],
+            ),
           ),
         ),
       ),

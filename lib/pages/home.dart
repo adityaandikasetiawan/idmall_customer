@@ -5,6 +5,7 @@ import 'package:idmall/pages/details.dart';
 import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/invoice.dart';
 import 'package:idmall/pages/invoice_testing.dart';
+import 'package:idmall/pages/pembayaran_testing.dart';
 import 'package:idmall/service/coverage_area.dart';
 // ignore: unused_import
 import 'package:idmall/service/database.dart';
@@ -32,10 +33,15 @@ class _HomeState extends State<Home> {
   String greeting = '';
   String points = '10';
   String vouchers = '1';
-  String? billing = "";
   String? package = "";
   String? customerID = "";
   String? status = "";
+
+  //endpoint h-7 billing
+  String? billing = "";
+  String? dueDate = "";
+  bool isDueDateActive = false;
+
   final oCcy = NumberFormat("#,##0", "en_US");
 
   @override
@@ -44,6 +50,7 @@ class _HomeState extends State<Home> {
     setGreeting();
     getUserName();
     dashboardData();
+    billingData();
   }
 
   void setGreeting() {
@@ -76,7 +83,7 @@ class _HomeState extends State<Home> {
       final String token = prefs.getString('token') ?? "";
 
       final response = await dio.get(
-        "${config.backendBaseUrl}/customer/billing/active",
+        "${config.backendBaseUrl}/customer/billing/active/",
         options: Options(headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token"
@@ -85,7 +92,35 @@ class _HomeState extends State<Home> {
       setState(() {
         package = response.data['data']['Sub_Product'] ?? "";
         customerID = response.data['data']['Task_ID'] ?? "";
-        billing = oCcy.format(response.data['data']['Monthly_Price']);
+        status = response.data['data']['Status'] ?? "";
+      });
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> billingData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token') ?? "";
+
+      final response = await dio.get(
+        "${config.backendBaseUrl}/customer/billing/due",
+        options: Options(headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        }),
+      );
+      setState(() {
+        if (response.data['data'].length > 0) {
+          isDueDateActive = true;
+          billing = oCcy.format(response.data['data']['AR_Val']);
+          DateTime dueDates =
+              DateTime.tryParse(response.data['data']['Due_Date'])!;
+          dueDate = DateFormat('MMMM, yyyy').format(dueDates);
+        }
+        package = response.data['data']['Sub_Product'] ?? "";
+        customerID = response.data['data']['Task_ID'] ?? "";
         status = response.data['data']['Status'] ?? "";
       });
     } catch (error) {
@@ -265,47 +300,135 @@ class _HomeState extends State<Home> {
             children: [
               //card billing, point, etc
               status == "ACTIVE" || status == "DU" || status == "FREEZE"
-                  ? SizedBox(
-                      width: double.infinity *
-                          2, // Sesuaikan lebar dengan kebutuhan
-                      height: 120, // Sesuaikan tinggi dengan kebutuhan
+                  ? Container(
+                      width: double.infinity * 2,
                       child: Card(
                         elevation: 4.0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius:
+                              BorderRadius.circular(15), // Bentuk sudut card
                         ),
-                        color: const Color.fromARGB(255, 19, 24,
-                            84), // Mengubah warna background menjadi biru dongker
-                        child: Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Customer ID : $customerID",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
-                              ),
-                              Text(
-                                "Paket            : $package",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
-                              ),
-                              Text(
-                                "Status           : $status",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
-                              ),
-                              Text(
-                                "Billing           : $billing",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
-                              )
-                            ],
+                        // Mengubah warna background menjadi biru dongker
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                                15), // Bentuk sudut container
+                            image: DecorationImage(
+                              image: AssetImage(
+                                  'images/bb_green_mint.jpg'), // Gambar background
+                              fit: BoxFit
+                                  .cover, // Menyesuaikan gambar dengan ukuran container
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(18.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "$customerID",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "$package",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "$status",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
+                    )
+                  : SizedBox(),
+
+              isDueDateActive == true
+                  ? Column(
+                      children: [
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Text(
+                          "Periode bulan ini sudah jatuh tempo, segera lakukan pembyaran",
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PaymentMethod(
+                                  taskid: "$customerID",
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: double.infinity * 2,
+                            child: Card(
+                              elevation: 4, // Tingkat elevasi card
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    15), // Bentuk sudut card
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                      15), // Bentuk sudut container
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        'images/bb_red_orange.jpg'), // Gambar background
+                                    fit: BoxFit
+                                        .cover, // Menyesuaikan gambar dengan ukuran container
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(18.0),
+                                  child: ListTile(
+                                    title: Text(
+                                      "$dueDate",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      "$billing",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    trailing: Icon(Icons.arrow_forward_ios),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     )
                   : SizedBox(),
 

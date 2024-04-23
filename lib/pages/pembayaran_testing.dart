@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: non_constant_identifier_names
 
+import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:idmall/models/payment_method.dart';
 import 'package:idmall/models/payment_method_model.dart';
@@ -29,7 +30,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
 
   List<PaymentMethodModel> paymentMethodListBank = [];
   List<PaymentMethodModelOutlet> paymentMethodListOutlet = [];
-  final oCcy = new NumberFormat("#,##0", "en_US");
+  final oCcy = NumberFormat("#,##0", "en_US");
   String? vat;
   String? monthly_price;
   String? total;
@@ -177,6 +178,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: paymentMethodListBank.length,
+                physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return buildPaymentMethodCard(
                     paymentMethodListBank[index].iconURL,

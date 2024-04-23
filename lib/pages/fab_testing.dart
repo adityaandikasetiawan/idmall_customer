@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously, empty_catches
+
 import 'dart:convert';
 import 'dart:io';
+import 'dart:developer';
 import 'dart:ui' as ui;
 
 import 'package:dio/dio.dart';
@@ -11,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'dart:typed_data';
+import 'package:image/image.dart' as img;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 
@@ -37,8 +41,6 @@ class _FABTestingState extends State<FABTesting> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _idNumberController = TextEditingController();
   // final TextEditingController _mobilePhoneController = TextEditingController();
-  final TextEditingController _referralCodeController = TextEditingController();
-  String? _selectedServiceType;
   bool _agreeToTerms = false;
   String pdfUrl =
       '${config.backendBaseUrl}/terms-and-condition'; // Ganti URL dengan URL PDF yang diinginkan
@@ -47,10 +49,12 @@ class _FABTestingState extends State<FABTesting> {
   Uint8List? pdfBytes;
   bool isLoad = false;
   File? ktpImageFile;
+  File? signImageFile;
+  bool isSign = false;
+  bool isUploadSign = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCustomerActivation();
   }
@@ -74,9 +78,9 @@ class _FABTestingState extends State<FABTesting> {
       throw Exception('Failed to load PDF');
     }
 
-    SharedPreferences _pref = await SharedPreferences.getInstance();
+    SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
-      token = _pref.getString('token');
+      token = pref.getString('token');
     });
 
     response = await dio.get("$linkLaravelAPI/customer/fab",
@@ -93,9 +97,7 @@ class _FABTestingState extends State<FABTesting> {
         _idNumberController.text = hasil['data']['ktp'];
         // _selectedServiceType = hasil['data']['serviceName'] ?? "";
       });
-    } else {
-      print(hasil);
-    }
+    } else {}
   }
 
   void getImage() async {
@@ -134,6 +136,79 @@ class _FABTestingState extends State<FABTesting> {
         ktpImageFile = File(file.path);
       }
     });
+  }
+
+  void getImageSign() async {
+    bool? isCamera2 = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text("Camera"),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text("Gallery"),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (isCamera2 == null) return;
+
+    XFile? file2 = await ImagePicker().pickImage(
+        source: isCamera2 ? ImageSource.camera : ImageSource.gallery);
+    if (file2 != null) {
+      setState(() {
+        signImageFile = File(file2.path);
+      });
+      signImageFile = await convertImageToPng(signImageFile!);
+      print(signImageFile);
+    }
+  }
+
+  Future<File?> convertImageToPng(File imageFile) async {
+    try {
+      // Baca gambar sebagai objek Image
+      img.Image? image = img.decodeImage(await imageFile.readAsBytes());
+
+      // Jika gambar berhasil dibaca, ubah ke format PNG
+      if (image != null) {
+        // Buat objek Image dalam format PNG
+        img.Image pngImage =
+            img.copyResize(image, width: image.width, height: image.height);
+
+        // Buat file sementara untuk menyimpan gambar PNG
+        // Ambil path file tanpa ekstensi .jpg
+        String imagePathWithoutExtension =
+            imageFile.path.replaceAll('.jpg', '');
+
+        // Buat file sementara untuk menyimpan gambar PNG
+        File pngFile = File('$imagePathWithoutExtension.png');
+
+        // Tulis gambar PNG ke file sementara
+        await pngFile.writeAsBytes(img.encodePng(pngImage));
+
+        // Kembalikan file PNG yang telah dibuat
+        return pngFile;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error converting image to PNG: $e');
+      return null;
+    }
   }
 
   @override
@@ -228,9 +303,7 @@ class _FABTestingState extends State<FABTesting> {
                 });
               }
             } else if (currentstep == 1) {
-              images = await _signaturePadKey.currentState?.toImage();
-              if (ktpImageFile == null ||
-                  _signaturePadKey.currentState!.toPathList().isEmpty) {
+              if (ktpImageFile == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text(
@@ -240,10 +313,16 @@ class _FABTestingState extends State<FABTesting> {
                   ),
                 );
               } else {
-                final pngByteData =
-                    await images!.toByteData(format: ui.ImageByteFormat.png);
-                _sign = pngByteData!.buffer.asUint8List();
-                String base64Image = base64Encode(_sign!);
+                String base64Image = "";
+                if (isSign == false && isUploadSign == true) {
+                  base64Image = base64Encode(signImageFile!.readAsBytesSync());
+                } else if (isSign == true && isUploadSign == false) {
+                  images = await _signaturePadKey.currentState?.toImage();
+                  final pngByteData =
+                      await images!.toByteData(format: ui.ImageByteFormat.png);
+                  _sign = pngByteData!.buffer.asUint8List();
+                  base64Image = base64Encode(_sign!);
+                }
                 FormData formData =
                     FormData.fromMap({'signature': base64Image});
                 FormData formData2 = FormData.fromMap({
@@ -277,9 +356,8 @@ class _FABTestingState extends State<FABTesting> {
                       currentstep += 1;
                     });
                   }
-                } on DioException catch (e) {
-                  print(e);
-                }
+                  // ignore: unused_catch_clause
+                } on DioException catch (e) {}
               }
             }
           }
@@ -368,54 +446,64 @@ class _FABTestingState extends State<FABTesting> {
                             ),
                           ],
                         ),
+                        // const SizedBox(height: 16.0),
+                        // _buildTextField(
+                        //     _customerNameController, 'Nama Customer'),
+                        // const SizedBox(height: 16.0),
+                        // _buildTextField(_installationAddressController,
+                        //     'Alamat Pemasangan'),
+                        // const SizedBox(height: 16.0),
+                        // _buildTextField(
+                        //     _phoneNumberController, 'Telepon/ Telepon Seluler'),
+                        // const SizedBox(height: 16.0),
+                        // _buildTextField(_idNumberController, 'Nomor Identitas'),
+                        // const SizedBox(height: 16.0),
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(15.0),
+                        //     border: Border.all(color: Colors.grey),
+                        //   ),
+                        //   child: DropdownButtonFormField<String>(
+                        //     value: _selectedServiceType,
+                        //     onChanged: (String? newValue) {
+                        //       setState(() {
+                        //         _selectedServiceType = newValue;
+                        //       });
+                        //     },
+                        //     items: <String>[
+                        //       'idplay Retail Up To 10 Mbps',
+                        //       'idplay Retail Up To 20 Mbps',
+                        //       'idplay Retail Up To 30 Mbps',
+                        //       'idplay Retail Up To 50 Mbps',
+                        //       'idplay Retail Up To 100Mbps',
+                        //     ].map<DropdownMenuItem<String>>((String value) {
+                        //       return DropdownMenuItem<String>(
+                        //         value: value,
+                        //         child: Text(value),
+                        //       );
+                        //     }).toList(),
+                        //     decoration: const InputDecoration(
+                        //       labelText: 'Service Type',
+                        //       contentPadding: EdgeInsets.symmetric(
+                        //           horizontal: 16.0, vertical: 12.0),
+                        //       border: InputBorder.none,
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(height: 16.0),
+                        // _buildTextField(
+                        //     _referralCodeController, 'Referal Code'),
+                        // const SizedBox(height: 16.0),
                         const SizedBox(height: 16.0),
-                        _buildTextField(
-                            _customerNameController, 'Nama Customer'),
-                        const SizedBox(height: 16.0),
-                        _buildTextField(_installationAddressController,
-                            'Alamat Pemasangan'),
-                        const SizedBox(height: 16.0),
-                        _buildTextField(
-                            _phoneNumberController, 'Telepon/ Telepon Seluler'),
-                        const SizedBox(height: 16.0),
-                        _buildTextField(_idNumberController, 'Nomor Identitas'),
-                        const SizedBox(height: 16.0),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0),
-                            border: Border.all(color: Colors.grey),
-                          ),
-                          child: DropdownButtonFormField<String>(
-                            value: _selectedServiceType,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _selectedServiceType = newValue;
-                              });
-                            },
-                            items: <String>[
-                              'idplay Retail Up To 10 Mbps',
-                              'idplay Retail Up To 20 Mbps',
-                              'idplay Retail Up To 30 Mbps',
-                              'idplay Retail Up To 50 Mbps',
-                              'idplay Retail Up To 100Mbps',
-                            ].map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            decoration: const InputDecoration(
-                              labelText: 'Service Type',
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 12.0),
-                              border: InputBorder.none,
+                        const Center(
+                          child: Text(
+                            "Upload KTP/SIM/Passport",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16.0),
-                        _buildTextField(
-                            _referralCodeController, 'Referal Code'),
-                        const SizedBox(height: 16.0),
+                        const SizedBox(height: 10.0),
                         _buildKtpUploadField(),
                         ktpImageFile != null
                             ? ElevatedButton(
@@ -426,15 +514,49 @@ class _FABTestingState extends State<FABTesting> {
                                   });
                                 },
                               )
-                            : const Text(""),
+                            : SizedBox(),
                         const SizedBox(height: 16.0),
-                        Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey)),
-                          child: SfSignaturePad(
-                            key: _signaturePadKey,
+                        const Center(
+                          child: Text(
+                            "Tanda Tangan",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  isSign = true;
+                                  isUploadSign = false;
+                                });
+                              },
+                              child: const Text("E-Sign"),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  isSign = false;
+                                  isUploadSign = true;
+                                });
+                              },
+                              child: const Text("Upload"),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16.0),
+                        isSign == true
+                            ? Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey)),
+                                child: SfSignaturePad(
+                                  key: _signaturePadKey,
+                                ),
+                              )
+                            : const SizedBox(),
                         // ElevatedButton(
                         //   child: Text("Save"),
                         //   onPressed: () async {
@@ -447,12 +569,28 @@ class _FABTestingState extends State<FABTesting> {
                         //     log(base64Image);
                         //   },
                         // ),
-                        ElevatedButton(
-                          child: const Text("Clear"),
-                          onPressed: () => {
-                            _signaturePadKey.currentState!.clear(),
-                          },
-                        ),
+                        isSign == true
+                            ? ElevatedButton(
+                                child: const Text("Clear"),
+                                onPressed: () => {
+                                  _signaturePadKey.currentState!.clear(),
+                                },
+                              )
+                            : const SizedBox(),
+                        isUploadSign == true
+                            ? _buildSignUpload()
+                            : const SizedBox(),
+                        signImageFile != null
+                            ? ElevatedButton(
+                                child: const Text("Clear"),
+                                onPressed: () {
+                                  setState(() {
+                                    signImageFile = null;
+                                  });
+                                },
+                              )
+                            : SizedBox(),
+
                         // ElevatedButton(
                         //   onPressed: () {
                         //     // Handle form submission
@@ -526,8 +664,37 @@ class _FABTestingState extends State<FABTesting> {
               },
               icon: const Icon(
                   Icons.upload_file), // Change icon to your preference
-              label:
-                  const Text('Upload KTP'), // Change label to your preference
+              label: const Text(
+                  'Upload Card ID'), // Change label to your preference
+            ),
+    );
+  }
+
+  Widget _buildSignUpload() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        border: Border.all(
+          color: Colors.grey,
+          style: BorderStyle.solid,
+          width: 1.0,
+        ),
+      ),
+      child: signImageFile != null
+          ? Image.file(
+              signImageFile!,
+              width: MediaQuery.of(context).size.width,
+              height: 200,
+              fit: BoxFit.fill,
+            )
+          : TextButton.icon(
+              onPressed: () async {
+                getImageSign();
+              },
+              icon: const Icon(
+                  Icons.upload_file), // Change icon to your preference
+              label: const Text(
+                  'Upload Card ID'), // Change label to your preference
             ),
     );
   }

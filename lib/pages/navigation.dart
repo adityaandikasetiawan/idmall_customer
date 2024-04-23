@@ -28,7 +28,7 @@ class NavigationScreen extends StatefulWidget {
 
 class _NavigationScreenState extends State<NavigationScreen> {
   int pageIndex = 0;
-  String? _customerid, _status; // Menggunakan late untuk menginisialisasi nanti
+  String? _customerid, _status;
   late List<Widget> pages = [];
 
   @override
