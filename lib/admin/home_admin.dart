@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:idmall/admin/after_add.dart';
 import 'package:idmall/admin/accept_order.dart';

@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'dart:io';
 
 import 'package:idmall/service/database.dart';
@@ -31,14 +33,9 @@ class _AddFoodState extends State<AddFood> {
       if (image != null) {
         selectedImage = File(image.path);
         setState(() {});
-      } else {
-        print('Image selection canceled.');
-      }
-    } catch (e) {
-      print('Error picking image: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
-
 
   Future<void> uploadItem() async {
     setState(() {
@@ -52,7 +49,7 @@ class _AddFoodState extends State<AddFood> {
         value != null) {
       String addId = randomAlphaNumeric(10);
       Reference firebaseStorageRef =
-      FirebaseStorage.instance.ref().child("blogImages").child(addId);
+          FirebaseStorage.instance.ref().child("blogImages").child(addId);
       final UploadTask task = firebaseStorageRef.putFile(selectedImage!);
       var downloadUrl = await (await task).ref.getDownloadURL();
       Map<String, dynamic> addItem = {
@@ -135,53 +132,53 @@ class _AddFoodState extends State<AddFood> {
                   ),
                   selectedImage == null
                       ? GestureDetector(
-                    onTap: () {
-                      getImage();
-                    },
-                    child: Center(
-                      child: Material(
-                        color: Colors.white,
-                        elevation: 4.0,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          width: 150,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            border:
-                            Border.all(color: Colors.black, width: 1.5),
-                            borderRadius: BorderRadius.circular(20),
+                          onTap: () {
+                            getImage();
+                          },
+                          child: Center(
+                            child: Material(
+                              color: Colors.white,
+                              elevation: 4.0,
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 150,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.black, width: 1.5),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt_outlined,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.camera_alt_outlined,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
+                        )
                       : Center(
-                    child: Material(
-                      color: Colors.white,
-                      elevation: 4.0,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          border:
-                          Border.all(color: Colors.black, width: 1.5),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.file(
-                            selectedImage!,
-                            fit: BoxFit.cover,
+                          child: Material(
+                            color: Colors.white,
+                            elevation: 4.0,
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.black, width: 1.5),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.file(
+                                  selectedImage!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
                   const SizedBox(
                     height: 30.0,
                   ),
@@ -194,10 +191,7 @@ class _AddFoodState extends State<AddFood> {
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       color: const Color(0xFFececf8),
                       borderRadius: BorderRadius.circular(10),
@@ -223,10 +217,7 @@ class _AddFoodState extends State<AddFood> {
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       color: const Color(0xFFececf8),
                       borderRadius: BorderRadius.circular(10),
@@ -252,10 +243,7 @@ class _AddFoodState extends State<AddFood> {
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       color: const Color(0xFFececf8),
                       borderRadius: BorderRadius.circular(10),
@@ -282,10 +270,7 @@ class _AddFoodState extends State<AddFood> {
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       color: const Color(0xFFececf8),
                       borderRadius: BorderRadius.circular(10),
@@ -294,8 +279,7 @@ class _AddFoodState extends State<AddFood> {
                       child: DropdownButton<String>(
                         items: items
                             .map(
-                              (item) =>
-                              DropdownMenuItem<String>(
+                              (item) => DropdownMenuItem<String>(
                                 value: item,
                                 child: Text(
                                   item,
@@ -305,12 +289,11 @@ class _AddFoodState extends State<AddFood> {
                                   ),
                                 ),
                               ),
-                        )
+                            )
                             .toList(),
-                        onChanged: (value) =>
-                            setState(() {
-                              this.value = value;
-                            }),
+                        onChanged: (value) => setState(() {
+                          this.value = value;
+                        }),
                         dropdownColor: Colors.white,
                         hint: const Text(
                           "Select Category",
@@ -325,7 +308,9 @@ class _AddFoodState extends State<AddFood> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30.0,),
+                  const SizedBox(
+                    height: 30.0,
+                  ),
                   GestureDetector(
                     onTap: () {
                       uploadItem();

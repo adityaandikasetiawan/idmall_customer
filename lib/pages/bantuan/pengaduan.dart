@@ -1,12 +1,16 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: PengaduanPage(),
   ));
 }
 
 class PengaduanPage extends StatefulWidget {
+  const PengaduanPage({super.key});
+
   @override
   _PengaduanPageState createState() => _PengaduanPageState();
 }
@@ -17,7 +21,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Pengaduan Page',
           style: TextStyle(
               fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
@@ -25,7 +29,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -35,18 +39,18 @@ class _PengaduanPageState extends State<PengaduanPage> {
               'Mohon maaf atas ketidaknyamanannya. Mohon laporkan masalah atau gangguan tersebut di sini agar Kami dapat segera menindaklanjutinya.',
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Gangguan Yang di Alami Kami',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             DropdownButton<String>(
               value: dropdownValue,
-              icon: Icon(Icons.arrow_drop_down, color: Colors.orange),
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.orange),
               iconSize: 24,
               elevation: 16,
               isExpanded: true,
@@ -71,15 +75,15 @@ class _PengaduanPageState extends State<PengaduanPage> {
                 );
               }).toList(),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'KOMENTAR/MASUKAN ANDA',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             TextFormField(
               maxLines: 5,
               decoration: InputDecoration(
@@ -92,19 +96,19 @@ class _PengaduanPageState extends State<PengaduanPage> {
                 hintText: 'Tulis komentar atau masukan Anda di sini...',
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 // Tambahkan logika untuk mengirim laporan gangguan
-                print('Laporan gangguan telah dikirim');
               },
-              child: Text('Laporkan Gangguan'),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
+              child: const Text('Laporkan Gangguan'),
             ),
           ],
         ),

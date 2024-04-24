@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'package:flutter/material.dart';
 import 'package:idmall/pages/fab_testing.dart';
 import 'package:idmall/pages/pembayaran_testing.dart';
@@ -121,19 +123,18 @@ class _CustomerStatusState extends State<CustomerStatus> {
                 DateTime.tryParse(response.data['data'][0]['Activation_Date'])!)
             : "";
       });
-    } on DioException catch (e) {
-      print(e.message);
-    }
+    } on DioException {}
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Status Customer"),
+        title: const Text("Status Customer"),
       ),
       body: Center(
         child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.symmetric(horizontal: 25),
           children: [
             //Created
             StatusTimeline(
@@ -142,7 +143,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
               isPast: statusCreated.contains(widget.status),
               title: "Registrasi",
               subtile: statusCreated.contains(widget.status)
-                  ? "Register Date : ${createdDate}"
+                  ? "Register Date : $createdDate"
                   : "",
             ),
             //survey
@@ -152,7 +153,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
               isPast: statusSurvey.contains(widget.status) ? true : false,
               title: "Survey",
               subtile: statusSurvey.contains(widget.status)
-                  ? "Survey Date : ${surveyDate}"
+                  ? "Survey Date : $surveyDate"
                   : "",
             ),
             //fab
@@ -178,8 +179,8 @@ class _CustomerStatusState extends State<CustomerStatus> {
                 endChild: Column(
                   children: [
                     Container(
-                      margin: EdgeInsets.all(20),
-                      padding: EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: statusFAB.contains(widget.status)
                             ? Colors.deepOrange.shade400
@@ -200,7 +201,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
                             ),
                             subtitle: Text(
                               statusFAB.contains(widget.status)
-                                  ? "FAB Date : ${fabDate}"
+                                  ? "FAB Date : $fabDate"
                                   : '',
                               style: TextStyle(
                                   color: statusFAB.contains(widget.status)
@@ -219,7 +220,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
                                               )),
                                     );
                                   },
-                                  child: Text('Lanjut'))
+                                  child: const Text('Lanjut'))
                               : Container(),
                         ],
                       ),
@@ -243,7 +244,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
               widget: widget,
               statusFAB: statusFAB,
               spkDate: spkDate,
-              statusReqActive: [],
+              statusReqActive: const [],
             ),
             //Req Active
             StatusTimeline(
@@ -252,7 +253,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
               isPast: statusReqActive.contains(widget.status) ? true : false,
               title: "Installation",
               subtile: statusReqActive.contains(widget.status)
-                  ? "Installation Date : ${activationDate}"
+                  ? "Installation Date : $activationDate"
                   : "",
             ),
             //active
@@ -284,8 +285,8 @@ class _CustomerStatusState extends State<CustomerStatus> {
               endChild: Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.all(20),
-                    padding: EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: statusActive.contains(widget.status)
                           ? Colors.deepOrange.shade400
@@ -306,7 +307,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
                           ),
                           subtitle: Text(
                             statusActive.contains(widget.status)
-                                ? "Active Date : ${activationDate}"
+                                ? "Active Date : $activationDate"
                                 : '',
                             style: TextStyle(
                                 color: statusActive.contains(widget.status)
@@ -329,7 +330,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
                                     ),
                                   );
                                 },
-                                child: Text('Upgrade'))
+                                child: const Text('Upgrade'))
                             : Container(),
                       ],
                     ),
@@ -384,8 +385,8 @@ class StatusTimelineWithExtendedWidget extends StatelessWidget {
         endChild: Column(
           children: [
             Container(
-              margin: EdgeInsets.all(20),
-              padding: EdgeInsets.all(10),
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: statusSPK.contains(widget.status)
                     ? Colors.deepOrange.shade400
@@ -406,7 +407,7 @@ class StatusTimelineWithExtendedWidget extends StatelessWidget {
                     ),
                     subtitle: Text(
                       statusFAB.contains(widget.status)
-                          ? "Paid Date : ${spkDate}"
+                          ? "Paid Date : $spkDate"
                           : '',
                       style: TextStyle(
                           color: statusSPK.contains(widget.status)
@@ -427,7 +428,7 @@ class StatusTimelineWithExtendedWidget extends StatelessWidget {
                               ),
                             );
                           },
-                          child: Text('Lanjut'))
+                          child: const Text('Lanjut'))
                       : Container(),
                 ],
               ),

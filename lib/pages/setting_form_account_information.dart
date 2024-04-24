@@ -1,14 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
+// ignore_for_file: library_private_types_in_public_api
 
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:idmall/config/config.dart' as config;
 
 class FormAccountInformation extends StatefulWidget {
-  const FormAccountInformation({Key? key}) : super(key: key);
+  const FormAccountInformation({super.key});
 
   @override
   _FormAccountInformationState createState() => _FormAccountInformationState();
@@ -16,7 +13,6 @@ class FormAccountInformation extends StatefulWidget {
 
 class _FormAccountInformationState extends State<FormAccountInformation> {
   String? token;
-  String? _selectedZipCode;
   Dio dio = Dio();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
@@ -25,13 +21,12 @@ class _FormAccountInformationState extends State<FormAccountInformation> {
 
   Future<Null> getNameUser() async {
     WidgetsFlutterBinding.ensureInitialized();
-    final SharedPreferences? prefs = await _prefs;
+    final SharedPreferences prefs = await _prefs;
 
     setState(() {
-      token = prefs?.getString('token');
+      token = prefs.getString('token');
     });
   }
-
 
   @override
   void initState() {
@@ -118,26 +113,25 @@ class _FormAccountInformationState extends State<FormAccountInformation> {
   //   }
   // }
 
-
   @override
   Widget build(BuildContext context) {
     // _selectedServiceType = widget.tipe;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Informasi Akun',
           style: TextStyle(fontSize: 16.0), // Mengatur ukuran teks judul
         ),
         centerTitle: true, // Mengatur judul menjadi di tengah
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -150,33 +144,30 @@ class _FormAccountInformationState extends State<FormAccountInformation> {
                   ),
                 ],
               ),
-              SizedBox(height: 16.0),
-
+              const SizedBox(height: 16.0),
               _buildTextField(_firstNameController, 'Nama Depan'),
-              SizedBox(height: 16.0),
-
+              const SizedBox(height: 16.0),
               _buildTextField(_lastNameController, 'Nama Belakang'),
-              SizedBox(height: 16.0),
-
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
                   // Handle form submission
                   // _submitForm(context);
                   // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
                 },
-                child: Text(
-                  'Submit',
-                  style: TextStyle(color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
-                  minimumSize: Size(double.infinity,
+                  minimumSize: const Size(double.infinity,
                       0), // Set minimum size untuk mengisi lebar layar
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                       vertical: 16.0), // Atur padding vertical
+                ),
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ],
@@ -197,7 +188,7 @@ class _FormAccountInformationState extends State<FormAccountInformation> {
         decoration: InputDecoration(
           labelText: labelText,
           contentPadding:
-          EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           border: InputBorder.none,
         ),
         validator: (value) {
@@ -211,4 +202,3 @@ class _FormAccountInformationState extends State<FormAccountInformation> {
     );
   }
 }
-

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, empty_catches
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,14 +7,13 @@ import 'package:flutter/material.dart';
 import '../service/auth.dart';
 
 class ChangePassword extends StatefulWidget {
-  const ChangePassword({Key? key}) : super(key: key);
+  const ChangePassword({super.key});
 
   @override
   _ChangePasswordState createState() => _ChangePasswordState();
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
-
   final _formkey = GlobalKey<FormState>();
 
   TextEditingController useremailcontroller = TextEditingController();
@@ -103,8 +104,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                         vertical: 15.0, horizontal: 20.0),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _isPasswordVisible ? Icons.visibility : Icons
-                            .visibility_off,
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.black,
                       ),
                       onPressed: () {
@@ -129,7 +131,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           backgroundColor: CupertinoColors.activeGreen,
-                          content: Text('Changes saved successfully!', style: TextStyle(fontFamily: 'Poppins', fontSize: 16.0)),
+                          content: Text('Changes saved successfully!',
+                              style: TextStyle(
+                                  fontFamily: 'Poppins', fontSize: 16.0)),
                           duration: Duration(seconds: 3),
                         ),
                       );
@@ -141,7 +145,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           backgroundColor: CupertinoColors.systemRed,
-                          content: Text('Unauthorized! Changes can only be made by the current user.', style: TextStyle(fontFamily: 'Poppins', fontSize: 16.0)),
+                          content: Text(
+                              'Unauthorized! Changes can only be made by the current user.',
+                              style: TextStyle(
+                                  fontFamily: 'Poppins', fontSize: 16.0)),
                           duration: Duration(seconds: 3),
                         ),
                       );
@@ -161,19 +168,13 @@ class _ChangePasswordState extends State<ChangePassword> {
     );
   }
 
-
   void saveChanges(String email, String newPassword) async {
     try {
       if (FirebaseAuth.instance.currentUser != null) {
         AuthMethods authMethods = AuthMethods();
         await authMethods.reauthenticateUser(email, "currentPassword");
         await FirebaseAuth.instance.currentUser!.updatePassword(newPassword);
-        print('Password updated successfully');
-      } else {
-        print("No user is currently signed in.");
-      }
-    } catch (e) {
-      print('Error updating password: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 }

@@ -9,18 +9,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:intl/intl.dart';
 
-class PaymentMethod extends StatefulWidget {
+class PaymentMethodExisting extends StatefulWidget {
   final String taskid;
-  const PaymentMethod({
+  const PaymentMethodExisting({
     super.key,
     required this.taskid,
   });
 
   @override
-  State<PaymentMethod> createState() => _PaymentMethodState();
+  State<PaymentMethodExisting> createState() => _PaymentMethodExistingState();
 }
 
-class _PaymentMethodState extends State<PaymentMethod> {
+class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
   @override
   void initState() {
     super.initState();
@@ -238,7 +238,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 "payment_method_code": bankCode,
                 "payment_type": typePayment,
                 "total_payment": total!.replaceAll(",", ""),
-                "status": "activation"
+                "status": "existing"
               },
               options: Options(headers: {
                 "Content-Type": "application/json",

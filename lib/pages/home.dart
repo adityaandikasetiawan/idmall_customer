@@ -1,28 +1,24 @@
+// ignore_for_file: empty_catches
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'package:idmall/pages/details.dart';
 import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/invoice.dart';
 import 'package:idmall/pages/invoice_testing.dart';
-import 'package:idmall/pages/pembayaran_testing.dart';
+import 'package:idmall/pages/pembayaran_existing.dart';
 import 'package:idmall/service/coverage_area.dart';
-// ignore: unused_import
-import 'package:idmall/service/database.dart';
-// ignore: unused_import
-import 'package:idmall/widget/button.dart';
 import 'package:idmall/widget/widget_support.dart';
 import 'package:idmall/widget/notificationpage.dart';
 import 'package:idmall/widget/chatbotpage.dart';
 import 'package:idmall/pages/promo.dart';
-import 'package:idmall/pages/coverange.dart';
 import 'package:idmall/widget/penawaranterbaru.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -94,9 +90,7 @@ class _HomeState extends State<Home> {
         customerID = response.data['data']['Task_ID'] ?? "";
         status = response.data['data']['Status'] ?? "";
       });
-    } catch (error) {
-      print(error);
-    }
+    } catch (error) {}
   }
 
   Future<void> billingData() async {
@@ -123,9 +117,7 @@ class _HomeState extends State<Home> {
         customerID = response.data['data']['Task_ID'] ?? "";
         status = response.data['data']['Status'] ?? "";
       });
-    } catch (error) {
-      print(error);
-    }
+    } catch (error) {}
   }
 
   @override
@@ -169,7 +161,7 @@ class _HomeState extends State<Home> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => NotificationsPage()),
+                          builder: (context) => const NotificationsPage()),
                     );
                   },
                   child: Container(
@@ -196,7 +188,7 @@ class _HomeState extends State<Home> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => NotificationsPage()),
+                              builder: (context) => const NotificationsPage()),
                         );
                       },
                     ),
@@ -229,7 +221,7 @@ class _HomeState extends State<Home> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ChatbotPage()),
+                              builder: (context) => const ChatbotPage()),
                         );
                       },
                     ),
@@ -300,7 +292,7 @@ class _HomeState extends State<Home> {
             children: [
               //card billing, point, etc
               status == "ACTIVE" || status == "DU" || status == "FREEZE"
-                  ? Container(
+                  ? SizedBox(
                       width: double.infinity * 2,
                       child: Card(
                         elevation: 4.0,
@@ -313,7 +305,7 @@ class _HomeState extends State<Home> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 15), // Bentuk sudut container
-                            image: DecorationImage(
+                            image: const DecorationImage(
                               image: AssetImage(
                                   'images/bb_green_mint.jpg'), // Gambar background
                               fit: BoxFit
@@ -328,7 +320,7 @@ class _HomeState extends State<Home> {
                               children: [
                                 Text(
                                   "$customerID",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -336,7 +328,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 Text(
                                   "$package",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -344,7 +336,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 Text(
                                   "$status",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -356,15 +348,15 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     )
-                  : SizedBox(),
+                  : const SizedBox(),
 
               isDueDateActive == true
                   ? Column(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
-                        Text(
+                        const Text(
                           "Periode bulan ini sudah jatuh tempo, segera lakukan pembyaran",
                           style: TextStyle(
                             fontSize: 10,
@@ -377,13 +369,13 @@ class _HomeState extends State<Home> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PaymentMethod(
+                                builder: (context) => PaymentMethodExisting(
                                   taskid: "$customerID",
                                 ),
                               ),
                             );
                           },
-                          child: Container(
+                          child: SizedBox(
                             width: double.infinity * 2,
                             child: Card(
                               elevation: 4, // Tingkat elevasi card
@@ -395,7 +387,7 @@ class _HomeState extends State<Home> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(
                                       15), // Bentuk sudut container
-                                  image: DecorationImage(
+                                  image: const DecorationImage(
                                     image: AssetImage(
                                         'images/bb_red_orange.jpg'), // Gambar background
                                     fit: BoxFit
@@ -407,7 +399,7 @@ class _HomeState extends State<Home> {
                                   child: ListTile(
                                     title: Text(
                                       "$dueDate",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -415,13 +407,14 @@ class _HomeState extends State<Home> {
                                     ),
                                     subtitle: Text(
                                       "$billing",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    trailing: Icon(Icons.arrow_forward_ios),
+                                    trailing:
+                                        const Icon(Icons.arrow_forward_ios),
                                   ),
                                 ),
                               ),
@@ -430,7 +423,7 @@ class _HomeState extends State<Home> {
                         ),
                       ],
                     )
-                  : SizedBox(),
+                  : const SizedBox(),
 
               // const SizedBox(height: 20.0),
               // //card billing, point, etc
@@ -831,7 +824,7 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    PenawaranPage()), // Ganti dengan halaman yang diinginkan
+                                    const PenawaranPage()), // Ganti dengan halaman yang diinginkan
                           );
                         },
                         child: const Text(
@@ -989,9 +982,12 @@ class CardWidgetWithIcon extends StatelessWidget {
   final String text;
   final String value;
 
-  const CardWidgetWithIcon(
-      {Key? key, required this.icon, required this.text, required this.value})
-      : super(key: key);
+  const CardWidgetWithIcon({
+    super.key,
+    required this.icon,
+    required this.text,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {

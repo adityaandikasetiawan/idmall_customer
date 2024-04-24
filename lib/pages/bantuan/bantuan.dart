@@ -3,19 +3,21 @@ import 'package:idmall/pages/bantuan/pengaduan.dart';
 import 'package:idmall/pages/bantuan/pertanyaan.dart';
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: Bantuan(),
   ));
 }
 
 class Bantuan extends StatelessWidget {
+  const Bantuan({super.key});
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Bantuan',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
@@ -32,11 +34,12 @@ class Bantuan extends StatelessWidget {
               () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PengaduanPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const PengaduanPage()),
                 );
               },
             ),
-            SizedBox(height: 16), // Spasi antara kedua Card
+            const SizedBox(height: 16), // Spasi antara kedua Card
             buildCard(
               screenHeight,
               'LIHAT PERTANYAAN',
@@ -44,7 +47,8 @@ class Bantuan extends StatelessWidget {
               () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PertanyaanPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const PertanyaanPage()),
                 );
               },
             ),
@@ -68,7 +72,7 @@ class Bantuan extends StatelessWidget {
       color: Colors.white, // Mengubah background color menjadi putih
       child: Container(
         height: screenHeight * 0.2,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
@@ -76,7 +80,7 @@ class Bantuan extends StatelessWidget {
               color: Colors.white.withOpacity(0.5), // Efek blur
               spreadRadius: 2,
               blurRadius: 7,
-              offset: Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3), // changes position of shadow
             ),
           ],
         ),
@@ -84,7 +88,7 @@ class Bantuan extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Kolom pertama: Gambar
-            Container(
+            SizedBox(
               width: 100,
               height: 100,
               child: Center(
@@ -106,29 +110,29 @@ class Bantuan extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 8),
-                  Text(
+                  const SizedBox(height: 8),
+                  const Text(
                     'Ini adalah deskripsi bantuan yang bisa berisi informasi atau instruksi untuk pengguna.',
                     style: TextStyle(fontSize: 14, color: Colors.black),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // Teks button (pengaduan layanan atau lihat pertanyaan) dengan border
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: onPressed,
                       style: TextButton.styleFrom(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                         backgroundColor: Colors.transparent,
-                        side: BorderSide(color: Colors.orange, width: 2),
+                        side: const BorderSide(color: Colors.orange, width: 2),
                       ),
                       child: Text(
                         buttonText,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,

@@ -1,9 +1,10 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-
 class RejectedOrder extends StatefulWidget {
-  const RejectedOrder({Key? key}) : super(key: key);
+  const RejectedOrder({super.key});
 
   @override
   State<RejectedOrder> createState() => _RejectedOrderState();
@@ -19,8 +20,6 @@ class _RejectedOrderState extends State<RejectedOrder> {
     getData();
   }
 
-
-
   Future<void> getData() async {
     try {
       QuerySnapshot snapshot = await FirebaseFirestore.instance
@@ -32,7 +31,6 @@ class _RejectedOrderState extends State<RejectedOrder> {
 
       for (DocumentSnapshot doc in snapshot.docs) {
         Map<String, dynamic> order = doc.data() as Map<String, dynamic>;
-        print("Order: $order");
         RejectedOrders.add(order);
       }
 
@@ -40,7 +38,6 @@ class _RejectedOrderState extends State<RejectedOrder> {
         isLoading = false;
       });
     } catch (e) {
-      print("Error fetching data: $e");
       setState(() {
         isLoading = false;
       });
@@ -118,29 +115,32 @@ class _RejectedOrderState extends State<RejectedOrder> {
                     width: 120,
                     child: orderList.isNotEmpty
                         ? Image.asset(
-                      "images/reject.png",
-                      width: 120,
-                      height: 120,
-                      fit: BoxFit.cover,
-                    )
+                            "images/reject.png",
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          )
                         : Container(),
                   ),
                 ),
                 const SizedBox(height: 10),
                 orderList.isNotEmpty
                     ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: orderList.length,
-                  itemBuilder: (context, listIndex) {
-                    return ListTile(
-                      title: Text('${orderList[listIndex]['name'] ?? 'No Name'} | x${orderList[listIndex]['quantity'] ?? 'No Quantity'}',style: const TextStyle(
-                          fontSize: 18.0,
-                          fontFamily: 'Poppins',
-                          color: Colors.black)),
-                      subtitle: Text('Name User: ${orderList[listIndex]['name user']}\nTable Number: ${orderList[listIndex]['table number']}'),
-                    );
-                  },
-                )
+                        shrinkWrap: true,
+                        itemCount: orderList.length,
+                        itemBuilder: (context, listIndex) {
+                          return ListTile(
+                            title: Text(
+                                '${orderList[listIndex]['name'] ?? 'No Name'} | x${orderList[listIndex]['quantity'] ?? 'No Quantity'}',
+                                style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontFamily: 'Poppins',
+                                    color: Colors.black)),
+                            subtitle: Text(
+                                'Name User: ${orderList[listIndex]['name user']}\nTable Number: ${orderList[listIndex]['table number']}'),
+                          );
+                        },
+                      )
                     : Container(),
               ],
             ),

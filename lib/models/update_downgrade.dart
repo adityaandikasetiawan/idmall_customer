@@ -44,19 +44,19 @@ class UpdateDownGradeModel {
     );
   }
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Order_No'] = this.orderNo;
-    data['Task_ID'] = this.taskID;
-    data['Customer_Sub_Name'] = this.customerSubName;
-    data['Customer_ID'] = this.customerID;
-    data['Customer_Name'] = this.customerName;
-    data['Sub_Product'] = this.subProduct;
-    data['Customer_Sub_Address'] = this.customerSubAddress;
-    data['City'] = this.city;
-    data['Region'] = this.region;
-    data['Email_Customer'] = this.emailCustomer;
-    data['Activation_Date'] = this.activationDate;
-    data['Monthly_Price'] = this.monthlyPrice;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Order_No'] = orderNo;
+    data['Task_ID'] = taskID;
+    data['Customer_Sub_Name'] = customerSubName;
+    data['Customer_ID'] = customerID;
+    data['Customer_Name'] = customerName;
+    data['Sub_Product'] = subProduct;
+    data['Customer_Sub_Address'] = customerSubAddress;
+    data['City'] = city;
+    data['Region'] = region;
+    data['Email_Customer'] = emailCustomer;
+    data['Activation_Date'] = activationDate;
+    data['Monthly_Price'] = monthlyPrice;
     return data;
   }
 }

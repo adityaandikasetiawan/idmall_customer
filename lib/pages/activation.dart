@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, library_private_types_in_public_api
 
 import 'dart:io';
 
@@ -88,10 +88,6 @@ class _ActivationPageState extends State<ActivationPage> {
               onPressed: () {
                 // Handle form submission
               },
-              child: const Text(
-                'Submit',
-                style: TextStyle(color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 shape: RoundedRectangleBorder(
@@ -101,6 +97,10 @@ class _ActivationPageState extends State<ActivationPage> {
                     0), // Set minimum size untuk mengisi lebar layar
                 padding: const EdgeInsets.symmetric(
                     vertical: 16.0), // Atur padding vertical
+              ),
+              child: const Text(
+                'Submit',
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],

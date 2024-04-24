@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 class ODPList {
   final String odp_name;
   final String latitude;

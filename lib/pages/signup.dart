@@ -1,21 +1,17 @@
+// ignore_for_file: empty_catches, no_leading_underscores_for_local_identifiers
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:idmall/models/signup.dart';
 import 'package:idmall/pages/login.dart';
-import 'package:idmall/service/database.dart';
-import 'package:idmall/service/shared_preference_helper.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:random_string/random_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../widget/widget_support.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:dio/dio.dart';
-import 'package:idmall/pages/navigation.dart';
-
 
 class SignUp extends StatefulWidget {
-  const SignUp({Key? key});
+  const SignUp({super.key});
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -40,38 +36,35 @@ class _SignUpState extends State<SignUp> {
 
   Future<Signup?> registerUser(_prefs) async {
     final SharedPreferences prefs = await _prefs;
-    final fcm_token = prefs.getString('fcm_token');
+    final fcmToken = prefs.getString('fcm_token');
     final dio = Dio();
-    final response = await dio.post("${config.backendBaseUrl}/user/register",
-        data: {
-          "first_name": firstNameController.text,
-          "last_name": lastNameController.text,
-          "email": emailController.text,
-          "password": passwordController.text,
-          "fcm_token" : fcm_token,
-        },
+    final response = await dio.post(
+      "${config.backendBaseUrl}/user/register",
+      data: {
+        "first_name": firstNameController.text,
+        "last_name": lastNameController.text,
+        "email": emailController.text,
+        "password": passwordController.text,
+        "fcm_token": fcmToken,
+      },
     );
 
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       var responseJson = jsonDecode(response.data);
       return Signup.fromJson(responseJson);
-    }else{
+    } else {
       return null;
     }
   }
 
   registration() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      SharedPreferences.getInstance();
       try {
         // await FirebaseAuth.instance.createUserWithEmailAndPassword(
         //   email: emailController.text,
         //   password: passwordController.text,
         // );
-
-        var response  = await registerUser(_prefs);
-
-        print("return from registerUser() ${response}");
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.green,
@@ -81,13 +74,7 @@ class _SignUpState extends State<SignUp> {
           ),
         ));
 
-        String uid = randomAlphaNumeric(10);
-        Map<String, dynamic> addUserInfo = {
-          "Name": firstNameController.text + " " + lastNameController.text,
-          "Email": emailController.text,
-          "Wallet": "0",
-          "Id": uid,
-        };
+        randomAlphaNumeric(10);
 
         // await SharedPreferenceHelper().clearAllPreferences();
         // await DatabaseMethods().addUserDetail(addUserInfo, uid);
@@ -96,30 +83,16 @@ class _SignUpState extends State<SignUp> {
         // await SharedPreferenceHelper().saveUserEmail(emailController.text);
         // await SharedPreferenceHelper().saveUserUId(uid);
         // await SharedPreferenceHelper().saveUserWallet('0');
-        final SharedPreferences prefs = await _prefs;
-        var token = response?.data?.token;
-        var firstName = (response?.data?.firstName  ?? '');
-        var lastName = (response?.data?.lastName  ?? '');
-        var fullName = (response?.data?.firstName  ?? '') + ' ' + (response?.data?.lastName ?? '');
         // var userId = response?.data?.;
-        var email = response?.data?.email;
         // prefs.setString('token', (token ?? ''));
         // prefs.setString('fullName', fullName);
         // prefs.setString('firstName', firstName);
         // prefs.setString('lastName', lastName);
         // prefs.setString('email', (email ?? ''));
 
-        print('id saat daftar: ${await SharedPreferenceHelper().getIdUser()}');
-        print(
-            'nama saat daftar: ${await SharedPreferenceHelper().getNameUser()}');
-        print(
-            'email saat daftar: ${await SharedPreferenceHelper().getEmailUser()}');
-
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const Login()));
-      } on DioException catch (e) {
-        print('Firebase Auth Exception: $e');
-
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const Login()));
+      } on DioException {
         // if (e.code == 'email-already-in-use') {
         //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         //     backgroundColor: Colors.red,
@@ -133,9 +106,7 @@ class _SignUpState extends State<SignUp> {
         // } else {
         //   print('Error signing up: ${e.message}');
         // }
-      } catch (error) {
-        print('Unexpected error: $error');
-      }
+      } catch (error) {}
     }
   }
 
@@ -213,7 +184,7 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -225,7 +196,7 @@ class _SignUpState extends State<SignUp> {
                   Expanded(
                     child: Container(
                       margin: const EdgeInsets.only(top: 190.0, left: 30),
-                      child: Column(
+                      child: const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -237,7 +208,7 @@ class _SignUpState extends State<SignUp> {
                               fontFamily: 'Poppins',
                             ),
                           ),
-                          const SizedBox(height: 0.1),
+                          SizedBox(height: 0.1),
                         ],
                       ),
                     ),
@@ -444,7 +415,7 @@ class _SignUpState extends State<SignUp> {
                         height: 50.0,
                         width: 400.0,
                         child: Material(
-                          color: Color.fromARGB(255, 228, 99, 7),
+                          color: const Color.fromARGB(255, 228, 99, 7),
                           borderRadius: BorderRadius.circular(20.0),
                           child: const Center(
                             child: Text(
@@ -477,7 +448,6 @@ class _SignUpState extends State<SignUp> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const Login()));
-                            print("Sign In tapped!");
                           },
                           child: const Text(
                             "Masuk",

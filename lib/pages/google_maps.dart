@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, library_prefixes
+// ignore_for_file: prefer_typing_uninitialized_variables, library_prefixes, empty_catches
 
 import 'dart:async';
 
@@ -50,9 +50,7 @@ class MapSampleState extends State<MapSample> {
           ),
         ),
       );
-    } catch (e) {
-      print('Error fetching autocomplete results: $e');
-    }
+    } catch (e) {}
   }
 
   Future<void> getODPList() async {
@@ -147,39 +145,66 @@ class MapSampleState extends State<MapSample> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          print(_lat);
-          print(_long);
-          await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Success'),
-                content: const Text('Lokasi Anda tercover'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (builder) => ProductList(
-                            latitude: _lat,
-                            longitude: _long,
-                          ),
-                        ),
-                      );
-                      // FormSurvey(latitude: position.latitude, longitude: position.longitude,)));
-                    },
-                    child: const Text('Lanjutkan'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Batal'),
-                  ),
-                ],
-              );
-            },
+          final dio = Dio();
+          final response = await dio.get(
+            "${config.backendBaseUrl}/region/check_coverage",
+            queryParameters: {'longitude': _long, 'latitude': _lat},
+            options: Options(headers: {
+              "Content-Type": "application/json",
+            }),
           );
+
+          if (response.data['status'] == "success") {
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Success'),
+                  content: const Text('Lokasi Anda tercover'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (builder) => ProductList(
+                              latitude: _lat,
+                              longitude: _long,
+                            ),
+                          ),
+                        );
+                        // FormSurvey(latitude: position.latitude, longitude: position.longitude,)));
+                      },
+                      child: const Text('Lanjutkan'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Batal'),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Maaf'),
+                  content: const Text('Lokasi Anda belum tercover'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
         },
         label: const Text('Check Coverage'),
         icon: const Icon(Icons.location_pin),

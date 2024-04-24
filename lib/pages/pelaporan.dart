@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PelaporanPage extends StatelessWidget {
-  const PelaporanPage({Key? key}) : super(key: key);
+  const PelaporanPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ class PelaporanPage extends StatelessWidget {
         ),
         centerTitle: true, // Menengahkan judul
       ),
-      body: Center(
+      body: const Center(
         child: Text(
           'Halaman Pelaporan',
           style: TextStyle(fontSize: 24), // Contoh ukuran teks untuk halaman
@@ -22,4 +22,3 @@ class PelaporanPage extends StatelessWidget {
     );
   }
 }
-

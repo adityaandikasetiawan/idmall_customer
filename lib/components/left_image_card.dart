@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class LeftImageCard extends StatelessWidget {
   final String image;
@@ -21,7 +20,7 @@ class LeftImageCard extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             gradient: LinearGradient(
           colors: [Color(0xffff512f), Color(0xffdd2476), Color(0xffdd2f24)],
           stops: [0, 1, 1],
@@ -51,7 +50,7 @@ class LeftImageCard extends StatelessWidget {
                         Text(
                           title,
                           maxLines: 3,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 15,
                             color: Colors.white,
                           ),
@@ -64,12 +63,12 @@ class LeftImageCard extends StatelessWidget {
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: onTap,
-                                child: Text(
-                                  'Lihat Detail',
-                                  style: TextStyle(color: Colors.black),
-                                ),
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
+                                ),
+                                child: const Text(
+                                  'Lihat Detail',
+                                  style: TextStyle(color: Colors.black),
                                 ),
                               ),
                             )

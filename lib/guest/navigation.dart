@@ -66,7 +66,7 @@ class _NavigationGuestState extends State<NavigationGuest> {
                 showModalBottomSheet<void>(
                   context: context,
                   builder: (BuildContext context) {
-                    return Container(
+                    return SizedBox(
                       height:
                           100, // Sesuaikan tinggi bottom sheet sesuai kebutuhan
                       child: ListView(

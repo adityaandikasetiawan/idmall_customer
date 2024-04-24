@@ -42,7 +42,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             customerId: _customerid,
             status: _status,
           ),
-          Bantuan(),
+          const Bantuan(),
           // const HelpCenterCategory(),
           // const PelaporanPage(),
           const Account(),
@@ -62,7 +62,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
         "Authorization": "Bearer $token"
       }),
     );
-    print(response.data['data']['Task_ID']);
     setState(() {
       _customerid = response.data['data']['Task_ID'];
       _status = response.data['data']['Status'];
@@ -90,10 +89,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
   // }
 
   Future<void> logout() async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    _pref.remove('token');
-    _pref.remove('fullName');
-    _pref.remove('user_id');
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove('token');
+    pref.remove('fullName');
+    pref.remove('user_id');
   }
 
   @override
@@ -146,8 +145,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
                               child: Text(
                                 'Kategori',
                                 style: TextStyle(
@@ -164,12 +163,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
+                                        const BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
                                   ),
                                 );
                               },
                             ),
-                            SizedBox(height: 16.0),
+                            const SizedBox(height: 16.0),
                             _buildCard(
                               title: 'Boardband Bisnis',
                               description: '4 Product',
@@ -178,12 +177,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
+                                        const BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
                                   ),
                                 );
                               },
                             ),
-                            SizedBox(height: 16.0),
+                            const SizedBox(height: 16.0),
                             _buildCard(
                               title: 'Enterprise Solution',
                               description: '1 Product',
@@ -192,12 +191,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
+                                        const EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
                                   ),
                                 );
                               },
                             ),
-                            SizedBox(height: 16.0),
+                            const SizedBox(height: 16.0),
                             _buildCard(
                               title: 'Enterprise Solution',
                               description: '1 Product',
@@ -250,7 +249,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
         elevation: 0,
         onTap: (index) {
           setState(() {
-            print(index);
             pageIndex = index;
           });
         },
@@ -276,15 +274,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
             children: [
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
                 description,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16.0,
                 ),
               ),

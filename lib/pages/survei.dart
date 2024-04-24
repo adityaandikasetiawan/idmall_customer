@@ -1,9 +1,10 @@
-import 'dart:io';
+// ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class SurveyForm extends StatefulWidget {
+  const SurveyForm({super.key});
+
   @override
   _SurveyFormState createState() => _SurveyFormState();
 }
@@ -14,28 +15,24 @@ class _SurveyFormState extends State<SurveyForm> {
       TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _idNumberController = TextEditingController();
-  final TextEditingController _referralCodeController = TextEditingController();
   String? _selectedServiceType;
-  late File _image;
-  final ImagePicker _picker = ImagePicker();
-  bool _agreeToTerms = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Survey',
           style: TextStyle(fontSize: 16.0), // Mengatur ukuran teks judul
         ),
         centerTitle: true, // Mengatur judul menjadi di tengah
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -48,37 +45,35 @@ class _SurveyFormState extends State<SurveyForm> {
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildTextField(_customerNameController, 'Nama Customer'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildTextField(
                 _installationAddressController, 'Alamat Pemasangan'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildTextField(_phoneNumberController, 'Telepon/ Telepon Seluler'),
-
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildTextField(_idNumberController, 'Nomor Identitas'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildDropdownButtonFormField(),
-
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 // Handle form submission
               },
-              child: Text(
-                'Submit',
-                style: TextStyle(color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
-                minimumSize: Size(double.infinity,
+                minimumSize: const Size(double.infinity,
                     0), // Set minimum size untuk mengisi lebar layar
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                     vertical: 16.0), // Atur padding vertical
+              ),
+              child: const Text(
+                'Submit',
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],
@@ -98,7 +93,7 @@ class _SurveyFormState extends State<SurveyForm> {
         decoration: InputDecoration(
           labelText: labelText,
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           border: InputBorder.none,
         ),
       ),
@@ -130,7 +125,7 @@ class _SurveyFormState extends State<SurveyForm> {
             child: Text(value),
           );
         }).toList(),
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           labelText: 'Service Type',
           contentPadding:
               EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -139,13 +134,10 @@ class _SurveyFormState extends State<SurveyForm> {
       ),
     );
   }
-
- 
-  
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: SurveyForm(),
   ));
 }

@@ -4,10 +4,10 @@ import 'package:idmall/pages/broadbandhome.dart';
 import 'package:idmall/pages/enterprisesolution.dart';
 import 'package:idmall/widget/notificationpage.dart';
 import 'package:idmall/widget/chatbotpage.dart';
-import 'package:idmall/widget/shoppingchartpage.dart'; 
+import 'package:idmall/widget/shoppingchartpage.dart';
 
 class CategoryPage extends StatelessWidget {
-  const CategoryPage({Key? key}) : super(key: key);
+  const CategoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class CategoryPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => NotificationsPage(),
+                        builder: (context) => const NotificationsPage(),
                       ),
                     );
                   },
@@ -51,7 +51,7 @@ class CategoryPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => NotificationsPage(),
+                            builder: (context) => const NotificationsPage(),
                           ),
                         );
                       },
@@ -64,7 +64,7 @@ class CategoryPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ChatbotPage(),
+                        builder: (context) => const ChatbotPage(),
                       ),
                     );
                   },
@@ -92,7 +92,7 @@ class CategoryPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ChatbotPage(),
+                            builder: (context) => const ChatbotPage(),
                           ),
                         );
                       },
@@ -105,7 +105,7 @@ class CategoryPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ShoppingCartPage(),
+                        builder: (context) => const ShoppingCartPage(),
                       ),
                     );
                   },
@@ -127,13 +127,13 @@ class CategoryPage extends StatelessWidget {
                       ],
                     ),
                     child: IconButton(
-                      icon: Icon(Icons.shopping_cart),
+                      icon: const Icon(Icons.shopping_cart),
                       color: const Color.fromARGB(255, 0, 0, 0),
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ShoppingCartPage(),
+                            builder: (context) => const ShoppingCartPage(),
                           ),
                         );
                       },
@@ -146,12 +146,12 @@ class CategoryPage extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Text(
                 'Kategori',
                 style: TextStyle(
@@ -167,12 +167,13 @@ class CategoryPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
+                    builder: (context) =>
+                        const BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
                   ),
                 );
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildCard(
               title: 'Boardband Bisnis',
               description: '4 Product',
@@ -180,12 +181,13 @@ class CategoryPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
+                    builder: (context) =>
+                        const BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
                   ),
                 );
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildCard(
               title: 'Enterprise Solution',
               description: '1 Product',
@@ -193,7 +195,8 @@ class CategoryPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
+                    builder: (context) =>
+                        const EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
                   ),
                 );
               },
@@ -204,7 +207,10 @@ class CategoryPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCard({required String title, required String description, required VoidCallback onPressed}) {
+  Widget _buildCard(
+      {required String title,
+      required String description,
+      required VoidCallback onPressed}) {
     return Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -219,15 +225,15 @@ class CategoryPage extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
                 description,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16.0,
                 ),
               ),

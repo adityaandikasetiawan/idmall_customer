@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches, use_build_context_synchronously, prefer_interpolation_to_compose_strings
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,7 +19,6 @@ class AfterAdd extends StatefulWidget {
 }
 
 class _AfterAddState extends State<AfterAdd> {
-
   late String selectedCategory;
 
   void onCategoryChanged(String value) {
@@ -31,7 +32,7 @@ class _AfterAddState extends State<AfterAdd> {
   TextEditingController namecontroller = TextEditingController();
   TextEditingController pricecontroller = TextEditingController();
   TextEditingController detailcontroller = TextEditingController();
-  final ImagePicker _picker= ImagePicker();
+  final ImagePicker _picker = ImagePicker();
   File? selectedImage;
 
   Future getImage() async {
@@ -40,20 +41,18 @@ class _AfterAddState extends State<AfterAdd> {
 
       if (image != null) {
         selectedImage = File(image.path);
-        setState(() {
-        });
-      } else {
-        print('Image selection canceled.');
-      }
-    } catch (e) {
-      print('Error picking image: $e');
-    }
+        setState(() {});
+      } else {}
+    } catch (e) {}
   }
 
-
   updateItem(String docId) async {
-    if (selectedImage != null && namecontroller.text.isNotEmpty && pricecontroller.text.isNotEmpty && detailcontroller.text.isNotEmpty) {
-      Reference firebaseStorageRef = FirebaseStorage.instance.ref().child("blogImages").child(docId);
+    if (selectedImage != null &&
+        namecontroller.text.isNotEmpty &&
+        pricecontroller.text.isNotEmpty &&
+        detailcontroller.text.isNotEmpty) {
+      Reference firebaseStorageRef =
+          FirebaseStorage.instance.ref().child("blogImages").child(docId);
 
       final UploadTask task = firebaseStorageRef.putFile(selectedImage!);
 
@@ -82,7 +81,6 @@ class _AfterAddState extends State<AfterAdd> {
             style: TextStyle(fontSize: 18.0, color: Colors.white),
           ),
         ));
-        print("Error updating food item: $e");
       }
     }
   }
@@ -95,16 +93,14 @@ class _AfterAddState extends State<AfterAdd> {
       setState(() {});
     }
   }
+
   void deleteFoodItem(String docId) {
     FirebaseFirestore.instance.collection('Food').doc(docId).delete();
     FirebaseFirestore.instance.collection('Drink').doc(docId).delete();
     FirebaseFirestore.instance.collection('Cake').doc(docId).delete();
   }
 
-
-  bool cake = false,
-      food = false,
-      drink = false;
+  bool cake = false, food = false, drink = false;
 
   Stream? fooditemStream;
 
@@ -183,7 +179,10 @@ class _AfterAddState extends State<AfterAdd> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.red,),
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
                                     onPressed: () {
                                       deleteFoodItem(ds.id);
                                     },
@@ -215,7 +214,6 @@ class _AfterAddState extends State<AfterAdd> {
     );
   }
 
-
   void _showEditPopup(DocumentSnapshot ds) {
     showDialog(
       context: context,
@@ -242,53 +240,53 @@ class _AfterAddState extends State<AfterAdd> {
                   ),
                   selectedImage == null
                       ? GestureDetector(
-                    onTap: () {
-                      getImage();
-                    },
-                    child: Center(
-                      child: Material(
-                        color: Colors.white,
-                        elevation: 4.0,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          width: 150,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.black, width: 1.5),
-                            borderRadius: BorderRadius.circular(20),
+                          onTap: () {
+                            getImage();
+                          },
+                          child: Center(
+                            child: Material(
+                              color: Colors.white,
+                              elevation: 4.0,
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 150,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.black, width: 1.5),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt_outlined,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.camera_alt_outlined,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
+                        )
                       : Center(
-                    child: Material(
-                      color: Colors.white,
-                      elevation: 4.0,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.black, width: 1.5),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.file(
-                            selectedImage!,
-                            fit: BoxFit.cover,
+                          child: Material(
+                            color: Colors.white,
+                            elevation: 4.0,
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.black, width: 1.5),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.file(
+                                  selectedImage!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
                   const SizedBox(
                     height: 30.0,
                   ),
@@ -389,20 +387,18 @@ class _AfterAddState extends State<AfterAdd> {
                       items: items
                           .map(
                             (item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 18.0,
-                              color: Colors.black,
+                              value: item,
+                              child: Text(
+                                item,
+                                style: const TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.black,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      )
+                          )
                           .toList(),
                       onChanged: (newValue) {
-                        print("Previous value: $value");
-                        print("New value: $newValue");
                         setState(() {
                           value = newValue;
                         });
@@ -437,7 +433,8 @@ class _AfterAddState extends State<AfterAdd> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: const Text("Incomplete Information"),
-                        content: const Text("Please fill in all fields before updating."),
+                        content: const Text(
+                            "Please fill in all fields before updating."),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
@@ -460,12 +457,13 @@ class _AfterAddState extends State<AfterAdd> {
                           children: [
                             CircularProgressIndicator(
                               valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                             SizedBox(height: 10),
                             Text(
                               "Updating Item...",
-                              style: TextStyle(color: Colors.white, fontSize: 18.0),
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 18.0),
                             ),
                           ],
                         ),
@@ -510,7 +508,6 @@ class _AfterAddState extends State<AfterAdd> {
               ),
             ),
           ],
-
         );
       },
     );
@@ -541,10 +538,8 @@ class _AfterAddState extends State<AfterAdd> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 30.0),
-
               showItem(),
               const SizedBox(height: 70.0),
-
               allItemsVertically(),
             ],
           ),
@@ -552,6 +547,7 @@ class _AfterAddState extends State<AfterAdd> {
       ),
     );
   }
+
   Widget showItem() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -638,4 +634,3 @@ class _AfterAddState extends State<AfterAdd> {
     );
   }
 }
-

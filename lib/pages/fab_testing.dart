@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:developer';
 import 'dart:ui' as ui;
 
 import 'package:dio/dio.dart';
@@ -174,7 +173,6 @@ class _FABTestingState extends State<FABTesting> {
         signImageFile = File(file2.path);
       });
       signImageFile = await convertImageToPng(signImageFile!);
-      print(signImageFile);
     }
   }
 
@@ -206,7 +204,6 @@ class _FABTestingState extends State<FABTesting> {
         return null;
       }
     } catch (e) {
-      print('Error converting image to PNG: $e');
       return null;
     }
   }
@@ -514,7 +511,7 @@ class _FABTestingState extends State<FABTesting> {
                                   });
                                 },
                               )
-                            : SizedBox(),
+                            : const SizedBox(),
                         const SizedBox(height: 16.0),
                         const Center(
                           child: Text(
@@ -589,7 +586,7 @@ class _FABTestingState extends State<FABTesting> {
                                   });
                                 },
                               )
-                            : SizedBox(),
+                            : const SizedBox(),
 
                         // ElevatedButton(
                         //   onPressed: () {
@@ -698,48 +695,4 @@ class _FABTestingState extends State<FABTesting> {
             ),
     );
   }
-
-  Future<void> _showDialogTerms(BuildContext context) {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Warning'),
-          content: const Text(
-            'Mohon setujui syarat & ketentuan\n'
-            'sebelum Anda lanjut ke langkah berikutnya\n',
-          ),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-Widget _buildTextField(TextEditingController controller, String labelText) {
-  return Container(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(15.0),
-      border: Border.all(color: Colors.grey),
-    ),
-    child: TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: labelText,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        border: InputBorder.none,
-      ),
-    ),
-  );
 }

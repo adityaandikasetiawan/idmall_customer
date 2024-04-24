@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class AllPage extends StatelessWidget {
+  const AllPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('All Page'),
+        title: const Text('All Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('This is the All Page'),
       ),
     );

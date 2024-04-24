@@ -6,7 +6,7 @@ import 'package:idmall/widget/chatbotpage.dart';
 import 'package:idmall/widget/shoppingchartpage.dart';
 
 class BroadbandHomePage extends StatelessWidget {
-  const BroadbandHomePage({Key? key}) : super(key: key);
+  const BroadbandHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class BroadbandHomePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => NotificationsPage(),
+                        builder: (context) => const NotificationsPage(),
                       ),
                     );
                   },
@@ -50,7 +50,7 @@ class BroadbandHomePage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => NotificationsPage(),
+                            builder: (context) => const NotificationsPage(),
                           ),
                         );
                       },
@@ -63,7 +63,7 @@ class BroadbandHomePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ChatbotPage(),
+                        builder: (context) => const ChatbotPage(),
                       ),
                     );
                   },
@@ -91,7 +91,7 @@ class BroadbandHomePage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ChatbotPage(),
+                            builder: (context) => const ChatbotPage(),
                           ),
                         );
                       },
@@ -104,7 +104,7 @@ class BroadbandHomePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ShoppingCartPage(),
+                        builder: (context) => const ShoppingCartPage(),
                       ),
                     );
                   },
@@ -126,13 +126,13 @@ class BroadbandHomePage extends StatelessWidget {
                       ],
                     ),
                     child: IconButton(
-                      icon: Icon(Icons.shopping_cart),
+                      icon: const Icon(Icons.shopping_cart),
                       color: const Color.fromARGB(255, 0, 0, 0),
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ShoppingCartPage(),
+                            builder: (context) => const ShoppingCartPage(),
                           ),
                         );
                       },
@@ -145,7 +145,7 @@ class BroadbandHomePage extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -153,7 +153,7 @@ class BroadbandHomePage extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Broadband\nHome',
                       style: TextStyle(
@@ -162,7 +162,7 @@ class BroadbandHomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 8.0),
+                  const SizedBox(width: 8.0),
                   Expanded(
                     child: Image.asset(
                       'images/broadbandhome.png', // Ganti dengan path gambar yang diinginkan
@@ -188,14 +188,14 @@ class BroadbandHomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
+                        const BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
                   ),
                 );
               },
               imagePath:
                   'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildCard(
               title: 'BroadBand  Home 20 Mb',
               price: 'Rp 239.000',
@@ -209,14 +209,14 @@ class BroadbandHomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
+                        const BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
                   ),
                 );
               },
               imagePath:
                   'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildCard(
               title: 'BroadBand  Home 50 Mb',
               price: 'Rp 299.000',
@@ -230,14 +230,14 @@ class BroadbandHomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
+                        const EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
                   ),
                 );
               },
               imagePath:
                   'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildCard(
               title: 'BroadBand  Home 100 Mb',
               price: 'Rp 369.000',
@@ -251,14 +251,14 @@ class BroadbandHomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
+                        const EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
                   ),
                 );
               },
               imagePath:
                   'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildCard(
               title: 'BroadBand  Home 200 Mb',
               price: 'Rp 569.000',
@@ -272,7 +272,7 @@ class BroadbandHomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
+                        const EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
                   ),
                 );
               },
@@ -320,26 +320,26 @@ class BroadbandHomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   Row(
                     children: [
                       Text(
                         price,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      Text(
+                      const Text(
                         '/bulan',
                         style: TextStyle(
                           fontSize: 12.0,
@@ -348,38 +348,39 @@ class BroadbandHomePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: details.map((detail) {
-                      return _buildFeatureRow(Icons.check_circle_outline, detail);
+                      return _buildFeatureRow(
+                          Icons.check_circle_outline, detail);
                     }).toList(),
                   ),
                 ],
               ),
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Align(
             alignment: Alignment.center,
             child: FractionallySizedBox(
               widthFactor: 3 / 4,
               child: ElevatedButton(
                 onPressed: onPressed,
-                child: Text(
-                  'Pilih Paket',
-                  style: TextStyle(color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
+                child: const Text(
+                  'Pilih Paket',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
         ],
       ),
     );
@@ -391,11 +392,11 @@ class BroadbandHomePage extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: Colors.blue, size: 24),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14.0,
                 color: Colors.black,
               ),
@@ -408,7 +409,7 @@ class BroadbandHomePage extends StatelessWidget {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: BroadbandHomePage(),
   ));
 }

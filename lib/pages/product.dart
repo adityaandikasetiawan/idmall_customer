@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:idmall/pages/broadbandbisnis.dart';
-import 'package:idmall/pages/broadbandhome.dart';
-import 'package:idmall/pages/enterprisesolution.dart';
 import 'package:idmall/pages/form_suervey.dart';
-import 'package:idmall/widget/chatbotpage.dart';
-import 'package:idmall/widget/notificationpage.dart';
-import 'package:idmall/widget/shoppingchartpage.dart';
 
 class ProductList extends StatefulWidget {
   final double latitude;
   final double longitude;
-  const ProductList({super.key, required this.longitude, required this.latitude});
+  const ProductList(
+      {super.key, required this.longitude, required this.latitude});
 
   @override
   State<ProductList> createState() => _ProductListState();
@@ -21,7 +16,7 @@ class _ProductListState extends State<ProductList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Product List'),
+        title: const Text('Product List'),
         // actions: [
         //   Padding(
         //     padding: const EdgeInsets.only(right: 20.0),
@@ -126,7 +121,7 @@ class _ProductListState extends State<ProductList> {
         // ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -134,7 +129,7 @@ class _ProductListState extends State<ProductList> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Broadband Home',
                       style: TextStyle(
@@ -159,16 +154,12 @@ class _ProductListState extends State<ProductList> {
               tipe: 'idplay Retail Up To 10 Mbps',
               title: 'BroadBand  Home 10 Mb',
               price: 'Rp 179.000',
-              details: [
-                'Unlimited data',
-                '10 Mbps speed',
-                'Free installation'
-              ],
+              details: ['Unlimited data', '10 Mbps speed', 'Free installation'],
               onPressed: () {},
               imagePath:
                   'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildCard(
               tipe: 'idplay Retail Up To 20 Mbps',
               title: 'BroadBand  Home 20 Mb',
@@ -182,7 +173,7 @@ class _ProductListState extends State<ProductList> {
               imagePath:
                   'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildCard(
               tipe: 'idplay Retail Up To 50 Mbps',
               title: 'BroadBand  Home 50 Mb',
@@ -196,7 +187,7 @@ class _ProductListState extends State<ProductList> {
               imagePath:
                   'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildCard(
               tipe: 'idplay Retail Up To 100 Mbps',
               title: 'BroadBand  Home 100 Mb',
@@ -210,7 +201,7 @@ class _ProductListState extends State<ProductList> {
               imagePath:
                   'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildCard(
               tipe: 'idplay Retail Up To 200 Mbps',
               title: 'BroadBand  Home 200 Mb',
@@ -264,26 +255,26 @@ class _ProductListState extends State<ProductList> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 Row(
                   children: [
                     Text(
                       price,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                     ),
-                    Text(
+                    const Text(
                       '/bulan',
                       style: TextStyle(
                         fontSize: 12.0,
@@ -292,7 +283,7 @@ class _ProductListState extends State<ProductList> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: details.map((detail) {
@@ -302,29 +293,35 @@ class _ProductListState extends State<ProductList> {
               ],
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Align(
             alignment: Alignment.center,
             child: FractionallySizedBox(
               widthFactor: 3 / 4,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (builder) => FormSurvey(latitude: widget.latitude, longitude: widget.longitude, tipe: tipe, price:price ,)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (builder) => FormSurvey(
+                            latitude: widget.latitude,
+                            longitude: widget.longitude,
+                            tipe: tipe,
+                            price: price,
+                          )));
                 },
-                child: Text(
-                  'Pilih Paket',
-                  style: TextStyle(color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
+                child: const Text(
+                  'Pilih Paket',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
         ],
       ),
     );
@@ -336,11 +333,11 @@ class _ProductListState extends State<ProductList> {
       child: Row(
         children: [
           Icon(icon, color: Colors.blue, size: 24),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14.0,
                 color: Colors.black,
               ),

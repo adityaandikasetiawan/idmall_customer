@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, empty_catches, use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -8,11 +10,10 @@ import 'package:idmall/consts.dart';
 import 'package:idmall/widget/notificationpage.dart';
 import 'package:idmall/widget/chatbotpage.dart';
 import 'package:idmall/widget/shoppingchartpage.dart';
-import 'package:idmall/config/config.dart' as config;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EnterpriseSolutionPage extends StatefulWidget {
-  const EnterpriseSolutionPage({Key? key}) : super(key: key);
+  const EnterpriseSolutionPage({super.key});
 
   @override
   _EnterpriseSolutionPageState createState() => _EnterpriseSolutionPageState();
@@ -21,16 +22,15 @@ class EnterpriseSolutionPage extends StatefulWidget {
 class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _companyNameController = TextEditingController();
-  TextEditingController _companyAddressController = TextEditingController();
-  TextEditingController _needsController = TextEditingController();
-  TextEditingController _noteController = TextEditingController();
-  TextEditingController _budgetController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _companyNameController = TextEditingController();
+  final TextEditingController _needsController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
+  final TextEditingController _budgetController = TextEditingController();
   Dio dio = Dio();
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   String? token;
   String? fullName;
   String? lastName;
@@ -39,32 +39,11 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
   String? _selectedBusinessIndustry;
   String? _selectedBusinessScale;
 
-  List<String> _businessIndustries = [
-    'Industry 1',
-    'Industry 2',
-    'Industry 3',
-    'Industry 4',
-  ];
-
-  List<String> _businessScales = [
+  final List<String> _businessScales = [
     'Micro',
     'Kecil',
     'Menegah',
     'Besar',
-  ];
-
-  List<String> _needs = [
-    'Need 1',
-    'Need 2',
-    'Need 3',
-    'Need 4',
-  ];
-
-  List<String> _budgets = [
-    'Budget 1',
-    'Budget 2',
-    'Budget 3',
-    'Budget 4',
   ];
 
   @override
@@ -75,22 +54,21 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
 
   Future<Null> getNameUser() async {
     WidgetsFlutterBinding.ensureInitialized();
-    final SharedPreferences? prefs = await _prefs;
+    final SharedPreferences prefs = await _prefs;
 
     setState(() {
-      fullName = prefs?.getString('fullName');
-      email = prefs?.getString('email');
-      token = prefs?.getString('token');
-      _nameController.text = prefs?.getString('fullName') ?? '';
-      _emailController.text = prefs?.getString('email') ?? '';
+      fullName = prefs.getString('fullName');
+      email = prefs.getString('email');
+      token = prefs.getString('token');
+      _nameController.text = prefs.getString('fullName') ?? '';
+      _emailController.text = prefs.getString('email') ?? '';
     });
 
     try {
-      
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-                      HttpClient()
-                        ..badCertificateCallback =
-                            (X509Certificate cert, String host, int port) => true;
+          HttpClient()
+            ..badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
       var response = await dio.get('$linkLaravelAPI/customer/industry',
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
@@ -100,9 +78,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
       if (data != '') {
         data = data['data'];
       }
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   }
 
   Future<void> _submitForm(context) async {
@@ -119,14 +95,14 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
     String needs = _needsController.text;
     // File? file = _imageFile; // Access the selected file if needed;
     // File? file = _imageFile;
-    var explode = fullName.split(' ');
+    fullName.split(' ');
     // String lastName = explode[explode.length - 1];
     // // String firstName = '';
     // // for (var i = 0; i < explode.length - 1; i++) {
     // //   firstName += explode[i] + ' ';
     // // }
     // // firstName = firstName.substring(0,firstName.length - 1);
-    Map<String,dynamic> dataNya = {};
+    Map<String, dynamic> dataNya = {};
     dataNya = {
       'name': fullName.toString(),
       'company_name': companyName.toString(),
@@ -136,25 +112,24 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
       'budget': budget.toString(),
       'scale': scale.toString(),
       'needs': needs.toString(),
-      'industry' : _selectedBusinessIndustry.toString()
+      'industry': _selectedBusinessIndustry.toString()
     };
-    FormData formData = FormData.fromMap(dataNya);
 
     try {
       // Replace URL with your endpoint
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-                      HttpClient()
-                        ..badCertificateCallback =
-                            (X509Certificate cert, String host, int port) => true;
-      var response = await dio.post('$linkLaravelAPI/customer/enterprise-solution',
-          data: dataNya,
-          options: Options(headers: {
-            HttpHeaders.authorizationHeader: "Bearer $token",
-          }));
+          HttpClient()
+            ..badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
+      var response =
+          await dio.post('$linkLaravelAPI/customer/enterprise-solution',
+              data: dataNya,
+              options: Options(headers: {
+                HttpHeaders.authorizationHeader: "Bearer $token",
+              }));
 
       // Handle response
-      Map<String,dynamic> result = response.data;
-      print(result['status']);
+      Map<String, dynamic> result = response.data;
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -166,7 +141,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                 onPressed: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
-                child: Text('Close'),
+                child: const Text('Close'),
               ),
             ],
           );
@@ -175,7 +150,6 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
       // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
     } catch (e) {
       // Handle error
-      print(e.toString());
     }
   }
 
@@ -189,40 +163,41 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => NotificationsPage(),
+                  builder: (context) => const NotificationsPage(),
                 ),
               );
             },
-            icon: Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           IconButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChatbotPage(),
+                  builder: (context) => const ChatbotPage(),
                 ),
               );
             },
-            icon: Image.asset('images/widget/Chatbot.png', width: 15, height: 15),
+            icon:
+                Image.asset('images/widget/Chatbot.png', width: 15, height: 15),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           IconButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ShoppingCartPage(),
+                  builder: (context) => const ShoppingCartPage(),
                 ),
               );
             },
-            icon: Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.shopping_cart),
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -232,7 +207,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         'Enterprise\nSolution',
                         style: TextStyle(
@@ -241,7 +216,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 1.0),
+                    const SizedBox(width: 1.0),
                     Expanded(
                       child: Image.asset(
                         'images/enterprisesolution.png',
@@ -252,10 +227,10 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _buildTextField('Name', _nameController),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   controller: _emailController,
@@ -274,7 +249,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   controller: _phoneController,
@@ -296,16 +271,15 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
               DropdownSearch<String>(
                 asyncItems: (String filter) async {
                   try {
-                    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-                  HttpClient()
-                    ..badCertificateCallback =
-                        (X509Certificate cert, String host, int port) => true;
+                    (dio.httpClientAdapter as IOHttpClientAdapter)
+                        .createHttpClient = () => HttpClient()
+                      ..badCertificateCallback =
+                          (X509Certificate cert, String host, int port) => true;
                     var response = await dio.get(
-                        "$linkLaravelAPI/customer/industry",
-                        queryParameters: {"chars": filter},
+                      "$linkLaravelAPI/customer/industry",
+                      queryParameters: {"chars": filter},
                     );
-                      // print(jsonDecode(response.data)['status']);
-                      print(response);
+                    // print(jsonDecode(response.data)['status']);
                     if (response.data['status'] == 'success') {
                       var hasil = response.data['data'];
                       List<String> list = [];
@@ -314,11 +288,10 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                       }
                       // print(model[0]);
                       return list;
-                    }else {
+                    } else {
                       return [];
                     }
                   } on DioException catch (e) {
-                    print(e);
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -348,12 +321,12 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                   ),
                 ),
                 popupProps: const PopupProps.menu(
-                    showSelectedItems: true,
-                    isFilterOnline: true,
-                    showSearchBox: true,
-                    // disabledItemFn: (String s) => s.startsWith('I'),
+                  showSelectedItems: true,
+                  isFilterOnline: true,
+                  showSearchBox: true,
+                  // disabledItemFn: (String s) => s.startsWith('I'),
                 ),
-                items: [],
+                items: const [],
                 onChanged: (String? value) {
                   setState(() {
                     _selectedBusinessIndustry = value;
@@ -367,7 +340,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                 },
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: DropdownButtonFormField<String>(
                   value: _selectedBusinessScale,
                   items: _businessScales.map((item) {
@@ -396,7 +369,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   controller: _budgetController,
@@ -415,21 +388,20 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
                 ),
               ),
               _buildTextField('Note', _noteController),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
-                onPressed:
-                    () {
-                      _submitForm(context);
-                    }, // Panggil _submitForm saat tombol ditekan
-                child: Text(
-                  'Submit',
-                  style: TextStyle(color: Colors.white),
-                ),
+                onPressed: () {
+                  _submitForm(context);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
+                ), // Panggil _submitForm saat tombol ditekan
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ],
@@ -439,41 +411,9 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
     );
   }
 
-  Widget _buildDropdown(String labelText, List<String> items, String? value) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        items: items.map((item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item),
-          );
-        }).toList(),
-        decoration: InputDecoration(
-          labelText: labelText,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-        onChanged: (newValue) {
-          setState(() {
-            value = newValue;
-          });
-        },
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return '$labelText is required';
-          }
-          return null;
-        },
-      ),
-    );
-  }
-
   Widget _buildTextField(String labelText, TextEditingController controller) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
@@ -504,7 +444,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: EnterpriseSolutionPage(),
   ));
 }

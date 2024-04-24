@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings, use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -64,96 +66,104 @@ class _OrderState extends State<Order> {
 
   Widget foodCart() {
     return StreamBuilder(
-      stream: foodStream,
-      builder: (context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 3.0,
-            ),
-          );
-        } else if (!snapshot.hasData || snapshot.data.docs.isEmpty) {
-          return Center(
-            child: Text("No items in the cart", style: AppWidget.semiboldTextFeildStyle(),),
-          );
-        } else {
-          foodSnapshot = snapshot;
-          return ListView.builder(
-            padding: EdgeInsets.zero,
-            itemCount: snapshot.data.docs.length,
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (context, index) {
-              DocumentSnapshot ds = snapshot.data.docs[index];
-              total = total + int.parse(ds["Total"]);
-              return Container(
-                margin: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
-                child: Material(
-                  elevation: 5.0,
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    decoration: BoxDecoration(
+        stream: foodStream,
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 3.0,
+              ),
+            );
+          } else if (!snapshot.hasData || snapshot.data.docs.isEmpty) {
+            return Center(
+              child: Text(
+                "No items in the cart",
+                style: AppWidget.semiboldTextFeildStyle(),
+              ),
+            );
+          } else {
+            foodSnapshot = snapshot;
+            return ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: snapshot.data.docs.length,
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot ds = snapshot.data.docs[index];
+                  total = total + int.parse(ds["Total"]);
+                  return Container(
+                    margin: const EdgeInsets.only(
+                        left: 20.0, right: 20.0, top: 10.0),
+                    child: Material(
+                      elevation: 5.0,
                       borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 85,
-                          width: 35,
-                          decoration: BoxDecoration(
-                            border: Border.all(),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: Text(
-                              ds["Quantity"],
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        const SizedBox(
-                          width: 20.0,
-                        ),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(60),
-                          child: Image.network(
-                            ds["Image"],
-                            height: 90,
-                            width: 90,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20.0,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
                           children: [
-                            Text(
-                              ds["Name"].length > 10
-                                  ? ds["Name"].substring(0, 10) + '...'
-                                  : ds["Name"],
-                              style: const TextStyle(fontSize: 16, color: Colors.black, fontFamily: 'Poppins'),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.justify,
+                            Container(
+                              height: 85,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                border: Border.all(),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  ds["Quantity"],
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
-                            Text(
-                              "Rp. " + ds["Total"],
-                              style: AppWidget.semibold2TextFeildStyle(),
+                            const SizedBox(
+                              width: 20.0,
                             ),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(60),
+                              child: Image.network(
+                                ds["Image"],
+                                height: 90,
+                                width: 90,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20.0,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  ds["Name"].length > 10
+                                      ? ds["Name"].substring(0, 10) + '...'
+                                      : ds["Name"],
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontFamily: 'Poppins'),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.justify,
+                                ),
+                                Text(
+                                  "Rp. " + ds["Total"],
+                                  style: AppWidget.semibold2TextFeildStyle(),
+                                ),
+                              ],
+                            )
                           ],
-                        )
-                      ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              );
-            });
-        }
-      });
+                  );
+                });
+          }
+        });
   }
 
   void _showCheckoutDialog() {
@@ -183,7 +193,8 @@ class _OrderState extends State<Order> {
                   ),
                   TextFormField(
                     controller: tableController,
-                    decoration: const InputDecoration(labelText: 'Table Number'),
+                    decoration:
+                        const InputDecoration(labelText: 'Table Number'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter the table number';
@@ -204,7 +215,6 @@ class _OrderState extends State<Order> {
             ),
             TextButton(
               onPressed: () async {
-
                 if (_formKey.currentState!.validate()) {
                   int walletBalance = int.parse(wallet!);
                   if (walletBalance <= 0) {
@@ -221,12 +231,16 @@ class _OrderState extends State<Order> {
                   String tableNumber = tableController.text;
 
                   int amount = int.parse(wallet!) - amount2;
-                  await DatabaseMethods().UpdateUserwallet(id!, amount.toString());
-                  await SharedPreferenceHelper().saveUserWallet(amount.toString());
+                  await DatabaseMethods()
+                      .UpdateUserwallet(id!, amount.toString());
+                  await SharedPreferenceHelper()
+                      .saveUserWallet(amount.toString());
 
                   List<Map<String, dynamic>> orderList = [];
 
-                  for (int index = 0; index < foodSnapshot.data.docs.length; index++) {
+                  for (int index = 0;
+                      index < foodSnapshot.data.docs.length;
+                      index++) {
                     DocumentSnapshot ds = foodSnapshot.data.docs[index];
                     Map<String, dynamic> orderItem = {
                       'quantity': ds["Quantity"],
@@ -260,9 +274,8 @@ class _OrderState extends State<Order> {
                     total = 0;
                   });
 
-                  await DatabaseMethods().sendOrderDetailsToHistory(id!, orderList);
-
-                  print('Name: $name, Table Number: $tableNumber');
+                  await DatabaseMethods()
+                      .sendOrderDetailsToHistory(id!, orderList);
                 }
               },
               child: const Text('Checkout'),
@@ -273,79 +286,77 @@ class _OrderState extends State<Order> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff343456),
-      body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Material(
-              color: Colors.black,
-              elevation: 2.0,
-              child: Container(
-                padding: const EdgeInsets.only(bottom: 20.0, top: 50.0),
-                child: Center(
-                  child: Text(
-                    "Food Troli",
-                    style: AppWidget.HeadlineTextFeildStyle(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Material(
+            color: Colors.black,
+            elevation: 2.0,
+            child: Container(
+              padding: const EdgeInsets.only(bottom: 20.0, top: 50.0),
+              child: Center(
+                child: Text(
+                  "Food Troli",
+                  style: AppWidget.HeadlineTextFeildStyle(),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 10.0,
+          ),
+          SizedBox(
+              height: MediaQuery.of(context).size.height / 1.7,
+              child: foodCart()),
+          const Spacer(),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Total Price",
+                  style: AppWidget.boldTextFeildStyle(),
+                ),
+                Text(
+                  "Rp. $total",
+                  style: AppWidget.semiboldTextFeildStyle(),
+                )
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 20.0,
+          ),
+          GestureDetector(
+            onTap: _showCheckoutDialog,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin:
+                  const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
+              child: const Center(
+                child: Text(
+                  "CheckOut",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10.0,
-            ),
-            SizedBox(
-                height: MediaQuery.of(context).size.height / 1.7,
-                child: foodCart()),
-            const Spacer(),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Total Price",
-                    style: AppWidget.boldTextFeildStyle(),
-                  ),
-                  Text(
-                    "Rp. $total",
-                    style: AppWidget.semiboldTextFeildStyle(),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20.0,
-            ),
-            GestureDetector(
-              onTap: _showCheckoutDialog,
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                margin: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
-                child: const Center(
-                  child: Text(
-                    "CheckOut",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:idmall/consts.dart';
 import 'package:idmall/models/update_downgrade.dart';
 import 'package:idmall/pages/upgrade_downgrade_detail.dart';
@@ -25,7 +24,7 @@ class _UpdateDownGradeState extends State<UpdateDownGrade> {
   Dio dio = Dio();
   List<UpdateDownGradeModel> _data = [];
   List<UpdateDownGradeModel>? _filterData;
-  TextEditingController _filterController = TextEditingController();
+  final TextEditingController _filterController = TextEditingController();
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   @override
@@ -49,20 +48,13 @@ class _UpdateDownGradeState extends State<UpdateDownGrade> {
 
   Future<Null> getNameUser() async {
     WidgetsFlutterBinding.ensureInitialized();
-    final SharedPreferences? prefs = await _prefs;
+    final SharedPreferences prefs = await _prefs;
 
     setState(() {
-      firstName = prefs?.getString('firstName');
-      lastName = prefs?.getString('lastName');
-      _token = prefs?.getString('token');
+      firstName = prefs.getString('firstName');
+      lastName = prefs.getString('lastName');
+      _token = prefs.getString('token');
     });
-  }
-
-  void _loadMoreData() {
-    if (!_isLoading) {
-      setState(() {});
-      getFutureDone();
-    }
   }
 
   Future<void> getFutureDone() async {
@@ -70,8 +62,8 @@ class _UpdateDownGradeState extends State<UpdateDownGrade> {
     setState(() {
       _isLoading = true;
     });
-    final SharedPreferences? prefs = await _prefs;
-    final token = prefs?.getString("token");
+    final SharedPreferences prefs = await _prefs;
+    final token = prefs.getString("token");
     final response = await dio.get(
       "${config.backendBaseUrl}/sales/filter-customer-list/ACTIVE",
       options: Options(headers: {
@@ -96,7 +88,6 @@ class _UpdateDownGradeState extends State<UpdateDownGrade> {
         _isLoading = false;
       });
     }
-    print(_data.length);
   }
 
   @override
@@ -139,7 +130,7 @@ class _UpdateDownGradeState extends State<UpdateDownGrade> {
                                   borderRadius: BorderRadius.circular(10)),
                               child: TextField(
                                 controller: _filterController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   hintText: "Type here to Filter",
                                 ),
                                 onChanged: (value) {
@@ -194,7 +185,7 @@ class _DataActiveList extends DataTableSource {
   List<UpdateDownGradeModel> items;
   Dio dio = Dio();
   BuildContext context;
-  final oCcy = new NumberFormat("#,##0", "en_US");
+  final oCcy = NumberFormat("#,##0", "en_US");
 
   _DataActiveList(
       {required this.token, required this.items, required this.context});

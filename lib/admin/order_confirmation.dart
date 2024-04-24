@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches, use_build_context_synchronously, duplicate_ignore
+
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceHelper {
@@ -10,10 +12,8 @@ class SharedPreferenceHelper {
   static String userWalletKey = "${_prefix}USERWALLETKEY";
 
   Future<void> clearAllPreferences() async {
-    print('Clearing preferences...');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    print('Preferences cleared.');
   }
 
   Future<bool> saveUserUId(String uid) async {

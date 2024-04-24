@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -81,13 +83,13 @@ class _PaymentToPageState extends State<PaymentToPage> {
     }
   }
 
-  Future<void> _submitForm(String taskID, String payment_method_code,
-      String payment_type, double total_payment) async {
+  Future<void> _submitForm(String taskID, String paymentMethodCode,
+      String paymentType, double totalPayment) async {
     var dataNya = {
       'task_id': taskID,
-      'payment_method_code': payment_method_code,
-      'payment_type': payment_type.toUpperCase(),
-      'total_payment': total_payment,
+      'payment_method_code': paymentMethodCode,
+      'payment_type': paymentType.toUpperCase(),
+      'total_payment': totalPayment,
     };
     try {
       // Replace URL with your endpoint
@@ -104,7 +106,6 @@ class _PaymentToPageState extends State<PaymentToPage> {
 
       // Handle response
       Map<String, dynamic> result = response.data;
-      print(result['status']);
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -118,12 +119,12 @@ class _PaymentToPageState extends State<PaymentToPage> {
                   // Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (builder) => Invoice(
-                            code: payment_method_code,
+                            code: paymentMethodCode,
                             totalPrice: widget.totalPrice!,
                             taskID: widget.taskID,
                           )));
                 },
-                child: Text('Close'),
+                child: const Text('Close'),
               ),
             ],
           );
@@ -132,13 +133,11 @@ class _PaymentToPageState extends State<PaymentToPage> {
       // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
     } catch (e) {
       // Handle error
-      print(e.toString());
     }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     checkPM();
     list = getPaymentList();
@@ -149,7 +148,7 @@ class _PaymentToPageState extends State<PaymentToPage> {
     var price = (widget.totalPrice! / 1.11).round();
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Pembayaran',
           style: TextStyle(fontSize: 16.0), // Ubah ukuran font menjadi 16px
         ),
@@ -161,58 +160,58 @@ class _PaymentToPageState extends State<PaymentToPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Pesanan:'),
+                  const Text('Pesanan:'),
                   Text(
                     'Rp $price',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Pajak:'),
+                  const Text('Pajak:'),
                   Text(
                     '${widget.ppn}%',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Total:'),
+                  const Text('Total:'),
                   Text(
                     'Rp ${widget.totalPrice}',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-              SizedBox(height: 8.0),
-              Divider(),
-              SizedBox(height: 8.0),
-              Text(
+              const SizedBox(height: 8.0),
+              const Divider(),
+              const SizedBox(height: 8.0),
+              const Text(
                 'Metode Pembayaran:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               SizedBox(
                 child: FutureBuilder(
                     future: list,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                       } else if (snapshot.hasData) {
                         final List<Map<String, dynamic>> dataNya =
                             snapshot.data!;
                         return ListView.builder(
                           shrinkWrap: true,
                           primary: false,
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: dataNya.length,
                           itemBuilder: (context, index) {
                             var dataNya1 = index == 0
@@ -222,7 +221,7 @@ class _PaymentToPageState extends State<PaymentToPage> {
                             return ListView.builder(
                               shrinkWrap: true,
                               primary: false,
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               itemCount: dataNya1.length,
                               itemBuilder: (context, index1) {
                                 return buildPaymentNew(
@@ -237,7 +236,7 @@ class _PaymentToPageState extends State<PaymentToPage> {
                           },
                         );
                       } else {
-                        return Text('no data available');
+                        return const Text('no data available');
                       }
                     }),
               ),
@@ -273,13 +272,13 @@ class _PaymentToPageState extends State<PaymentToPage> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 50,
                 ),
                 Expanded(
                   child: Text(
                     bankName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -319,13 +318,13 @@ class _PaymentToPageState extends State<PaymentToPage> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 100,
                 ),
                 Expanded(
                   child: Text(
                     bankName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),

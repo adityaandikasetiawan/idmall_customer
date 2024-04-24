@@ -1,12 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
-import 'package:accordion/accordion.dart';
-import 'package:accordion/controllers.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,9 +32,9 @@ class _InvoiceState extends State<Invoice> {
   int? total;
 
   Future<void> getInvoice() async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
+    SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
-      token = _pref.getString('token');
+      token = pref.getString('token');
     });
     try {
       // Replace URL with your endpoint
@@ -52,7 +51,6 @@ class _InvoiceState extends State<Invoice> {
       // Handle response
       Map<String, dynamic> result = response.data;
       if (result['data']['task_id'] == widget.taskID) {
-        print(result);
         setState(() {
           codeAccount = result['data']['code'];
           bank = result['data']['payment_method'];
@@ -62,7 +60,6 @@ class _InvoiceState extends State<Invoice> {
       // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
     } catch (e) {
       // Handle error
-      print(e.toString());
     }
   }
 
@@ -72,16 +69,15 @@ class _InvoiceState extends State<Invoice> {
     getInvoice();
   }
 
-  List<Item> _data = generateItems(3);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Payment'),
+        title: const Text('Payment'),
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
           child: Column(
             children: [
               ContainerWidgetWithRoundedBorder(
@@ -109,19 +105,19 @@ class _InvoiceState extends State<Invoice> {
               //     );
               //   }).toList(),
               // ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               ContainerWidgetWithRoundedBorder(
                 title: 'Name:',
                 subtitle: bank ?? '',
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               ContainerWidgetWithRoundedBorder(
                 title: 'Total Payment:',
-                subtitle: "${total.toString()}",
+                subtitle: total.toString(),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               ElevatedButton(
@@ -130,8 +126,8 @@ class _InvoiceState extends State<Invoice> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Success'),
-                        content: SingleChildScrollView(
+                        title: const Text('Success'),
+                        content: const SingleChildScrollView(
                           child: Text(
                             // Your agreement content here
                             'Pembayaran sudah selesai dilakukan',
@@ -147,7 +143,7 @@ class _InvoiceState extends State<Invoice> {
                               Navigator.of(context)
                                   .popUntil((route) => route.isFirst);
                             },
-                            child: Text('Close'),
+                            child: const Text('Close'),
                           ),
                           // TextButton(
                           //   onPressed: () {
@@ -164,7 +160,7 @@ class _InvoiceState extends State<Invoice> {
                     },
                   );
                 },
-                child: Text('Check Payment Status'),
+                child: const Text('Check Payment Status'),
               )
             ],
           ),
@@ -303,7 +299,7 @@ class ContainerWidgetWithRoundedBorder extends StatelessWidget {
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         decoration: BoxDecoration(
           border: Border.all(),
           borderRadius: BorderRadius.circular(15),
@@ -312,12 +308,12 @@ class ContainerWidgetWithRoundedBorder extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(title),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Text(
               subtitle,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
         ),

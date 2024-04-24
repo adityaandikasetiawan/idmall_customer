@@ -12,7 +12,6 @@ class _PushNotificationOnAllState extends State<PushNotificationOnAll> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     final arguments = ModalRoute.of(context)?.settings.arguments;
 
@@ -24,14 +23,13 @@ class _PushNotificationOnAllState extends State<PushNotificationOnAll> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: Scaffold(
         body: Center(
-          child: Container(
-            child: Text('Push Notifications'),
-          ),
+          child: Text('Push Notifications'),
         ),
       ),
     );

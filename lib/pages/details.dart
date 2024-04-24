@@ -23,6 +23,8 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   String? token;
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  @override
   void initState() {
     super.initState();
     getNameUser();
@@ -30,18 +32,18 @@ class _DetailPageState extends State<DetailPage> {
 
   Future<Null> getNameUser() async {
     WidgetsFlutterBinding.ensureInitialized();
-    final SharedPreferences? prefs = await _prefs;
+    final SharedPreferences prefs = await _prefs;
 
     setState(() {
-      token = prefs?.getString('token');
+      token = prefs.getString('token');
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detail'),
+        title: const Text('Detail'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,66 +60,72 @@ class _DetailPageState extends State<DetailPage> {
               children: [
                 Text(
                   widget.title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  'Rp. ' + widget.price.toString(),
-                  style: TextStyle(
+                  'Rp. ${widget.price}',
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
                   ),
                 ),
-                SizedBox(height: 16),
-                Text(
+                const SizedBox(height: 16),
+                const Text(
                   'Deskripsi Produk:',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   widget.description ?? '',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        shadowColor: Colors.orange, // Ubah warna latar belakang tombol menjadi orange
-                        backgroundColor: Colors.white, // Ubah warna font menjadi putih
-                        side: BorderSide(color: Colors.orange), // Tambahkan garis tepi dengan warna yang sama
+                        shadowColor: Colors
+                            .orange, // Ubah warna latar belakang tombol menjadi orange
+                        backgroundColor:
+                            Colors.white, // Ubah warna font menjadi putih
+                        side: const BorderSide(
+                            color: Colors
+                                .orange), // Tambahkan garis tepi dengan warna yang sama
                       ),
                       onPressed: () {
                         // Tambahkan logika untuk memasukkan produk ke keranjang di sini
                         // Misalnya, Anda dapat menampilkan pesan atau mengirimkan produk ke keranjang belanja
                         if (token == null) {
-                          print('belum login');
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: Text('Info'),
-                              content: Text('Login terlebih dahulu.'),
+                              title: const Text('Info'),
+                              content: const Text('Login terlebih dahulu.'),
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> Login()));
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (builder) =>
+                                                const Login()));
                                   },
-                                  child: Text('Sign In'),
+                                  child: const Text('Sign In'),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     'Tutup',
                                     // style: TextStyle(
                                     //   color: Colors.white
@@ -127,25 +135,26 @@ class _DetailPageState extends State<DetailPage> {
                               ],
                             ),
                           );
-                        }else {
+                        } else {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: Text('Sukses'),
-                              content: Text('Produk berhasil dimasukkan ke keranjang.'),
+                              title: const Text('Sukses'),
+                              content: const Text(
+                                  'Produk berhasil dimasukkan ke keranjang.'),
                               actions: [
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: Text('Tutup'),
+                                  child: const Text('Tutup'),
                                 ),
                               ],
                             ),
                           );
                         }
                       },
-                      child: Text('Pesan Sekarang!'),
+                      child: const Text('Pesan Sekarang!'),
                     ),
                   ],
                 ),

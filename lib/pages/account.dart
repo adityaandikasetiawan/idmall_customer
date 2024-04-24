@@ -1,3 +1,4 @@
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously, duplicate_ignore
 
 import 'package:flutter/material.dart';
 import 'package:idmall/config/config.dart';
@@ -24,8 +25,6 @@ class _AccountState extends State<Account> {
     // ignore: no_leading_underscores_for_local_identifiers
     SharedPreferences _pref = await SharedPreferences.getInstance();
 
-
-
     setState(() {
       fullName = _pref.getString('fullName');
       token = _pref.getString('token');
@@ -34,25 +33,26 @@ class _AccountState extends State<Account> {
     });
   }
 
-  Future<void> verifyEmailAddress() async{
+  Future<void> verifyEmailAddress() async {
     Dio dio = Dio();
     var headers = {"Authorization": "Bearer $token"};
-    Response response = await dio.post("${backendBaseUrl}/send-verification-email",
-    data:{
-      "target_email": email,
-    },
-      options: Options(
-        headers: headers,
-      )
-    );
+    Response response =
+        await dio.post("$backendBaseUrl/send-verification-email",
+            data: {
+              "target_email": email,
+            },
+            options: Options(
+              headers: headers,
+            ));
 
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text("success"),
-            content: Text("Berhasil mengirimkan email, silahkan cek kotak masuk email anda"),
+            content: const Text(
+                "Berhasil mengirimkan email, silahkan cek kotak masuk email anda"),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -65,17 +65,12 @@ class _AccountState extends State<Account> {
         },
       );
     }
-    print("$response");
-
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getUser();
-    print("This is from pref");
-
   }
 
   @override
@@ -128,20 +123,19 @@ class _AccountState extends State<Account> {
                             Text(fullName ?? ''),
                             const SizedBox(height: 10),
                             Text(email ?? ''),
-                            Column(
-                              children: [
-                                if(is_email_verified == "1")
-                                  Text("Terverifikasi")
-                                else...[
-                                  Text("Belum verifikasi"),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 16)),
-                                    onPressed: verifyEmailAddress,
-                                    child: const Text('Verifikasi'),
-                                  ),
-                                ]
+                            Column(children: [
+                              if (is_email_verified == "1")
+                                const Text("Terverifikasi")
+                              else ...[
+                                const Text("Belum verifikasi"),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      textStyle: const TextStyle(fontSize: 16)),
+                                  onPressed: verifyEmailAddress,
+                                  child: const Text('Verifikasi'),
+                                ),
                               ]
-                            ),
+                            ]),
 
                             // SizedBox(height: 20),
                             // ElevatedButton(
@@ -255,7 +249,8 @@ class _AccountState extends State<Account> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const SettingChangePasswordPage()),
+                        builder: (context) =>
+                            const SettingChangePasswordPage()),
                   );
                 },
               ),

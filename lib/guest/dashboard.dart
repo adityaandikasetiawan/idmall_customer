@@ -260,7 +260,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    PenawaranPage()), // Ganti dengan halaman yang diinginkan
+                                    const PenawaranPage()), // Ganti dengan halaman yang diinginkan
                           );
                         },
                         child: const Text(

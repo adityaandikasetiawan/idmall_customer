@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -24,17 +26,17 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   ).then((_) {});
   String? token;
-  SharedPreferences? _pref = await SharedPreferences.getInstance();
-  token = _pref.getString('token') ?? '';
+  SharedPreferences? pref = await SharedPreferences.getInstance();
+  token = pref.getString('token') ?? '';
   FirebaseMessaging.instance.getToken().then((value) async {
     if (value != null) {
-      _pref.setString('fcm_token', value);
+      pref.setString('fcm_token', value);
       if (token != null && token != '') {
         (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
             HttpClient()
               ..badCertificateCallback =
                   (X509Certificate cert, String host, int port) => true;
-        final response = await dio.post(
+        await dio.post(
           "$linkLaravelAPI/customer/update-device-key",
           data: {"token": value},
           options: Options(headers: {
@@ -60,7 +62,7 @@ void main() async {
           channelKey: "basic_channel",
           channelName: "Basic Notifications",
           channelDescription: "Basic Notification Channel",
-          defaultColor: Color(0xFF9D50DD),
+          defaultColor: const Color(0xFF9D50DD),
           ledColor: Colors.white,
         )
       ],
@@ -135,7 +137,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    // TODO: implement initState
     AwesomeNotifications().setListeners(
       onActionReceivedMethod: NotificationController.onActionReceivedMethod,
       onNotificationCreatedMethod:
@@ -173,7 +174,7 @@ class _MyAppState extends State<MyApp> {
             seedColor: const Color.fromARGB(255, 251, 251, 251)),
         useMaterial3: true,
       ),
-      home: widget.token == '' ? Splash() : NavigationScreen(),
+      home: widget.token == '' ? const Splash() : const NavigationScreen(),
       // home: EmptyPage(),
       navigatorKey: navigatorKey,
       // routes: {

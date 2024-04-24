@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:idmall/models/customer_list..dart';
@@ -38,10 +40,10 @@ class _HistoryListState extends State<HistoryList> {
 
   Future<Null> getNameUser() async {
     WidgetsFlutterBinding.ensureInitialized();
-    final SharedPreferences? prefs = await _prefs;
+    final SharedPreferences prefs = await _prefs;
 
     setState(() {
-      userID = prefs?.getString('email');
+      userID = prefs.getString('email');
     });
   }
 
@@ -51,8 +53,8 @@ class _HistoryListState extends State<HistoryList> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Center(child: const Text("History")),
-          bottom: TabBar(
+          title: const Center(child: Text("History")),
+          bottom: const TabBar(
             tabs: [
               Tab(text: 'Pembayaran'),
               Tab(text: 'Aktivasi'),
@@ -77,7 +79,7 @@ class _HistoryListState extends State<HistoryList> {
                     height: 600,
                     child: TabBarView(
                       children: [
-                        HistoryPayment(),
+                        const HistoryPayment(),
                         CustomerStatus(
                           status: widget.status ?? "",
                           taskid: widget.customerId ?? "",
@@ -96,6 +98,8 @@ class _HistoryListState extends State<HistoryList> {
 }
 
 class HistoryPaymentPage extends StatelessWidget {
+  const HistoryPaymentPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -133,11 +137,11 @@ class HistoryPaymentPage extends StatelessWidget {
     return Column(
       children: [
         Card(
-          margin: EdgeInsets.all(0),
-          shape: RoundedRectangleBorder(
+          margin: const EdgeInsets.all(0),
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.zero,
           ),
-          child: Container(
+          child: SizedBox(
             height: 200,
             width: 380,
             child: ClipRRect(
@@ -149,16 +153,15 @@ class HistoryPaymentPage extends StatelessWidget {
             ),
           ),
         ),
-        Divider(
+        const Divider(
           color: Colors.white,
           thickness: 0.5,
         ),
         ListTile(
           title: Text(
             title,
-            style: TextStyle(
-              color: const Color.fromARGB(
-                  255, 0, 0, 0), // Warna teks menjadi orange
+            style: const TextStyle(
+              color: Color.fromARGB(255, 0, 0, 0), // Warna teks menjadi orange
             ),
           ),
           subtitle: Text(description),
@@ -256,12 +259,12 @@ class _HistoryActivationPageState extends State<HistoryActivationPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Reg. No: " + post.taskID.toString()),
-                    Text("Status: " + post.status.toString()),
-                    Text("Product: " + post.serviceName.toString()),
+                    Text("Reg. No: ${post.taskID}"),
+                    Text("Status: ${post.status}"),
+                    Text("Product: ${post.serviceName}"),
                   ],
                 ),
-                subtitle: Text(""),
+                subtitle: const Text(""),
               ),
             ],
           ),

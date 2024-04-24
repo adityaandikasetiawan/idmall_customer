@@ -1,10 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:idmall/pages/login.dart';
 import 'package:idmall/widget/content_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class Onboard extends StatefulWidget {
-  const Onboard({Key? key}) : super(key: key);
+  const Onboard({super.key});
 
   @override
   State<Onboard> createState() => _OnboardState();

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:idmall/pages/pembayaran.dart'; // Mengimport halaman pembayaran
 
 class OrderPage extends StatelessWidget {
+  const OrderPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Pesanan',
           style: TextStyle(fontSize: 16.0), // Ubah ukuran font menjadi 16px
         ),
@@ -19,7 +21,7 @@ class OrderPage extends StatelessWidget {
           children: [
             Card(
               elevation: 0.0, // Hilangkan elevation agar tidak ada shadow
-              margin: EdgeInsets.symmetric(vertical: 16.0),
+              margin: const EdgeInsets.symmetric(vertical: 16.0),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -37,8 +39,8 @@ class OrderPage extends StatelessWidget {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        SizedBox(width: 16.0),
-                        Column(
+                        const SizedBox(width: 16.0),
+                        const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: 8.0),
@@ -69,8 +71,8 @@ class OrderPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20.0),
-                    Row(
+                    const SizedBox(height: 20.0),
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
@@ -98,18 +100,18 @@ class OrderPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20.0),
-                    Divider(),
-                    SizedBox(height: 20.0),
-                    Text(
+                    const SizedBox(height: 20.0),
+                    const Divider(),
+                    const SizedBox(height: 20.0),
+                    const Text(
                       'Detail Pembayaran',
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8.0),
-                    Row(
+                    const SizedBox(height: 8.0),
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -126,8 +128,8 @@ class OrderPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 8.0),
-                    Row(
+                    const SizedBox(height: 8.0),
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -144,8 +146,8 @@ class OrderPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 8.0),
-                    Row(
+                    const SizedBox(height: 8.0),
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -162,9 +164,9 @@ class OrderPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Divider(),
-                    SizedBox(height: 8.0),
-                    Row(
+                    const Divider(),
+                    const SizedBox(height: 8.0),
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -183,7 +185,7 @@ class OrderPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -191,15 +193,18 @@ class OrderPage extends StatelessWidget {
                           // Navigasi ke halaman pembayaran saat tombol ditekan
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => PaymentPage()),
+                            MaterialPageRoute(
+                                builder: (context) => const PaymentPage()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange, // Warna background orange
+                          backgroundColor:
+                              Colors.orange, // Warna background orange
                           // Warna text putih
-                          padding: EdgeInsets.symmetric(vertical: 16.0), // Padding tambahan
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16.0), // Padding tambahan
                         ),
-                        child: Text('Proses Pembayaran'),
+                        child: const Text('Proses Pembayaran'),
                       ),
                     ),
                   ],

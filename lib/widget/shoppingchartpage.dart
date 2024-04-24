@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:idmall/widget/pesanan.dart'; // Import halaman OrderPage
 
 class ShoppingCartPage extends StatelessWidget {
+  const ShoppingCartPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Keranjang Belanja',
           style: TextStyle(fontSize: 16.0), // Ubah ukuran font menjadi 16px
         ),
@@ -17,7 +19,7 @@ class ShoppingCartPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Icon(Icons.location_on),
                 SizedBox(width: 16.0),
@@ -30,7 +32,7 @@ class ShoppingCartPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Row(
               children: [
                 Expanded(
@@ -39,7 +41,7 @@ class ShoppingCartPage extends StatelessWidget {
                     height: 120.0,
                     child: Card(
                       elevation: 4.0,
-                      margin: EdgeInsets.only(right: 8.0),
+                      margin: const EdgeInsets.only(right: 8.0),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
@@ -48,7 +50,7 @@ class ShoppingCartPage extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
+                                const Text(
                                   'Alamat Lengkap',
                                   style: TextStyle(
                                     fontSize: 16.0,
@@ -56,15 +58,15 @@ class ShoppingCartPage extends StatelessWidget {
                                   ),
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit),
                                   onPressed: () {
                                     // Tambahkan logika untuk mengedit alamat
                                   },
                                 ),
                               ],
                             ),
-                            SizedBox(height: 8.0),
-                            Text(
+                            const SizedBox(height: 8.0),
+                            const Text(
                               'Jl. Contoh No. 123, Kota Contoh',
                               style: TextStyle(fontSize: 14.0),
                             ),
@@ -79,10 +81,10 @@ class ShoppingCartPage extends StatelessWidget {
                   child: SizedBox(
                     height: 120.0,
                     child: Container(
-                      constraints: BoxConstraints(maxWidth: 200.0),
+                      constraints: const BoxConstraints(maxWidth: 200.0),
                       child: Card(
                         elevation: 4.0,
-                        margin: EdgeInsets.only(left: 8.0),
+                        margin: const EdgeInsets.only(left: 8.0),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
@@ -105,8 +107,8 @@ class ShoppingCartPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
-            Text(
+            const SizedBox(height: 16.0),
+            const Text(
               'List Pembelian',
               style: TextStyle(
                 fontSize: 20.0,
@@ -119,13 +121,13 @@ class ShoppingCartPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => OrderPage(),
+                    builder: (context) => const OrderPage(),
                   ),
                 );
               },
               child: Card(
                 elevation: 4.0,
-                margin: EdgeInsets.symmetric(vertical: 16.0),
+                margin: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -143,8 +145,8 @@ class ShoppingCartPage extends StatelessWidget {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          SizedBox(width: 16.0),
-                          Expanded(
+                          const SizedBox(width: 16.0),
+                          const Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -176,8 +178,8 @@ class ShoppingCartPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Divider(),
-                      Row(
+                      const Divider(),
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(

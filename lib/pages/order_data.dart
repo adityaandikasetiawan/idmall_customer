@@ -5,7 +5,6 @@ import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:idmall/consts.dart';
 import 'package:idmall/pages/payment_to.dart';
-import 'package:idmall/pages/pembayaran.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Mengimport halaman pembayaran
 
 class OrderData extends StatefulWidget {
@@ -24,17 +23,12 @@ class _OrderDataState extends State<OrderData> {
   int? totalPrice;
   Dio dio = Dio();
 
-  Future getDataTaskID (taskID) async {
-
-    SharedPreferences _pref = await SharedPreferences.getInstance();
+  Future getDataTaskID(taskID) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
-      token = _pref.getString('token');
+      token = pref.getString('token');
     });
 
-    print(taskID);
-    
-
-    
     (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
         HttpClient()
           ..badCertificateCallback =
@@ -46,22 +40,18 @@ class _OrderDataState extends State<OrderData> {
         }));
     var hasil = response.data;
     if (hasil['status'] == 'success') {
-      var tempPrice;
+      double tempPrice;
       setState(() {
-        namaProduk =  hasil['data']['serviceName'];
-        price =  hasil['data']['price'];
+        namaProduk = hasil['data']['serviceName'];
+        price = hasil['data']['price'];
         tempPrice = (price! * ppn / 100) + price!;
         totalPrice = tempPrice.round();
       });
-      
-    }else {
-      print(hasil);
-    }
+    } else {}
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getDataTaskID(widget.taskID);
   }
@@ -70,7 +60,7 @@ class _OrderDataState extends State<OrderData> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Pesanan',
           style: TextStyle(fontSize: 16.0), // Ubah ukuran font menjadi 16px
         ),
@@ -83,7 +73,7 @@ class _OrderDataState extends State<OrderData> {
           children: [
             Card(
               elevation: 0.0, // Hilangkan elevation agar tidak ada shadow
-              margin: EdgeInsets.symmetric(vertical: 16.0),
+              margin: const EdgeInsets.symmetric(vertical: 16.0),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -103,23 +93,23 @@ class _OrderDataState extends State<OrderData> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 16.0),
+                        const SizedBox(width: 16.0),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: 8.0),
+                              const SizedBox(height: 8.0),
                               Text(
                                 namaProduk ?? 'Produk',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(height: 4.0),
+                              const SizedBox(height: 4.0),
                               Text(
                                 'Rp. $price',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16.0,
                                   color: Colors.grey,
                                 ),
@@ -137,7 +127,7 @@ class _OrderDataState extends State<OrderData> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     //   children: [
@@ -166,21 +156,21 @@ class _OrderDataState extends State<OrderData> {
                     //     ),
                     //   ],
                     // ),
-                    SizedBox(height: 20.0),
-                    Divider(),
-                    SizedBox(height: 20.0),
-                    Text(
+                    const SizedBox(height: 20.0),
+                    const Divider(),
+                    const SizedBox(height: 20.0),
+                    const Text(
                       'Detail Pembayaran',
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Total Pembayaran:',
                           style: TextStyle(
                             fontSize: 16.0,
@@ -188,17 +178,17 @@ class _OrderDataState extends State<OrderData> {
                         ),
                         Text(
                           'Rp $price',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Pajak:',
                           style: TextStyle(
                             fontSize: 16.0,
@@ -206,14 +196,14 @@ class _OrderDataState extends State<OrderData> {
                         ),
                         Text(
                           '$ppn%',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 8.0),
-                    Row(
+                    const SizedBox(height: 8.0),
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -230,12 +220,12 @@ class _OrderDataState extends State<OrderData> {
                         ),
                       ],
                     ),
-                    Divider(),
-                    SizedBox(height: 8.0),
+                    const Divider(),
+                    const SizedBox(height: 8.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Total Pemesanan:',
                           style: TextStyle(
                             fontSize: 18.0,
@@ -244,14 +234,14 @@ class _OrderDataState extends State<OrderData> {
                         ),
                         Text(
                           'Rp $totalPrice',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -259,15 +249,22 @@ class _OrderDataState extends State<OrderData> {
                           // Navigasi ke halaman pembayaran saat tombol ditekan
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => PaymentToPage(totalPrice: totalPrice, taskID: widget.taskID, ppn: ppn,)),
+                            MaterialPageRoute(
+                                builder: (context) => PaymentToPage(
+                                      totalPrice: totalPrice,
+                                      taskID: widget.taskID,
+                                      ppn: ppn,
+                                    )),
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange, // Warna background orange
+                          backgroundColor:
+                              Colors.orange, // Warna background orange
                           // Warna text putih
-                          padding: EdgeInsets.symmetric(vertical: 16.0), // Padding tambahan
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16.0), // Padding tambahan
                         ),
-                        child: Text('Proses Pembayaran'),
+                        child: const Text('Proses Pembayaran'),
                       ),
                     ),
                   ],

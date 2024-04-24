@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:shared_preferences/shared_preferences.dart';

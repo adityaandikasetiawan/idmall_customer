@@ -8,11 +8,8 @@ import 'package:idmall/models/customer_detail.dart';
 import 'package:idmall/models/product.dart';
 import 'package:idmall/models/zip_code.dart';
 import 'package:idmall/consts.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:idmall/config/config.dart' as config;
 
 class UpgradeDowngradeDetail extends StatefulWidget {
   final String task;
@@ -41,15 +38,15 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
 
   Future<Null> getNameUser() async {
     WidgetsFlutterBinding.ensureInitialized();
-    final SharedPreferences? prefs = await _prefs;
+    final SharedPreferences prefs = await _prefs;
     Position? position = await _determinePosition();
 
     setState(() {
-      firstName = prefs?.getString('firstName');
-      lastName = prefs?.getString('lastName');
-      token = prefs?.getString('token');
-      latitude = position?.latitude;
-      longitude = position?.longitude;
+      firstName = prefs.getString('firstName');
+      lastName = prefs.getString('lastName');
+      token = prefs.getString('token');
+      latitude = position.latitude;
+      longitude = position.longitude;
     });
   }
 
@@ -80,54 +77,33 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
         _postalCodeType =
             "${jsonNya.zipCode} => ${jsonNya.district}, ${jsonNya.city}, ${jsonNya.province}";
         _selectedServiceType = "${jsonNya.service} => ${jsonNya.productName}";
-        print(jsonNya.status);
       });
     }
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _idCardController = TextEditingController();
-  TextEditingController _noteController = TextEditingController();
-  TextEditingController _latitudeController = TextEditingController();
-  TextEditingController _longitudeController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _idCardController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
+  final TextEditingController _latitudeController = TextEditingController();
+  final TextEditingController _longitudeController = TextEditingController();
   String? _selectedServiceType;
   String? _postalCodeType;
   File? _imageFile;
   String? _region;
 
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
-  }
-
   Future<void> _submitForm(context) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    String firstName = _firstNameController.text;
-    String lastName = _lastNameController.text;
-    String email = _emailController.text;
-    String address = _addressController.text;
-    String phone = _phoneController.text;
-    String idCard = _idCardController.text;
-    String note = _noteController.text;
     String formLongitude = _longitudeController.text;
     String formLatitude = _latitudeController.text;
     // File? file = _imageFile; // Access the selected file if needed;
     File? file = _imageFile;
-    String selectedServiceType = _selectedServiceType ?? '';
-    String postalCodeType = _postalCodeType ?? '';
-    Map<String, dynamic> dataNya = {};
-    String name = firstName + lastName;
     if (formLongitude != '') {
       longitude = double.parse(formLongitude);
     }
@@ -135,65 +111,22 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
       latitude = double.parse(formLatitude);
     }
     if (file != null) {
-      dataNya = {
-        'name': name,
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        'address': address,
-        'phone': phone,
-        // 'ktp': idCard,
-        'zipcode': postalCodeType,
-        'service': selectedServiceType,
-        'image': await MultipartFile.fromFile(_imageFile!.path,
-            filename: _imageFile?.path.split('/').last),
-        'note': note,
-        'longitude': longitude,
-        'latitude': latitude,
-      };
     } else {
       // Send form data and image
-      dataNya = {
-        'name': name,
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        'address': address,
-        'phone': phone,
-        // 'ktp': idCard,
-        'zipcode': postalCodeType,
-        'service': selectedServiceType,
-        'note': note,
-        'longitude': longitude,
-        'latitude': latitude,
-      };
     }
-    FormData formData = FormData.fromMap({
-      'username': widget.sid,
-      'cid': widget.task,
-    });
 
     try {
       // Replace URL with your endpoint
-      var response =
-          await dio.post('${config.backendBaseUrl}/entri-data/update',
-              data: formData,
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: token,
-              }));
 
       // Handle response
-      print(jsonDecode(response.data));
       return Navigator.of(context).pop();
     } catch (e) {
       // Handle error
-      print(e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Request Upgrade'),
@@ -229,7 +162,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Material(
@@ -253,7 +186,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Material(
@@ -277,7 +210,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Material(
@@ -343,7 +276,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Material(
@@ -367,7 +300,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Material(
@@ -390,7 +323,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Material(
@@ -413,7 +346,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Material(
@@ -437,7 +370,6 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                             options: Options(headers: {
                               HttpHeaders.authorizationHeader: token,
                             }));
-                        print(response.data['data']);
                         if (jsonDecode(response.data)['status'] == 'success') {
                           var hasil = jsonDecode(response.data)['data'];
                           List<String> list = [];
@@ -470,7 +402,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                         isFilterOnline: true,
                         showSearchBox: true,
                       ),
-                      items: [],
+                      items: const [],
                       onChanged: (String? value) {
                         setState(() {
                           _selectedServiceType = value;
@@ -484,7 +416,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Material(
@@ -509,14 +441,14 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
                         // _submitFormTrial(context);
                         _submitForm(context);
                       },
-                      child: Text('Request Upgrade'),
+                      child: const Text('Request Upgrade'),
                     ),
                   ),
                 ],
@@ -526,38 +458,6 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
         ),
       ),
     );
-  }
-}
-
-_submitFormTrial(context) async {
-  print(ModalRoute.of(context)?.settings.name);
-  return Navigator.of(context).pop();
-}
-
-void _checkPermission(BuildContext context) async {
-  FocusScope.of(context).requestFocus(FocusNode());
-  Map<Permission, PermissionStatus> statues = await [
-    Permission.camera,
-    Permission.storage,
-    Permission.photos
-  ].request();
-  PermissionStatus? statusCamera = statues[Permission.camera];
-  PermissionStatus? statusStorage = statues[Permission.storage];
-  PermissionStatus? statusPhotos = statues[Permission.photos];
-  bool isGranted = statusCamera == PermissionStatus.granted &&
-      statusStorage == PermissionStatus.granted &&
-      statusPhotos == PermissionStatus.granted;
-  if (isGranted) {
-    //openCameraGallery();
-    //_openDialog(context);
-  }
-  bool isPermanentlyDenied =
-      statusCamera == PermissionStatus.permanentlyDenied ||
-          statusStorage == PermissionStatus.permanentlyDenied ||
-          statusPhotos == PermissionStatus.permanentlyDenied;
-  if (isPermanentlyDenied) {
-    // SnackBar(content: Text(context));
-    print(context);
   }
 }
 

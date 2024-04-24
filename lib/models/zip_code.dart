@@ -6,18 +6,23 @@ class ZipCode {
   String province;
   String regional;
 
-  ZipCode({required this.id,required this.zipCode, required this.city,required this.district,required this.province, required this.regional});
+  ZipCode(
+      {required this.id,
+      required this.zipCode,
+      required this.city,
+      required this.district,
+      required this.province,
+      required this.regional});
 
   factory ZipCode.fromJson(Map<String, dynamic> json) {
     // if (json['id'] == null) return null;
     return ZipCode(
-      id: json["ID"],
-      zipCode: json["ZipCode"],
-      city: json["City"],
-      district: json["District"],
-      province: json["Province"],
-      regional: json["Regional"]
-    );
+        id: json["ID"],
+        zipCode: json["ZipCode"],
+        city: json["City"],
+        district: json["District"],
+        province: json["Province"],
+        regional: json["Regional"]);
   }
 
   static List<ZipCode> fromJsonList(List list) {
@@ -26,7 +31,7 @@ class ZipCode {
 
   ///this method will prevent the override of toString
   String zipCodeAsString() {
-    return '#${this.id} ${this.zipCode}';
+    return '#$id $zipCode';
   }
 
   ///this method will prevent the override of toString
@@ -37,6 +42,6 @@ class ZipCode {
   ///custom comparing function to check if two users are equal
   bool isEqual(ZipCode model) {
     // if (model.id == null) return null;
-    return this.id == model.id;
+    return id == model.id;
   }
 }

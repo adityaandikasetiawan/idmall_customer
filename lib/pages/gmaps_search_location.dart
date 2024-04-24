@@ -1,6 +1,7 @@
+// ignore_for_file: empty_catches, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:idmall/config/config.dart' as config;
@@ -47,10 +48,7 @@ class _SearchLocationState extends State<SearchLocation> {
               .toList();
         });
       }
-    } catch (e) {
-      print('Error fetching autocomplete results: $e');
-    }
-    print(_predictions);
+    } catch (e) {}
   }
 
   Future<LatLng?> _getPlaceDetails(String placeName) async {
@@ -71,9 +69,7 @@ class _SearchLocationState extends State<SearchLocation> {
           response.data['results'][0]['geometry']['location']['lng'];
       Navigator.pop(context,
           {'latitude': latitude, 'longitude': longitude, 'name': placeName});
-    } catch (e) {
-      print('Error fetching place details: $e');
-    }
+    } catch (e) {}
     return null;
   }
 
@@ -128,16 +124,14 @@ class _SearchLocationState extends State<SearchLocation> {
           return results[0]['formatted_address'];
         }
       }
-    } catch (e) {
-      print('Error getting place name: $e');
-    }
+    } catch (e) {}
 
     return 'Unknown place';
   }
 
   Future<Map<String, dynamic>> getCurrentLocation2() async {
     const apiKey = googleKey.googleApiKey;
-    final url =
+    const url =
         'https://www.googleapis.com/geolocation/v1/geolocate?key=$apiKey';
 
     final dio = Dio();
@@ -217,7 +211,7 @@ class _SearchLocationState extends State<SearchLocation> {
                       onPressed: () {
                         _searchController.clear();
                       },
-                      icon: Icon(Icons.close),
+                      icon: const Icon(Icons.close),
                     )),
               ),
             ),
@@ -246,7 +240,7 @@ class _SearchLocationState extends State<SearchLocation> {
                 //   print(e);
                 // });
               },
-              icon: Icon(Icons.send),
+              icon: const Icon(Icons.send),
               label: const Text("Use my current location"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.grey[300],

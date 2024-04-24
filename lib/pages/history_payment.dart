@@ -47,7 +47,7 @@ class _HistoryPaymentState extends State<HistoryPayment> {
           children: [
             paymentHistory.isNotEmpty
                 ? ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: paymentHistory.length,
                     itemBuilder: (context, index) {
@@ -58,7 +58,7 @@ class _HistoryPaymentState extends State<HistoryPayment> {
 
                       return Container(
                         width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             border: Border(
                           bottom: BorderSide(
                             color: Colors.grey, // Warna border
@@ -68,19 +68,15 @@ class _HistoryPaymentState extends State<HistoryPayment> {
                         child: ListTile(
                           title: Text(formattedDate),
                           trailing: Text(
-                            "Rp. " +
-                                oCcy
-                                    .format(paymentHistory[index].monthlyPrice)
-                                    .toString()
-                                    .replaceAll(",", "."),
+                            "Rp. ${oCcy.format(paymentHistory[index].monthlyPrice).toString().replaceAll(",", ".")}",
                           ),
                           onTap: () {},
                         ),
                       );
                     },
                   )
-                : Padding(
-                    padding: const EdgeInsets.only(top: 10),
+                : const Padding(
+                    padding: EdgeInsets.only(top: 10),
                     child: Center(
                       child: Text("Tidak ada histori pembayaran"),
                     ),

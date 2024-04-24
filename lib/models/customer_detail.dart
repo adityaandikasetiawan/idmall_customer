@@ -17,11 +17,27 @@ class CustomerDetailAchieve {
   String productName;
   String status;
 
-  CustomerDetailAchieve({required this.name, required this.address, required this.taskID,required this.price,required this.activeDate, this.ktp, required this.handphone, required this.email, required this.zipCode, required this.longitude, required this.latitude, required this.service, required this.district, required this.city, required this. province, required this.productName, required this.status});
+  CustomerDetailAchieve(
+      {required this.name,
+      required this.address,
+      required this.taskID,
+      required this.price,
+      required this.activeDate,
+      this.ktp,
+      required this.handphone,
+      required this.email,
+      required this.zipCode,
+      required this.longitude,
+      required this.latitude,
+      required this.service,
+      required this.district,
+      required this.city,
+      required this.province,
+      required this.productName,
+      required this.status});
 
   factory CustomerDetailAchieve.fromJson(Map<String, dynamic> json) {
     // if (json['id'] == null) return null;
-    print(json);
     return CustomerDetailAchieve(
       name: json["Customer_Sub_Name"],
       address: json["Customer_Sub_Address"],

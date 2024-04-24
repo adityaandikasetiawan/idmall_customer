@@ -12,7 +12,6 @@ class _EmptyPageState extends State<EmptyPage> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     final arguments = ModalRoute.of(context)?.settings.arguments;
 
@@ -25,15 +24,12 @@ class _EmptyPageState extends State<EmptyPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: Scaffold(
         body: Center(
-          child: Container(
-            child: Text('Push Notifications'),
-          ),
+          child: Text('Push Notifications'),
         ),
       ),
     );

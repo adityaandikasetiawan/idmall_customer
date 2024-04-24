@@ -1,5 +1,6 @@
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
-import 'package:idmall/consts.dart';
 import 'package:idmall/pages/details.dart';
 
 class PromoPage extends StatelessWidget {
@@ -10,22 +11,22 @@ class PromoPage extends StatelessWidget {
     'Promo 3',
   ];
 
-  final List<Map<String,dynamic>> cardNya = [
+  final List<Map<String, dynamic>> cardNya = [
     {
-      'title' : 'IdPlay Home 10MB',
-      'description' : 'Layanan Rumah Dengan Kecepatan 10MB',
+      'title': 'IdPlay Home 10MB',
+      'description': 'Layanan Rumah Dengan Kecepatan 10MB',
       'image': 'promo1.png',
       'price': 179000,
     },
     {
-      'title' : 'IdPlay Home 20MB',
-      'description' : 'Layanan Rumah Dengan Kecepatan 20MB',
+      'title': 'IdPlay Home 20MB',
+      'description': 'Layanan Rumah Dengan Kecepatan 20MB',
       'image': 'promo2.png',
       'price': 189000,
     },
     {
-      'title' : 'IdPlay Home 30MB',
-      'description' : 'Layanan Rumah Dengan Kecepatan 30MB',
+      'title': 'IdPlay Home 30MB',
+      'description': 'Layanan Rumah Dengan Kecepatan 30MB',
       'image': 'promo3.png',
       'price': 199000,
     }
@@ -42,7 +43,7 @@ class PromoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Promo Page'),
+        title: const Text('Promo Page'),
       ),
       body: ListView.builder(
         itemCount: cardNya.length, // Ubah jumlah card sesuai kebutuhan
@@ -50,9 +51,12 @@ class PromoPage extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: PromoCard(
-              imagePath: 'images/promo${index + 1}.png', // Panggil gambar promo1.png, promo2.png, dst.
-              title: cardNya[index]['title'], // Set judul dari daftar judul sesuai index
-              description: cardNya[index]['description'], // Set deskripsi dari daftar deskripsi sesuai index
+              imagePath:
+                  'images/promo${index + 1}.png', // Panggil gambar promo1.png, promo2.png, dst.
+              title: cardNya[index]
+                  ['title'], // Set judul dari daftar judul sesuai index
+              description: cardNya[index][
+                  'description'], // Set deskripsi dari daftar deskripsi sesuai index
               price: cardNya[index]['price'].toString(),
             ),
           );
@@ -79,21 +83,22 @@ class PromoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetailPage(
-                title: title,
-                price: price,
-                imagePath: imagePath,
-                description: description,
-              ),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPage(
+              title: title,
+              price: price,
+              imagePath: imagePath,
+              description: description,
             ),
-          );
+          ),
+        );
       },
       child: Card(
         elevation: 4.0,
-        color: Color.fromARGB(200, 19, 24, 84), // Ubah warna latar belakang card
+        color: const Color.fromARGB(
+            200, 19, 24, 84), // Ubah warna latar belakang card
         child: Row(
           children: [
             Expanded(
@@ -120,16 +125,16 @@ class PromoCard extends StatelessWidget {
                   children: [
                     Text(
                       title, // Set judul dari properti title
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.white, // Ubah warna teks judul
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       description, // Set deskripsi dari properti description
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         color: Colors.white, // Ubah warna teks deskripsi
                       ),

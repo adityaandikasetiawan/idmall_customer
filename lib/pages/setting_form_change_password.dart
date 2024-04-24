@@ -1,4 +1,5 @@
-import 'dart:convert';
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -8,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 
 class FormChangePassword extends StatefulWidget {
-  const FormChangePassword({Key? key}) : super(key: key);
+  const FormChangePassword({super.key});
 
   @override
   _FormChangePasswordState createState() => _FormChangePasswordState();
@@ -20,24 +21,22 @@ class _FormChangePasswordState extends State<FormChangePassword> {
   Dio dio = Dio();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   Future<Null> getUser() async {
     WidgetsFlutterBinding.ensureInitialized();
-    final _prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
     setState(() {
-      token = _prefs?.getString('token');
+      token = prefs.getString('token');
     });
   }
-
 
   @override
   void initState() {
     super.initState();
     getUser();
-
   }
 
   Future<void> _submitForm(context) async {
@@ -48,12 +47,11 @@ class _FormChangePasswordState extends State<FormChangePassword> {
     String confirmPassword = _confirmPasswordController.text;
 
     // print("$password, $confirmPassword}");
-    if(password != confirmPassword){
-        return;
+    if (password != confirmPassword) {
+      return;
     }
 
-
-    Map<String,dynamic> dataNya = {};
+    Map<String, dynamic> dataNya = {};
 
     dataNya = {
       'new_password': password.toString(),
@@ -62,18 +60,18 @@ class _FormChangePasswordState extends State<FormChangePassword> {
     try {
       // Replace URL with your endpoint
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-      HttpClient()
-        ..badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
-      var response = await dio.patch('${config.backendBaseUrl}/user/change-password',
-          data: dataNya,
-          options: Options(headers: {
-            HttpHeaders.authorizationHeader: "Bearer $token",
-          }));
+          HttpClient()
+            ..badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
+      var response =
+          await dio.patch('${config.backendBaseUrl}/user/change-password',
+              data: dataNya,
+              options: Options(headers: {
+                HttpHeaders.authorizationHeader: "Bearer $token",
+              }));
 
       // Handle response
-      Map<String,dynamic> result = response.data;
-      print(result['status']);
+      Map<String, dynamic> result = response.data;
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -85,7 +83,7 @@ class _FormChangePasswordState extends State<FormChangePassword> {
                 onPressed: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
-                child: Text('Close'),
+                child: const Text('Close'),
               ),
             ],
           );
@@ -94,30 +92,28 @@ class _FormChangePasswordState extends State<FormChangePassword> {
       // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
     } catch (e) {
       // Handle error
-      print(e.toString());
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
     // _selectedServiceType = widget.tipe;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Ubah Password',
           style: TextStyle(fontSize: 16.0), // Mengatur ukuran teks judul
         ),
         centerTitle: true, // Mengatur judul menjadi di tengah
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -130,33 +126,31 @@ class _FormChangePasswordState extends State<FormChangePassword> {
                   ),
                 ],
               ),
-              SizedBox(height: 16.0),
-
+              const SizedBox(height: 16.0),
               _buildTextField(_passwordController, 'Password'),
-              SizedBox(height: 16.0),
-
-              _buildTextField(_confirmPasswordController, 'Konfirmasi Password'),
-              SizedBox(height: 16.0),
-
+              const SizedBox(height: 16.0),
+              _buildTextField(
+                  _confirmPasswordController, 'Konfirmasi Password'),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
                   // Handle form submission
                   _submitForm(context);
                   // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
                 },
-                child: Text(
-                  'Submit',
-                  style: TextStyle(color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
-                  minimumSize: Size(double.infinity,
+                  minimumSize: const Size(double.infinity,
                       0), // Set minimum size untuk mengisi lebar layar
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                       vertical: 16.0), // Atur padding vertical
+                ),
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ],
@@ -178,7 +172,7 @@ class _FormChangePasswordState extends State<FormChangePassword> {
         decoration: InputDecoration(
           labelText: labelText,
           contentPadding:
-          EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           border: InputBorder.none,
         ),
         validator: (value) {
@@ -192,4 +186,3 @@ class _FormChangePasswordState extends State<FormChangePassword> {
     );
   }
 }
-

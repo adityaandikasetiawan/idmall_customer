@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 
 class FadeAnimation extends StatefulWidget {
@@ -10,7 +12,8 @@ class FadeAnimation extends StatefulWidget {
   _FadeAnimationState createState() => _FadeAnimationState();
 }
 
-class _FadeAnimationState extends State<FadeAnimation> with TickerProviderStateMixin {
+class _FadeAnimationState extends State<FadeAnimation>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _translateAnimation;
@@ -50,7 +53,7 @@ class _FadeAnimationState extends State<FadeAnimation> with TickerProviderStateM
 
     Future.delayed(
       Duration(milliseconds: (1000 * widget.delay).round()),
-          () => _controller.forward(),
+      () => _controller.forward(),
     );
   }
 

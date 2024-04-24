@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:idmall/pages/navigation.dart';
@@ -24,7 +26,7 @@ class _InvoicePageState extends State<InvoicePage> {
   // Waktu countdown
   late Timer _timer;
   int _secondsRemaining = 86400; // 24 jam dalam detik
-  final oCcy = new NumberFormat("#,##0", "en_US");
+  final oCcy = NumberFormat("#,##0", "en_US");
 
   @override
   void initState() {
@@ -58,7 +60,7 @@ class _InvoicePageState extends State<InvoicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Invoice'),
+        title: const Text('Invoice'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -68,42 +70,42 @@ class _InvoicePageState extends State<InvoicePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Detail Pembayaran',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   ListTile(
-                    title: Text('Metode Pembayaran'),
+                    title: const Text('Metode Pembayaran'),
                     subtitle: Text(widget.typePayment == "BANK"
                         ? "Virtual Account"
                         : "Outlet"),
                   ),
                   ListTile(
-                    title: Text('Bank'),
+                    title: const Text('Bank'),
                     subtitle: Text(widget.bankName),
                   ),
                   ListTile(
-                    title: Text('Nomor Rekening'),
+                    title: const Text('Nomor Rekening'),
                     subtitle: Text(widget.taskid),
                   ),
                   ListTile(
-                    title: Text('Total Pembayaran'),
+                    title: const Text('Total Pembayaran'),
                     subtitle: Text('Rp. ${widget.total}'),
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Tata Cara Pembayaran',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Column(
+                  const SizedBox(height: 8),
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -127,24 +129,24 @@ class _InvoicePageState extends State<InvoicePage> {
                       )
                     ],
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Waktu Pembayaran Tersisa:',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     '${(_secondsRemaining ~/ 3600).toString().padLeft(2, '0')} : ${((_secondsRemaining % 3600) ~/ 60).toString().padLeft(2, '0')} : ${(_secondsRemaining % 60).toString().padLeft(2, '0')}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   // ElevatedButton(
@@ -155,11 +157,11 @@ class _InvoicePageState extends State<InvoicePage> {
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (builder) => NavigationScreen(),
+                          builder: (builder) => const NavigationScreen(),
                         ),
                       );
                     },
-                    child: Text("Kembali ke beranda"),
+                    child: const Text("Kembali ke beranda"),
                   )
                 ],
               ),

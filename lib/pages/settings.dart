@@ -1,28 +1,30 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:idmall/pages/setting_form_change_password.dart';
-import 'package:idmall/pages/setting_form_account_information.dart';
 
 class SettingChangePasswordPage extends StatefulWidget {
-  const SettingChangePasswordPage({Key? key}) : super(key: key);
+  const SettingChangePasswordPage({super.key});
   @override
-  _SettingChangePasswordPageState createState() => _SettingChangePasswordPageState();
+  _SettingChangePasswordPageState createState() =>
+      _SettingChangePasswordPageState();
 }
 
-class _SettingChangePasswordPageState extends State<SettingChangePasswordPage>{
-
+class _SettingChangePasswordPageState extends State<SettingChangePasswordPage> {
   @override
-  void initState(){}
-
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: const Text('Settings'),
         actions: [
           IconButton(
             onPressed: () {},
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
           ),
         ],
       ),
@@ -71,7 +73,7 @@ class _SettingChangePasswordPageState extends State<SettingChangePasswordPage>{
                 ),
                 title: const Text('Ubah Password'),
                 trailing:
-                const Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
+                    const Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
                 onTap: () {
                   Navigator.push(
                     context,

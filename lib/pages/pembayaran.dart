@@ -1,28 +1,15 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:idmall/pages/invoice.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:idmall/config/config.dart' as config;
 
 class PaymentPage extends StatelessWidget {
-  Future<void> getPaymentMethod() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
-    final dio = Dio();
-    final response = await dio.get(
-      "${config.backendBaseUrl}/payment-method",
-      options: Options(headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
-      }),
-    );
-  }
+  const PaymentPage({super.key});
+
+  Future<void> getPaymentMethod() async {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Pembayaran',
           style: TextStyle(fontSize: 16.0), // Ubah ukuran font menjadi 16px
         ),
@@ -34,8 +21,8 @@ class PaymentPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 8.0),
-              Row(
+              const SizedBox(height: 8.0),
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Pesanan:'),
@@ -45,7 +32,7 @@ class PaymentPage extends StatelessWidget {
                   ),
                 ],
               ),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Pajak:'),
@@ -55,7 +42,7 @@ class PaymentPage extends StatelessWidget {
                   ),
                 ],
               ),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Total:'),
@@ -65,14 +52,14 @@ class PaymentPage extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 8.0),
-              Divider(),
-              SizedBox(height: 8.0),
-              Text(
+              const SizedBox(height: 8.0),
+              const Divider(),
+              const SizedBox(height: 8.0),
+              const Text(
                 'Metode Pembayaran:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               buildPaymentMethodCard('images/bank/bca.png', 'Bank BCA', context,
                   cardWidth: MediaQuery.of(context).size.width,
                   cardHeight: 120,
@@ -186,13 +173,13 @@ class PaymentPage extends StatelessWidget {
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 100,
                 ),
                 Expanded(
                   child: Text(
                     bankName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),

@@ -13,7 +13,7 @@ import 'package:idmall/config/config.dart' as config;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key});
+  const Login({super.key});
 
   @override
   State<Login> createState() => _LoginState();
@@ -122,7 +122,8 @@ class _LoginState extends State<Login> {
         prefs.setString('lastName', response.data['data']['last_name'] ?? "");
         prefs.setString('email', email);
         prefs.setString('user_id', userId.toString());
-        prefs.setString('is_email_verified', response.data['data']['is_email_verified'].toString());
+        prefs.setString('is_email_verified',
+            response.data['data']['is_email_verified'].toString());
       }
       Navigator.pushAndRemoveUntil(
         context,

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names, use_build_context_synchronously, empty_catches
+
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -6,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:idmall/consts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'dart:typed_data';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -31,7 +32,6 @@ class _FABFormState extends State<FABForm> {
   final TextEditingController _idNumberController = TextEditingController();
   // final TextEditingController _mobilePhoneController = TextEditingController();
   final TextEditingController _referralCodeController = TextEditingController();
-  String? _selectedServiceType;
   late File _imageFile;
   final ImagePicker _picker = ImagePicker();
   bool _agreeToTerms = false;
@@ -43,7 +43,6 @@ class _FABFormState extends State<FABForm> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCustomerActivation(widget.taskID);
   }
@@ -52,8 +51,8 @@ class _FABFormState extends State<FABForm> {
     try {
       var dataNya = {
         'no_ktp': _idNumberController.text,
-        'ktp': await MultipartFile.fromFile(_imageFile!.path,
-            filename: _imageFile?.path.split('/').last),
+        'ktp': await MultipartFile.fromFile(_imageFile.path,
+            filename: _imageFile.path.split('/').last),
         'task_id': widget.taskID,
       };
 
@@ -81,15 +80,13 @@ class _FABFormState extends State<FABForm> {
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
                 },
-                child: Text('Close'),
+                child: const Text('Close'),
               ),
             ],
           );
         },
       );
-    } catch (e) {
-      print(e.toString());
-    }
+    } catch (e) {}
   }
 
   Future getCustomerActivation(taskID) async {
@@ -111,13 +108,11 @@ class _FABFormState extends State<FABForm> {
       throw Exception('Failed to load PDF');
     }
 
-    SharedPreferences _pref = await SharedPreferences.getInstance();
+    SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
-      token = _pref.getString('token');
-      user_id = _pref.getString('user_id');
+      token = pref.getString('token');
+      user_id = pref.getString('user_id');
     });
-
-    print(taskID);
 
     response = await dio.get("$linkLaravelAPI/customer/fab",
         queryParameters: {"taskID": taskID},
@@ -133,25 +128,23 @@ class _FABFormState extends State<FABForm> {
         _idNumberController.text = hasil['data']['ktp'];
         // _selectedServiceType = hasil['data']['serviceName'] ?? "";
       });
-    } else {
-      print(hasil);
-    }
+    } else {}
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Activation'),
+        title: const Text('Activation'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -164,20 +157,20 @@ class _FABFormState extends State<FABForm> {
                   ),
                 ],
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               _buildTextField(_customerNameController, 'Nama Customer'),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               _buildTextField(
                   _installationAddressController, 'Alamat Pemasangan'),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               _buildTextField(
                   _phoneNumberController, 'Telepon/ Telepon Seluler'),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               _buildKtpUploadField(),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               _buildTextField(
                   _idNumberController, 'Nomor Identitas (NIK/SIM/Passport)'),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               // // Container(
               // //     decoration: BoxDecoration(
               // //       borderRadius: BorderRadius.circular(15.0),
@@ -212,7 +205,7 @@ class _FABFormState extends State<FABForm> {
               // //   ),
               // SizedBox(height: 16.0),
               _buildTextField(_referralCodeController, 'Handler'),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Row(
                 children: [
                   Checkbox(
@@ -227,27 +220,27 @@ class _FABFormState extends State<FABForm> {
                       });
                     },
                   ),
-                  Text(
+                  const Text(
                     'I agree to terms & conditions',
                     style: TextStyle(fontSize: 14.0),
                   ),
                 ],
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
                   _submitForm();
                   // Handle form submission
                 },
-                child: Text(
-                  'Submit',
-                  style: TextStyle(color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
+                ),
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ],
@@ -268,7 +261,7 @@ class _FABFormState extends State<FABForm> {
         decoration: InputDecoration(
           labelText: labelText,
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           border: InputBorder.none,
         ),
       ),
@@ -330,8 +323,8 @@ class _FABFormState extends State<FABForm> {
             });
           }
         },
-        icon: Icon(Icons.upload_file), // Change icon to your preference
-        label: Text('Upload ID'), // Change label to your preference
+        icon: const Icon(Icons.upload_file), // Change icon to your preference
+        label: const Text('Upload ID'), // Change label to your preference
       ),
     );
   }
@@ -341,7 +334,7 @@ class _FABFormState extends State<FABForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Terms & Conditions'),
+          title: const Text('Terms & Conditions'),
           content: SingleChildScrollView(
             child: SizedBox(
               height: 500,
@@ -358,7 +351,7 @@ class _FABFormState extends State<FABForm> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
+              child: const Text('Close'),
             ),
             TextButton(
               onPressed: () {
@@ -368,7 +361,7 @@ class _FABFormState extends State<FABForm> {
                 // Then proceed with further actions.
                 Navigator.of(context).pop();
               },
-              child: Text('I Agree'),
+              child: const Text('I Agree'),
             ),
           ],
         );

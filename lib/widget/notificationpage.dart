@@ -1,24 +1,28 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: NotificationsPage(),
   ));
 }
 
 class NotificationsPage extends StatelessWidget {
+  const NotificationsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Notifications',
             style: TextStyle(fontSize: 16),
           ),
           centerTitle: true,
-          bottom: TabBar(
+          bottom: const TabBar(
             tabs: [
               Tab(text: 'Pembayaran'),
               Tab(text: 'Status Bar'),
@@ -28,7 +32,7 @@ class NotificationsPage extends StatelessWidget {
             labelColor: Colors.orange, // Warna teks pada tab saat aktif
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             PromotionsPage(),
             StatusBarPage(),
@@ -40,6 +44,8 @@ class NotificationsPage extends StatelessWidget {
 }
 
 class PromotionsPage extends StatelessWidget {
+  const PromotionsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -77,11 +83,11 @@ class PromotionsPage extends StatelessWidget {
     return Column(
       children: [
         Card(
-          margin: EdgeInsets.all(0),
-          shape: RoundedRectangleBorder(
+          margin: const EdgeInsets.all(0),
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.zero,
           ),
-          child: Container(
+          child: SizedBox(
             height: 200,
             width: 380,
             child: ClipRRect(
@@ -93,16 +99,15 @@ class PromotionsPage extends StatelessWidget {
             ),
           ),
         ),
-        Divider(
+        const Divider(
           color: Colors.white,
           thickness: 0.5,
         ),
         ListTile(
           title: Text(
             title,
-            style: TextStyle(
-              color: const Color.fromARGB(
-                  255, 0, 0, 0), // Warna teks menjadi orange
+            style: const TextStyle(
+              color: Color.fromARGB(255, 0, 0, 0), // Warna teks menjadi orange
             ),
           ),
           subtitle: Text(description),
@@ -113,6 +118,8 @@ class PromotionsPage extends StatelessWidget {
 }
 
 class StatusBarPage extends StatefulWidget {
+  const StatusBarPage({super.key});
+
   @override
   _StatusBarPageState createState() => _StatusBarPageState();
 }
@@ -127,7 +134,7 @@ class _StatusBarPageState extends State<StatusBarPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Theme(
           data: Theme.of(context).copyWith(),
           child: Stepper(
@@ -139,22 +146,22 @@ class _StatusBarPageState extends State<StatusBarPage> {
             onStepContinue: _currentStep == 2 ? null : _handleContinue,
             steps: [
               Step(
-                title: Text('Step 1'),
-                content: Text('Content for Step 1'),
+                title: const Text('Step 1'),
+                content: const Text('Content for Step 1'),
                 isActive: !_stepOneComplete,
                 state:
                     _stepOneComplete ? StepState.complete : StepState.indexed,
               ),
               Step(
-                title: Text('Step 2'),
-                content: Text('Content for Step 2'),
+                title: const Text('Step 2'),
+                content: const Text('Content for Step 2'),
                 isActive: !_stepTwoComplete,
                 state:
                     _stepTwoComplete ? StepState.complete : StepState.indexed,
               ),
               Step(
-                title: Text('Step 3'),
-                content: Text('Content for Step 3'),
+                title: const Text('Step 3'),
+                content: const Text('Content for Step 3'),
                 isActive: !_stepThreeComplete,
                 state:
                     _stepThreeComplete ? StepState.complete : StepState.indexed,

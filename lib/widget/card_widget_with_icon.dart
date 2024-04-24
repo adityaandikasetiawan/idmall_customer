@@ -6,8 +6,7 @@ class CardWidgetWithIcon extends StatelessWidget {
   final String value;
 
   const CardWidgetWithIcon(
-      {Key? key, required this.icon, required this.text, required this.value})
-      : super(key: key);
+      {super.key, required this.icon, required this.text, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +18,16 @@ class CardWidgetWithIcon extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               text,
-              style: TextStyle(fontSize: 16, color: Colors.white), // Ubah warna teks menjadi putih
+              style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white), // Ubah warna teks menjadi putih
             ),
           ],
         ),
         const SizedBox(height: 8),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
               fontSize: 20,
               color: Colors.white, // Ubah warna nilai (value) menjadi putih
               fontWeight: FontWeight.bold),
