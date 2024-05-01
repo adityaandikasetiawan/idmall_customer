@@ -1,9 +1,7 @@
-import 'dart:io';
+// ignore_for_file: avoid_print
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:idmall/pages/bantuan/bantuan.dart';
 import 'package:idmall/pages/broadbandbisnis.dart';
@@ -16,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
-import 'package:idmall/consts.dart';
 
 class NavigationScreen extends StatefulWidget {
   final String? customerID;
@@ -48,8 +45,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             status: _status,
           ),
           const Bantuan(),
-          // const HelpCenterCategory(),
-          // const PelaporanPage(),
           const Account(),
         ];
       });
@@ -57,63 +52,30 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   Future<void> getDetailCustomer() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
-    final dio = Dio();
-    final response = await dio.get(
-      "${config.backendBaseUrl}/customer/dashboard/detail-customer",
-      options: Options(headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
-      }),
-    );
-    await prefs.setString("token", response.data['data']['Updated_Auth_Token']);
-    final String tokenUpdate = prefs.getString('token') ?? "";
-    FirebaseMessaging.instance.getToken().then((value) async {
-      if (value != null) {
-        prefs.setString('fcm_token', value);
-        if (token != '') {
-          (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient =
-              () => HttpClient()
-                ..badCertificateCallback =
-                    (X509Certificate cert, String host, int port) => true;
-          await dio.post(
-            "$linkLaravelAPI/customer/update-device-key",
-            data: {"token": value},
-            options: Options(headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer $tokenUpdate"
-            }),
-          );
-        }
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token') ?? "";
+      final dio = Dio();
+      final response = await dio.get(
+        "${config.backendBaseUrl}/customer/dashboard/detail-customer",
+        options: Options(headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        }),
+      );
+      if (response.data['data'].length > 0) {
+        setState(
+          () {
+            _customerid = response.data['data']['Task_ID'];
+            _status = response.data['data']['Status'];
+          },
+        );
       }
-    });
-
-    setState(() {
-      _customerid = response.data['data']['Task_ID'];
-      _status = response.data['data']['Status'];
-    });
+    } on DioException catch (e) {
+      print(e.error);
+      print(e.message);
+    }
   }
-
-  // late List<Widget> pages;
-
-  // @override
-  // void didChangeDependencies() {
-  //   print(_customerid);
-  //   super.didChangeDependencies();
-  //   // Initialize pages after _customerid is available
-  //   pages = [
-  //     const Home(),
-  //     HistoryList(
-  //       customerId: _customerid,
-  //       status: _status,
-  //     ),
-  //     const HelpCenterPage(),
-  //     // const HelpCenterCategory(),
-  //     // const PelaporanPage(),
-  //     const Account(),
-  //   ];
-  // }
 
   Future<void> logout() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -260,7 +222,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       bottomNavigationBar: AnimatedBottomNavigationBar(
         icons: const [
           CupertinoIcons.house_fill,
-          CupertinoIcons.compass,
+          Icons.history,
           CupertinoIcons.headphones,
           CupertinoIcons.profile_circled,
         ],

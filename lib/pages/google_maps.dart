@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, library_prefixes, empty_catches
+// ignore_for_file: prefer_typing_uninitialized_variables, library_prefixes, empty_catches, use_build_context_synchronously
 
 import 'dart:async';
 
@@ -41,6 +41,15 @@ class MapSampleState extends State<MapSample> {
     try {
       setState(() {
         _searchController.text = placeName;
+        _markers.add(Marker(
+          markerId: MarkerId('$latitude,$longitude'),
+          position: LatLng(latitude, longitude),
+          infoWindow: const InfoWindow(
+            title: 'Your location',
+            snippet: 'This is your current location',
+          ),
+          icon: BitmapDescriptor.defaultMarker,
+        ));
       });
       await _mapController?.animateCamera(
         CameraUpdate.newCameraPosition(
@@ -145,54 +154,54 @@ class MapSampleState extends State<MapSample> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          final dio = Dio();
-          final response = await dio.get(
-            "${config.backendBaseUrl}/region/check_coverage",
-            queryParameters: {'longitude': _long, 'latitude': _lat},
-            options: Options(headers: {
-              "Content-Type": "application/json",
-            }),
-          );
-
-          if (response.data['status'] == "success") {
-            await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Success'),
-                  content: const Text('Lokasi Anda tercover'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (builder) => ProductList(
-                              latitude: _lat,
-                              longitude: _long,
-                            ),
-                          ),
-                        );
-                        // FormSurvey(latitude: position.latitude, longitude: position.longitude,)));
-                      },
-                      child: const Text('Lanjutkan'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Batal'),
-                    ),
-                  ],
-                );
-              },
+          try {
+            final dio = Dio();
+            final response = await dio.get(
+              "${config.backendBaseUrl}/region/check_coverage",
+              queryParameters: {'longitude': _long, 'latitude': _lat},
+              options: Options(headers: {
+                "Content-Type": "application/json",
+              }),
             );
-          } else {
+            if (response.statusCode == 200) {
+              await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Success'),
+                    content: const Text('Lokasi Anda tercover'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (builder) => ProductList(
+                                latitude: _lat,
+                                longitude: _long,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Lanjutkan'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Batal'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+          } on DioException catch (e) {
             await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: const Text('Maaf'),
-                  content: const Text('Lokasi Anda belum tercover'),
+                  content: Text(e.response?.data['message']),
                   actions: <Widget>[
                     TextButton(
                       onPressed: () {

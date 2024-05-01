@@ -1,4 +1,4 @@
-// ignore_for_file: empty_catches
+// ignore_for_file: empty_catches, avoid_print
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -79,18 +79,22 @@ class _HomeState extends State<Home> {
       final String token = prefs.getString('token') ?? "";
 
       final response = await dio.get(
-        "${config.backendBaseUrl}/customer/billing/active/",
+        "${config.backendBaseUrl}/customer/dashboard/detail-customer",
         options: Options(headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token"
         }),
       );
+      print(response.data);
       setState(() {
         package = response.data['data']['Sub_Product'] ?? "";
         customerID = response.data['data']['Task_ID'] ?? "";
         status = response.data['data']['Status'] ?? "";
       });
-    } catch (error) {}
+    } on DioException catch (e) {
+      print(e.message);
+      print(e.error);
+    }
   }
 
   Future<void> billingData() async {
@@ -105,19 +109,26 @@ class _HomeState extends State<Home> {
           "Authorization": "Bearer $token"
         }),
       );
-      setState(() {
-        if (response.data['data'].length > 0) {
-          isDueDateActive = true;
-          billing = oCcy.format(response.data['data']['AR_Val']);
-          DateTime dueDates =
-              DateTime.tryParse(response.data['data']['Due_Date'])!;
-          dueDate = DateFormat('MMMM, yyyy').format(dueDates);
-        }
-        package = response.data['data']['Sub_Product'] ?? "";
-        customerID = response.data['data']['Task_ID'] ?? "";
-        status = response.data['data']['Status'] ?? "";
-      });
-    } catch (error) {}
+      print(response.data['data'].length);
+
+      if (response.data['data'].length > 0) {
+        setState(
+          () {
+            isDueDateActive = true;
+            billing = oCcy.format(response.data['data']['AR_Val']);
+            DateTime dueDates =
+                DateTime.tryParse(response.data['data']['Due_Date'])!;
+            dueDate = DateFormat('MMMM, yyyy').format(dueDates);
+            package = response.data['data']['Sub_Product'] ?? "";
+            customerID = response.data['data']['Task_ID'] ?? "";
+            status = response.data['data']['Status'] ?? "";
+          },
+        );
+      }
+    } on DioException catch (e) {
+      print(e.message);
+      print(e.error);
+    }
   }
 
   @override

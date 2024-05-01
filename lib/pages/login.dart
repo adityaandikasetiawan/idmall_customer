@@ -110,7 +110,7 @@ class _LoginState extends State<Login> {
         if (response.data['data']['subscription_status'] != null) {
           status = response.data['data']['subscription_status'];
         } else {
-          status = response.data['data']['status'];
+          status = response.data['data']['status'] ?? "";
         }
         var userId = response.data['data']['id'];
         var email = response.data['data']['email'];
@@ -122,8 +122,10 @@ class _LoginState extends State<Login> {
         prefs.setString('lastName', response.data['data']['last_name'] ?? "");
         prefs.setString('email', email);
         prefs.setString('user_id', userId.toString());
-        prefs.setString('is_email_verified',
-            response.data['data']['is_email_verified'].toString());
+        prefs.setString(
+          'is_email_verified',
+          response.data['data']['is_email_verified'].toString(),
+        );
       }
       Navigator.pushAndRemoveUntil(
         context,
