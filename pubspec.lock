@@ -298,7 +298,7 @@ packages:
     source: hosted
     version: "5.4.1"
   dots_indicator:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: dots_indicator
       sha256: f1599baa429936ba87f06ae5f2adc920a367b16d08f74db58c3d0f6e93bcdb5c
@@ -752,6 +752,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.6"
+  glassmorphism_ui:
+    dependency: "direct main"
+    description:
+      name: glassmorphism_ui
+      sha256: "4a28b45fedb74c2b30e25495980394e3cf5b3634c74ec1ebedaef4d4c295f46f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   glob:
     dependency: transitive
     description:

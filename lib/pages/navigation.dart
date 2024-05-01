@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:idmall/pages/bantuan/bantuan.dart';
 import 'package:idmall/pages/broadbandbisnis.dart';
@@ -16,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
-import 'package:idmall/consts.dart';
 
 class NavigationScreen extends StatefulWidget {
   final String? customerID;
@@ -48,8 +43,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             status: _status,
           ),
           const Bantuan(),
-          // const HelpCenterCategory(),
-          // const PelaporanPage(),
           const Account(),
         ];
       });
@@ -68,52 +61,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
       }),
     );
     await prefs.setString("token", response.data['data']['Updated_Auth_Token']);
-    final String tokenUpdate = prefs.getString('token') ?? "";
-    FirebaseMessaging.instance.getToken().then((value) async {
-      if (value != null) {
-        prefs.setString('fcm_token', value);
-        if (token != '') {
-          (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient =
-              () => HttpClient()
-                ..badCertificateCallback =
-                    (X509Certificate cert, String host, int port) => true;
-          await dio.post(
-            "$linkLaravelAPI/customer/update-device-key",
-            data: {"token": value},
-            options: Options(headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer $tokenUpdate"
-            }),
-          );
-        }
-      }
-    });
 
     setState(() {
       _customerid = response.data['data']['Task_ID'];
       _status = response.data['data']['Status'];
     });
   }
-
-  // late List<Widget> pages;
-
-  // @override
-  // void didChangeDependencies() {
-  //   print(_customerid);
-  //   super.didChangeDependencies();
-  //   // Initialize pages after _customerid is available
-  //   pages = [
-  //     const Home(),
-  //     HistoryList(
-  //       customerId: _customerid,
-  //       status: _status,
-  //     ),
-  //     const HelpCenterPage(),
-  //     // const HelpCenterCategory(),
-  //     // const PelaporanPage(),
-  //     const Account(),
-  //   ];
-  // }
 
   Future<void> logout() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -162,90 +115,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
             padding: const EdgeInsets.all(
                 8), // Sesuaikan ukuran padding inner circle sesuai kebutuhan
             child: IconButton(
-              onPressed: () {
-                showModalBottomSheet<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return SingleChildScrollView(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Kategori',
-                                style: TextStyle(
-                                  fontSize: 24.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            _buildCard(
-                              title: 'Boardband Home',
-                              description: '5 Product',
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const BroadbandHomePage(), // Ganti dengan halaman tujuan yang diinginkan
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 16.0),
-                            _buildCard(
-                              title: 'Boardband Bisnis',
-                              description: '4 Product',
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const BroadbandBisnisPage(), // Ganti dengan halaman tujuan yang diinginkan
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 16.0),
-                            _buildCard(
-                              title: 'Enterprise Solution',
-                              description: '1 Product',
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const EnterpriseSolutionPage(), // Ganti dengan halaman tujuan yang diinginkan
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 16.0),
-                            _buildCard(
-                              title: 'Enterprise Solution',
-                              description: '1 Product',
-                              onPressed: () {
-                                AwesomeNotifications().createNotification(
-                                    content: NotificationContent(
-                                  id: 1,
-                                  channelKey: "basic_channel",
-                                  title: "Hello World!",
-                                  body: "Yeyeyeyeye",
-                                ));
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
+              onPressed: () {},
               icon: Image.asset(
-                'images/splash.png', // Ubah 'your_image.png' sesuai dengan nama dan lokasi gambar Anda
+                'images/idmall_logo.png', // Ubah 'your_image.png' sesuai dengan nama dan lokasi gambar Anda
                 height: 60,
                 width: 60,
               ),
@@ -260,7 +132,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       bottomNavigationBar: AnimatedBottomNavigationBar(
         icons: const [
           CupertinoIcons.house_fill,
-          CupertinoIcons.compass,
+          Icons.history,
           CupertinoIcons.headphones,
           CupertinoIcons.profile_circled,
         ],
