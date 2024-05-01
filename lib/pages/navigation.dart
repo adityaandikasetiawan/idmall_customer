@@ -1,10 +1,8 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
+// ignore_for_file: avoid_print
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:idmall/pages/bantuan/bantuan.dart';
-import 'package:idmall/pages/broadbandbisnis.dart';
-import 'package:idmall/pages/broadbandhome.dart';
-import 'package:idmall/pages/enterprisesolution.dart';
 import 'package:idmall/pages/history.dart';
 import 'package:idmall/pages/home.dart';
 import 'package:idmall/pages/account.dart';
@@ -50,22 +48,32 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   Future<void> getDetailCustomer() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
-    final dio = Dio();
-    final response = await dio.get(
-      "${config.backendBaseUrl}/customer/dashboard/detail-customer",
-      options: Options(headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
-      }),
-    );
-    await prefs.setString("token", response.data['data']['Updated_Auth_Token']);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token') ?? "";
+      final dio = Dio();
+      final response = await dio.get(
+        "${config.backendBaseUrl}/customer/dashboard/detail-customer",
+        options: Options(headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        }),
+      );
+      if (response.data['data'].length > 0) {
+        await prefs.setString(
+            "token", response.data['data']['Updated_Auth_Token']);
 
-    setState(() {
-      _customerid = response.data['data']['Task_ID'];
-      _status = response.data['data']['Status'];
-    });
+        setState(
+          () {
+            _customerid = response.data['data']['Task_ID'];
+            _status = response.data['data']['Status'];
+          },
+        );
+      }
+    } on DioException catch (e) {
+      print(e.error);
+      print(e.message);
+    }
   }
 
   Future<void> logout() async {
@@ -151,43 +159,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             pageIndex = index;
           });
         },
-      ),
-    );
-  }
-
-  Widget _buildCard(
-      {required String title,
-      required String description,
-      required VoidCallback onPressed}) {
-    return Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: InkWell(
-        onTap: onPressed,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              Text(
-                description,
-                style: const TextStyle(
-                  fontSize: 16.0,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

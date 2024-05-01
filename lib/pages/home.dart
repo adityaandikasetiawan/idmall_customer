@@ -1,6 +1,4 @@
-// ignore_for_file: empty_catches
-
-import 'dart:math';
+// ignore_for_file: empty_catches, avoid_print
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
@@ -92,13 +90,17 @@ class _HomeState extends State<Home> {
           "Authorization": "Bearer $token"
         }),
       );
+      print(response.data);
       setState(() {
         package = response.data['data']['Package_Name'] ?? "";
         basePackage = response.data['data']['Base_Package_Name'] ?? "";
         customerID = response.data['data']['Task_ID'] ?? "";
         status = response.data['data']['Status'] ?? "";
       });
-    } catch (error) {}
+    } on DioException catch (e) {
+      print(e.message);
+      print(e.error);
+    }
   }
 
   Future<void> billingData() async {
@@ -113,19 +115,26 @@ class _HomeState extends State<Home> {
           "Authorization": "Bearer $token"
         }),
       );
-      setState(() {
-        if (response.data['data'].length > 0) {
-          isDueDateActive = true;
-          billing = oCcy.format(response.data['data']['AR_Val']);
-          DateTime dueDates =
-              DateTime.tryParse(response.data['data']['Due_Date'])!;
-          dueDate = DateFormat('MMMM, yyyy').format(dueDates);
-        }
-        package = response.data['data']['Sub_Product'] ?? "";
-        customerID = response.data['data']['Task_ID'] ?? "";
-        status = response.data['data']['Status'] ?? "";
-      });
-    } catch (error) {}
+      print(response.data['data'].length);
+
+      if (response.data['data'].length > 0) {
+        setState(
+          () {
+            isDueDateActive = true;
+            billing = oCcy.format(response.data['data']['AR_Val']);
+            DateTime dueDates =
+                DateTime.tryParse(response.data['data']['Due_Date'])!;
+            dueDate = DateFormat('MMMM, yyyy').format(dueDates);
+            package = response.data['data']['Sub_Product'] ?? "";
+            customerID = response.data['data']['Task_ID'] ?? "";
+            status = response.data['data']['Status'] ?? "";
+          },
+        );
+      }
+    } on DioException catch (e) {
+      print(e.message);
+      print(e.error);
+    }
   }
 
   @override
@@ -800,7 +809,7 @@ class _HomeState extends State<Home> {
                       items: [1, 2, 3, 4, 5].map((i) {
                         return Builder(
                           builder: (BuildContext context) {
-                            return Container(
+                            return SizedBox(
                               width: MediaQuery.of(context).size.width / 1.6,
                               // decoration: const BoxDecoration(
                               //     color: Colors.transparent),
