@@ -1,14 +1,12 @@
 // ignore_for_file: empty_catches, avoid_print
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:idmall/pages/details.dart';
 import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/invoice.dart';
 import 'package:idmall/pages/invoice_testing.dart';
+import 'package:idmall/pages/pembayaran_existing.dart';
 import 'package:idmall/service/coverage_area.dart';
 import 'package:idmall/widget/widget_support.dart';
 import 'package:idmall/widget/notificationpage.dart';
@@ -41,9 +39,6 @@ class _HomeState extends State<Home> {
   bool isDueDateActive = false;
 
   final oCcy = NumberFormat("#,##0", "en_US");
-
-  CarouselController controllerCarousel = CarouselController();
-  int carouselIndex = 0;
 
   @override
   void initState() {
@@ -90,13 +85,21 @@ class _HomeState extends State<Home> {
           "Authorization": "Bearer $token"
         }),
       );
-      print(response.data);
-      setState(() {
-        package = response.data['data']['Package_Name'] ?? "";
-        basePackage = response.data['data']['Base_Package_Name'] ?? "";
-        customerID = response.data['data']['Task_ID'] ?? "";
-        status = response.data['data']['Status'] ?? "";
-      });
+
+      print(response.data['data']['Status']);
+
+      if (response.data['data'].length > 0) {
+        await prefs.setString(
+            "token", response.data['data']['Updated_Auth_Token']);
+        setState(
+          () {
+            package = response.data['data']['Package_Name'] ?? "";
+            basePackage = response.data['data']['Base_Package_Name'] ?? "";
+            customerID = response.data['data']['Task_ID'] ?? "";
+            status = response.data['data']['Status'] ?? "";
+          },
+        );
+      }
     } on DioException catch (e) {
       print(e.message);
       print(e.error);
@@ -115,7 +118,6 @@ class _HomeState extends State<Home> {
           "Authorization": "Bearer $token"
         }),
       );
-      print(response.data['data'].length);
 
       if (response.data['data'].length > 0) {
         setState(
@@ -142,11 +144,6 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        flexibleSpace: const Image(
-          image: AssetImage('images/background.png'),
-          fit: BoxFit.cover,
-        ),
-        backgroundColor: Colors.transparent,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -183,8 +180,7 @@ class _HomeState extends State<Home> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NotificationsPage(),
-                      ),
+                          builder: (context) => const NotificationsPage()),
                     );
                   },
                   child: Container(
@@ -195,7 +191,10 @@ class _HomeState extends State<Home> {
                       ),
                       boxShadow: const [
                         BoxShadow(
-                          color: Colors.transparent,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                        BoxShadow(
+                          color: Color.fromARGB(255, 255, 255, 255),
                           spreadRadius: 7.0,
                           blurRadius: 12.0,
                         ),
@@ -236,7 +235,10 @@ class _HomeState extends State<Home> {
                       ),
                       boxShadow: const [
                         BoxShadow(
-                          color: Colors.transparent,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                        BoxShadow(
+                          color: Color.fromARGB(255, 255, 255, 255),
                           spreadRadius: 7.0,
                           blurRadius: 12.0,
                         ),
@@ -266,13 +268,9 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("images/background.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
+      backgroundColor: const Color.fromARGB(255, 250, 250, 255),
+      body: RefreshIndicator(
+        onRefresh: dashboardData,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
@@ -280,708 +278,259 @@ class _HomeState extends State<Home> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //new detail customer
-                const Text(
-                  "Paket Anda",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 10,
-                    color: Colors.black,
-                  ),
-                ),
-                GlassContainer(
-                  width: double.infinity * 2,
-                  blur: 4,
-                  color: Colors.white.withOpacity(0.5),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withOpacity(0.4),
-                      Colors.white.withOpacity(0.35),
-                    ],
-                  ),
-                  border: const Border.fromBorderSide(BorderSide.none),
-                  shadowStrength: 4,
-                  borderRadius: BorderRadius.circular(16),
-                  shadowColor: Colors.black.withOpacity(0.43),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "$customerID",
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontFamily: "Roboto Flex",
-                                fontWeight: FontWeight.w500,
+                //card billing, point, etc
+                status == "ACTIVE" || status == "DU" || status == "FREEZE"
+                    ? SizedBox(
+                        key: UniqueKey(),
+                        width: double.infinity * 2,
+                        child: Card(
+                          elevation: 4.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(15), // Bentuk sudut card
+                          ),
+                          // Mengubah warna background menjadi biru dongker
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                  15), // Bentuk sudut container
+                              image: const DecorationImage(
+                                image: AssetImage(
+                                    'images/bb_green_mint.jpg'), // Gambar background
+                                fit: BoxFit
+                                    .cover, // Menyesuaikan gambar dengan ukuran container
                               ),
                             ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: const Color.fromARGB(255, 254, 114, 76),
+                            child: Padding(
+                              padding: const EdgeInsets.all(18.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "$customerID",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    "$package",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    "$status",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  "$package",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 7,
+                            ),
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+
+                isDueDateActive == true &&
+                        (status == "ACTIVE" ||
+                            status == "DU" ||
+                            status == "FREEZE")
+                    ? Column(
+                        key: UniqueKey(),
+                        children: [
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Periode bulan ini sudah jatuh tempo, segera lakukan pembyaran",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PaymentMethodExisting(
+                                    taskid: "$customerID",
                                   ),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 50,
-                              width: 20,
-                              child: VerticalDivider(
-                                width: 5,
-                                thickness: 3,
-                                indent: 5,
-                                endIndent: 5,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                  "$basePackage",
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                              );
+                            },
+                            child: SizedBox(
+                              width: double.infinity * 2,
+                              child: Card(
+                                elevation: 4, // Tingkat elevasi card
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      15), // Bentuk sudut card
                                 ),
-                                const Text(
-                                  "130GB",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "images/icon_globe.png",
-                                      width: 10,
-                                      height: 10,
-                                    ),
-                                    const SizedBox(
-                                      width: 3,
-                                    ),
-                                    Text(
-                                      "Penggunaan Dalam Sebulan",
-                                      style: TextStyle(
-                                        fontSize: 6,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const Divider(
-                          thickness: 3,
-                          indent: 30,
-                          endIndent: 30,
-                          color: Colors.white,
-                        ),
-                        const Text(
-                          "Riwayat Transaksi",
-                          style: TextStyle(
-                            color: Colors.orange,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  "Billing Payment",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 10,
-                    color: Colors.black,
-                  ),
-                ),
-                GlassContainer(
-                  width: double.infinity * 2,
-                  blur: 4,
-                  color: Colors.white.withOpacity(0.5),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withOpacity(0.4),
-                      Colors.white.withOpacity(0.35),
-                    ],
-                  ),
-                  border: const Border.fromBorderSide(BorderSide.none),
-                  shadowStrength: 4,
-                  borderRadius: BorderRadius.circular(16),
-                  shadowColor: Colors.black.withOpacity(0.43),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const Icon(
-                          Icons.wifi,
-                          color: Color.fromARGB(255, 254, 114, 76),
-                          size: 30,
-                        ),
-                        Column(
-                          children: [
-                            const Text(
-                              "Actual Bill Periode",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 83, 83, 83),
-                                fontWeight: FontWeight.w500,
-                                fontFamily: "Roboto",
-                              ),
-                            ),
-                            Text(
-                              "$dueDate",
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 83, 83, 83),
-                                fontWeight: FontWeight.w500,
-                                fontFamily: "Robotto",
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          "Rp. $billing",
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: "Robotto",
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 155, 156, 248),
-                            Color.fromARGB(255, 128, 130, 237),
-                          ],
-                        ),
-                      ),
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white,
-                          ),
-                          child: const Icon(
-                            Icons.arrow_upward,
-                            color: Color.fromARGB(255, 128, 130, 237),
-                          ),
-                        ),
-                        label: const Text("Upgrade"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 254, 180, 197),
-                            Color.fromARGB(255, 219, 134, 154),
-                          ],
-                        ),
-                      ),
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white,
-                          ),
-                          child: const Icon(
-                            Icons.arrow_downward,
-                            color: Color.fromARGB(255, 238, 159, 177),
-                          ),
-                        ),
-                        label: const Text("Downgrade"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //new check coverage
-                GlassContainer(
-                  width: double.infinity * 2,
-                  blur: 4,
-                  color: Colors.white.withOpacity(0.5),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withOpacity(0.4),
-                      Colors.white.withOpacity(0.35),
-                    ],
-                  ),
-                  border: const Border.fromBorderSide(BorderSide.none),
-                  shadowStrength: 4,
-                  borderRadius: BorderRadius.circular(16),
-                  shadowColor: Colors.black.withOpacity(0.43),
-                  child: Stack(
-                    children: [
-                      const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                        child: Column(
-                          children: [
-                            Text(
-                              "Cek",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 22,
-                                fontFamily: "Plus Jakarta Sans",
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              "Lokasi Anda disini",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 22,
-                                fontFamily: "Plus Jakarta Sans",
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        right: 53,
-                        child: Image.asset(
-                          "images/idmall_logo.png",
-                          height: 70,
-                          width: 70,
-                          fit: BoxFit.fitHeight,
-                        ),
-                      ),
-                      Positioned(
-                        right: 0,
-                        top: 8,
-                        child: ClipRect(
-                          clipBehavior: Clip.hardEdge,
-                          child: Image.asset(
-                            "images/coverage.png",
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                // new play product list for home
-                CarouselSlider(
-                  carouselController: controllerCarousel,
-                  options: CarouselOptions(
-                    height: 400.0,
-                    autoPlay: true,
-                    autoPlayInterval: const Duration(seconds: 3),
-                    autoPlayAnimationDuration:
-                        const Duration(milliseconds: 800),
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    enlargeFactor: 0.3,
-                    scrollDirection: Axis.horizontal,
-                  ),
-                  items: [1, 2, 3, 4, 5].map((i) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Stack(
-                          fit: StackFit.loose,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width / 1.6,
-                              decoration: const BoxDecoration(
-                                  color: Colors.transparent),
-                              child: GlassContainer(
-                                height: 400,
-                                blur: 4,
-                                color: Colors.white.withOpacity(0.5),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Colors.white.withOpacity(0.4),
-                                    Colors.white.withOpacity(0.35),
-                                  ],
-                                ),
-                                border: const Border.fromBorderSide(
-                                    BorderSide.none),
-                                shadowStrength: 4,
-                                borderRadius: BorderRadius.circular(16),
-                                shadowColor: Colors.black.withOpacity(0.43),
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 0,
-                                    horizontal: 30,
-                                  ),
-                                  child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.speed,
-                                            size: 25,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            'Internet Tanpa Batas 30 MB',
-                                            style: TextStyle(fontSize: 12.0),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.router,
-                                            size: 25,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            'Gratis Router Wi-Fi',
-                                            style: TextStyle(fontSize: 12.0),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.settings,
-                                            size: 25,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            'Gratis Instalasi',
-                                            style: TextStyle(fontSize: 12.0),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.device_hub,
-                                            size: 25,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            'Ideal untuk 8 - 12 devices',
-                                            style: TextStyle(fontSize: 12.0),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.wifi_sharp,
-                                            size: 25,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              'Ideal untuk keluarga dengan pemakaian standar',
-                                              style: TextStyle(fontSize: 10.0),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: ClipRect(
-                                clipBehavior: Clip.hardEdge,
-                                child: Image.asset(
-                                  "images/carousel_bg.png",
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                // new play product list for home
-                Column(
-                  children: [
-                    CarouselSlider(
-                      options: CarouselOptions(
-                        height: 400.0,
-                        autoPlay: true,
-                        autoPlayInterval: const Duration(seconds: 3),
-                        autoPlayAnimationDuration:
-                            const Duration(milliseconds: 800),
-                        autoPlayCurve: Curves.fastOutSlowIn,
-                        enlargeFactor: 0.3,
-                        scrollDirection: Axis.horizontal,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            carouselIndex = index;
-                          });
-                        },
-                      ),
-                      items: [1, 2, 3, 4, 5].map((i) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return SizedBox(
-                              width: MediaQuery.of(context).size.width / 1.6,
-                              // decoration: const BoxDecoration(
-                              //     color: Colors.transparent),
-                              child: GlassContainer(
-                                height: 400,
-                                blur: 4,
-                                color: Colors.white.withOpacity(0.5),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Colors.white.withOpacity(0.4),
-                                    Colors.white.withOpacity(0.35),
-                                  ],
-                                ),
-                                border: const Border.fromBorderSide(
-                                    BorderSide.none),
-                                shadowStrength: 4,
-                                borderRadius: BorderRadius.circular(16),
-                                shadowColor: Colors.black.withOpacity(0.43),
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 20,
-                                        horizontal: 30,
-                                      ),
-                                      child: const Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.speed,
-                                                size: 25,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                'Internet Tanpa Batas 30 MB',
-                                                style:
-                                                    TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.router,
-                                                size: 25,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                'Gratis Router Wi-Fi',
-                                                style:
-                                                    TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.settings,
-                                                size: 25,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                'Gratis Instalasi',
-                                                style:
-                                                    TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.device_hub,
-                                                size: 25,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                'Ideal untuk 8 - 12 devices',
-                                                style:
-                                                    TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.wifi_sharp,
-                                                size: 25,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  'Ideal untuk keluarga dengan pemakaian standar',
-                                                  style:
-                                                      TextStyle(fontSize: 10.0),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 25,
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              "Rp. 900.000 / bulan",
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                color: Colors.orange,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        15), // Bentuk sudut container
+                                    image: const DecorationImage(
+                                      image: AssetImage(
+                                          'images/bb_red_orange.jpg'), // Gambar background
+                                      fit: BoxFit
+                                          .cover, // Menyesuaikan gambar dengan ukuran container
                                     ),
-                                    Positioned(
-                                      right: 0,
-                                      bottom: 0,
-                                      child: ClipRect(
-                                        clipBehavior: Clip.hardEdge,
-                                        child: Image.asset(
-                                          "images/carousel_bg.png",
-                                          fit: BoxFit.cover,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(18.0),
+                                    child: ListTile(
+                                      title: Text(
+                                        "$dueDate",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
+                                      subtitle: Text(
+                                        "$billing",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      trailing:
+                                          const Icon(Icons.arrow_forward_ios),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                            );
-                          },
-                        );
-                      }).toList(),
-                    ),
-                    DotsIndicator(
-                      dotsCount: 5,
-                      position: carouselIndex.toDouble(),
-                      decorator: DotsDecorator(
-                        shape: const Border(),
-                        size: const Size.square(9.0),
-                        activeSize: const Size(18.0, 9.0),
-                        activeShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
-                      ),
-                    )
-                  ],
-                ),
-                // New Promotion Cards
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox(),
+
+                // const SizedBox(height: 20.0),
+                // //card billing, point, etc
+                // SizedBox(
+                //   width: double.infinity * 2, // Sesuaikan lebar dengan kebutuhan
+                //   height: 120, // Sesuaikan tinggi dengan kebutuhan
+                //   child: Card(
+                //     elevation: 4.0,
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(20.0),
+                //     ),
+                //     color: const Color.fromARGB(255, 19, 24,
+                //         84), // Mengubah warna background menjadi biru dongker
+                //     child: Padding(
+                //       padding: const EdgeInsets.all(18.0),
+                //       child: Row(
+                //         children: [
+                //           Expanded(
+                //             child: Column(
+                //               crossAxisAlignment: CrossAxisAlignment.center,
+                //               children: [
+                //                 Image.asset('images/widget/point.png',
+                //                     width: 20,
+                //                     height: 20), // Menggunakan gambar untuk icon
+                //                 const SizedBox(
+                //                     height:
+                //                         8), // Tambahkan jarak antara icon dan teks
+                //                 const Text(
+                //                   'Point',
+                //                   style: TextStyle(
+                //                     color: Colors.white,
+                //                     fontSize: 16,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //                 const Text(
+                //                   'Rp.100.000',
+                //                   style: TextStyle(
+                //                     color: Colors.white,
+                //                     fontSize: 12,
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //           const SizedBox(
+                //               width:
+                //                   20), // Tambahkan jarak horizontal di antara widget
+                //           Expanded(
+                //             child: Column(
+                //               crossAxisAlignment: CrossAxisAlignment.center,
+                //               children: [
+                //                 Image.asset('images/widget/bill.png',
+                //                     width: 20,
+                //                     height: 20), // Menggunakan gambar untuk icon
+                //                 const SizedBox(
+                //                     height:
+                //                         8), // Tambahkan jarak antara icon dan teks
+                //                 const Text(
+                //                   'Actual Bill',
+                //                   style: TextStyle(
+                //                     color: Colors.white,
+                //                     fontSize: 16,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //                 const Text(
+                //                   'Rp.100.000',
+                //                   style: TextStyle(
+                //                     color: Colors.white,
+                //                     fontSize: 12,
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //           const SizedBox(
+                //               width:
+                //                   20), // Tambahkan jarak horizontal di antara widget
+                //           Expanded(
+                //             child: Column(
+                //               crossAxisAlignment: CrossAxisAlignment.center,
+                //               children: [
+                //                 Image.asset('images/widget/voucher.png',
+                //                     width: 20,
+                //                     height: 20), // Menggunakan gambar untuk icon
+                //                 const SizedBox(
+                //                     height:
+                //                         8), // Tambahkan jarak antara icon dan teks
+                //                 const Text(
+                //                   'Voucher',
+                //                   style: TextStyle(
+                //                     color: Colors.white,
+                //                     fontSize: 16,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //                 const Text(
+                //                   'Rp.100.000',
+                //                   style: TextStyle(
+                //                     color: Colors.white,
+                //                     fontSize: 12,
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
+                // New Promotion Card
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 20.0),
                   child: Card(
@@ -1048,6 +597,152 @@ class _HomeState extends State<Home> {
                   ),
                 ),
 
+                // // Three icons
+                // SizedBox(height: 20),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //   children: [
+                //     GestureDetector(
+                //       onTap: () {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(builder: (context) => PackagesPage()),
+                //         );
+                //       },
+                //       child: Column(
+                //         children: [
+                //           Container(
+                //             decoration: BoxDecoration(
+                //               shape: BoxShape.circle,
+                //               border: Border.all(
+                //                 color: Colors.black,
+                //               ),
+                //               boxShadow: const [
+                //                 BoxShadow(
+                //                   color: Color.fromARGB(255, 0, 0, 0),
+                //                 ),
+                //                 BoxShadow(
+                //                   color: Color.fromARGB(255, 255, 255, 255),
+                //                   spreadRadius: 7.0,
+                //                   blurRadius: 12.0,
+                //                 ),
+                //               ],
+                //             ),
+                //             child: Padding(
+                //               padding: const EdgeInsets.all(10.0),
+                //               child: Image.asset(
+                //                 'images/widget/paket.png',
+                //                 width: 50,
+                //                 height: 50,
+                //                 color: const Color.fromARGB(255, 0, 0, 0),
+                //               ),
+                //             ),
+                //           ),
+                //           const SizedBox(height: 5),
+                //           const Text(
+                //             'Paket',
+                //             style: TextStyle(
+                //               color: Color.fromARGB(255, 0, 0, 0),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     GestureDetector(
+                //       onTap: () {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(builder: (context) => TroublePage()),
+                //         );
+                //       },
+                //       child: Column(
+                //         children: [
+                //           Container(
+                //             decoration: BoxDecoration(
+                //               shape: BoxShape.circle,
+                //               border: Border.all(
+                //                 color: Colors.black,
+                //               ),
+                //               boxShadow: const [
+                //                 BoxShadow(
+                //                   color: Color.fromARGB(255, 0, 0, 0),
+                //                 ),
+                //                 BoxShadow(
+                //                   color: Color.fromARGB(255, 255, 255, 255),
+                //                   spreadRadius: 7.0,
+                //                   blurRadius: 12.0,
+                //                 ),
+                //               ],
+                //             ),
+                //             child: Padding(
+                //               padding: const EdgeInsets.all(10.0),
+                //               child: Image.asset(
+                //                 'images/widget/gangguan.png',
+                //                 width: 50,
+                //                 height: 50,
+                //                 color: const Color.fromARGB(255, 0, 0, 0),
+                //               ),
+                //             ),
+                //           ),
+                //           const SizedBox(height: 5),
+                //           const Text(
+                //             'Gangguan',
+                //             style: TextStyle(
+                //               color: Color.fromARGB(255, 0, 0, 0),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     GestureDetector(
+                //       onTap: () {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(builder: (context) => AllPage()),
+                //         );
+                //       },
+                //       child: Column(
+                //         children: [
+                //           Container(
+                //             decoration: BoxDecoration(
+                //               shape: BoxShape.circle,
+                //               border: Border.all(
+                //                 color: Colors.black,
+                //               ),
+                //               boxShadow: const [
+                //                 BoxShadow(
+                //                   color: Color.fromARGB(255, 0, 0, 0),
+                //                 ),
+                //                 BoxShadow(
+                //                   color: Color.fromARGB(255, 255, 255, 255),
+                //                   spreadRadius: 7.0,
+                //                   blurRadius: 12.0,
+                //                 ),
+                //               ],
+                //             ),
+                //             child: Padding(
+                //               padding: const EdgeInsets.all(10.0),
+                //               child: Image.asset(
+                //                 'images/widget/semua.png',
+                //                 width: 50,
+                //                 height: 50,
+                //                 color: const Color.fromARGB(255, 0, 0, 0),
+                //               ),
+                //             ),
+                //           ),
+                //           const SizedBox(height: 5),
+                //           const Text(
+                //             'Semua',
+                //             style: TextStyle(
+                //               color: Color.fromARGB(255, 0, 0, 0),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                // ),
+
                 // New Card
                 Container(
                   margin: const EdgeInsets.only(bottom: 20.0),
@@ -1065,7 +760,8 @@ class _HomeState extends State<Home> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      color: const Color.fromARGB(255, 19, 24, 84),
+                      color: const Color.fromARGB(255, 19, 24,
+                          84), // Ubah warna latar belakang kartu menjadi biru tua
                       child: Padding(
                         padding: const EdgeInsets.all(18.0),
                         child: Row(
@@ -1120,8 +816,8 @@ class _HomeState extends State<Home> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const PenawaranPage(),
-                              ),
+                                  builder: (context) =>
+                                      const PenawaranPage()), // Ganti dengan halaman yang diinginkan
                             );
                           },
                           child: const Text(
@@ -1135,7 +831,9 @@ class _HomeState extends State<Home> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(
+                        height:
+                            5), // Tambahkan jarak vertikal antara judul dan carousel
                     SizedBox(
                       height: 280,
                       child: ListView(

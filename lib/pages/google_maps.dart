@@ -154,6 +154,8 @@ class MapSampleState extends State<MapSample> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
+          final prefs = await SharedPreferences.getInstance();
+          final String token = prefs.getString('token') ?? "";
           try {
             final dio = Dio();
             final response = await dio.get(
@@ -161,6 +163,7 @@ class MapSampleState extends State<MapSample> {
               queryParameters: {'longitude': _long, 'latitude': _lat},
               options: Options(headers: {
                 "Content-Type": "application/json",
+                "Authorization": "Bearer $token"
               }),
             );
             if (response.statusCode == 200) {

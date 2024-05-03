@@ -62,7 +62,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
       if (response.data['data'].length > 0) {
         await prefs.setString(
             "token", response.data['data']['Updated_Auth_Token']);
-
         setState(
           () {
             _customerid = response.data['data']['Task_ID'];
