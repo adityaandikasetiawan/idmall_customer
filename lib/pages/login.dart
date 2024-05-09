@@ -74,6 +74,7 @@ Future<dynamic> loginWithEmailPassword(payload) async {
 
 class _LoginState extends State<Login> {
   User? currentUser;
+
   String email = "", password = "", taskid = "", status = "", fullName = "";
   bool _isPasswordVisible = false;
   bool isLoading = false;
@@ -117,6 +118,7 @@ class _LoginState extends State<Login> {
         }
         var userId = response.data['data']['id'];
         var email = response.data['data']['email'];
+
         taskid = response.data['data']['task_id'] ?? "";
         final SharedPreferences prefs = await _prefs;
         prefs.setString('token', token);
@@ -129,6 +131,33 @@ class _LoginState extends State<Login> {
           'is_email_verified',
           response.data['data']['is_email_verified'].toString(),
         );
+
+        if (response.data['data']['is_connected_to_oss'].toString() == "1") {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SignUp(
+                  existingUserFirstName: response.data['data']['first_name'],
+                  existingUserLastName: response.data['data']['last_name'],
+                  existingUserFullName: fullName,
+                  existingUserEmail: email,
+                  isAlreadySubscribed:
+                      response.data['data']['is_connected_to_oss'].toString()),
+            ),
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NavigationScreen(
+                customerID: taskid,
+                status: status,
+              ),
+            ),
+            (Route<dynamic> route) => false,
+          );
+        }
       }
       Navigator.pushAndRemoveUntil(
         context,
