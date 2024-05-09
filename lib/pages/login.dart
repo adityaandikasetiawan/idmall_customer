@@ -170,7 +170,7 @@ class _LoginState extends State<Login> {
             return AlertDialog(
               title: const Text("Warning"),
               content:
-                  const Text("Email atau password salah, silakan coba lagi"),
+                  Text("${e.response!.data['errors']['message']}"),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {

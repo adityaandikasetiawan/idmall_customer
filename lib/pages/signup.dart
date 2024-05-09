@@ -114,7 +114,7 @@ class _SignUpState extends State<SignUp> {
     lastNameController.text = widget.existingUserLastName ?? "";
     fullNameController.text = widget.existingUserFullName ?? "";
     emailController.text = widget.existingUserEmail ?? "";
-    // isAlreadySubscribed = widget.isAlreadySubscribed.toString() ?? "0";
+    isAlreadySubscribed = widget.isAlreadySubscribed.toString() ?? "0";
 
     super.initState();
   }
