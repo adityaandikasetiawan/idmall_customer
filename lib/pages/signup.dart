@@ -3,12 +3,26 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:idmall/models/signup.dart';
 import 'package:idmall/pages/login.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:dio/dio.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+  final String? existingUserFirstName;
+  final String? existingUserLastName;
+  final String? existingUserFullName;
+  final String? existingUserEmail;
+  final String? isAlreadySubscribed;
+
+  const SignUp({
+    this.existingUserFirstName,
+    this.existingUserLastName,
+    this.existingUserEmail,
+    this.existingUserFullName,
+    this.isAlreadySubscribed,
+    super.key,
+  });
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -18,10 +32,15 @@ class _SignUpState extends State<SignUp> {
   String email = "";
   String firstName = "";
   String lastName = "";
+  String fullName = "";
   String password = "";
+  String? isAlreadySubscribed;
+
+
 
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController repeatPasswordController = TextEditingController();
@@ -39,6 +58,8 @@ class _SignUpState extends State<SignUp> {
         data: {
           "first_name": firstNameController.text,
           "last_name": lastNameController.text,
+          "full_name": fullNameController.text,
+          "is_connected_to_oss": isAlreadySubscribed,
           "email": emailController.text,
           "password": passwordController.text,
         },
@@ -76,16 +97,29 @@ class _SignUpState extends State<SignUp> {
   }
 
   @override
+  void initState() {
+    firstNameController.text = widget.existingUserFirstName ?? "";
+    lastNameController.text = widget.existingUserLastName ?? "";
+    fullNameController.text = widget.existingUserFullName ?? "";
+    emailController.text = widget.existingUserEmail ?? "";
+    isAlreadySubscribed = widget.isAlreadySubscribed.toString() ?? "0";
+
+    super.initState();
+  }
+
+  @override
   void dispose() {
     firstNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    fullNameController.dispose();
     repeatPasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('widget ${widget.existingUserFirstName}');
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SingleChildScrollView(
@@ -189,6 +223,28 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: fullNameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please Enter valid full name';
+                        }
+                        return null;
+                      },
+                      style:
+                      const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                      decoration: InputDecoration(
+                        hintText: 'Nama Lengkap',
+                        hintStyle: const TextStyle(
+                            color: Color.fromARGB(255, 93, 92, 92)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 20.0),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(

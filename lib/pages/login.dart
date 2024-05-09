@@ -74,6 +74,7 @@ Future<dynamic> loginWithEmailPassword(payload) async {
 
 class _LoginState extends State<Login> {
   User? currentUser;
+
   String email = "", password = "", taskid = "", status = "", fullName = "";
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -90,6 +91,8 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> userLogin() async {
+
+
     try {
       var payload = json.encode({
         "email": useremailcontroller.text,
@@ -114,6 +117,7 @@ class _LoginState extends State<Login> {
         }
         var userId = response.data['data']['id'];
         var email = response.data['data']['email'];
+
         taskid = response.data['data']['task_id'] ?? "";
         final SharedPreferences prefs = await _prefs;
         prefs.setString('token', token);
@@ -126,17 +130,32 @@ class _LoginState extends State<Login> {
           'is_email_verified',
           response.data['data']['is_email_verified'].toString(),
         );
-      }
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NavigationScreen(
-            customerID: taskid,
-            status: status,
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SignUp(
+              existingUserFirstName: response.data['data']['first_name'],
+              existingUserLastName: response.data['data']['last_name'],
+              existingUserFullName: fullName,
+              existingUserEmail: email,
+              isAlreadySubscribed: response.data['data']['is_connected_to_oss'].toString()
+            ),
           ),
-        ),
-        (Route<dynamic> route) => false,
-      );
+              (Route<dynamic> route) => false,
+        );
+      }
+
+      // Navigator.pushAndRemoveUntil(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => NavigationScreen(
+      //       customerID: taskid,
+      //       status: status,
+      //     ),
+      //   ),
+      //   (Route<dynamic> route) => false,
+      // );
     } on DioException catch (e) {
       if (e.response?.statusCode == 403) {
         showDialog(
