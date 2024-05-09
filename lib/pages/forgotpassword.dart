@@ -1,7 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:dio/dio.dart';
 import 'package:idmall/pages/signup.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:idmall/config/config.dart' as config;
 import 'package:flutter/material.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -19,21 +20,51 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final _formkey = GlobalKey<FormState>();
 
   resetPassword() async {
+    final dio = Dio();
+
     try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-        "Password Reset Email has been sent !",
-        style: TextStyle(fontSize: 18.0),
-      )));
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "user-not-found") {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-          "No user found with that email",
-          style: TextStyle(fontSize: 18.0),
-        )));
-      }
+      final response = await dio.post(
+        '${config.backendBaseUrl}/user/password/reset/send',
+        data: {
+          "target_email": email,
+        },
+      );
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Success"),
+            content: Text(response.data['message']),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    } on DioException catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Warning"),
+            content: Text(e.response?.data),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 

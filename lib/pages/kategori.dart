@@ -23,7 +23,7 @@ class CategoryPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NotificationsPage(),
+                        builder: (context) => const NotificationPage(),
                       ),
                     );
                   },
@@ -51,7 +51,7 @@ class CategoryPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const NotificationsPage(),
+                            builder: (context) => const NotificationPage(),
                           ),
                         );
                       },

@@ -190,7 +190,7 @@ class _HomeState extends State<Home> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NotificationsPage(),
+                        builder: (context) => const NotificationPage(),
                       ),
                     );
                   },
@@ -215,7 +215,7 @@ class _HomeState extends State<Home> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const NotificationsPage()),
+                              builder: (context) => const NotificationPage()),
                         );
                       },
                     ),

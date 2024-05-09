@@ -75,6 +75,8 @@ Future<dynamic> loginWithEmailPassword(payload) async {
 class _LoginState extends State<Login> {
   User? currentUser;
   String email = "", password = "", taskid = "", status = "", fullName = "";
+  bool _isPasswordVisible = false;
+  bool isLoading = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -97,6 +99,7 @@ class _LoginState extends State<Login> {
       });
 
       var response = await loginWithEmailPassword(payload);
+      print(response.data['data']);
       if (response.statusCode == 200) {
         var token = response.data['data']['token'];
         if (response.data['data']['first_name'] != null) {
@@ -137,137 +140,34 @@ class _LoginState extends State<Login> {
         ),
         (Route<dynamic> route) => false,
       );
+
+      setState(() {
+        isLoading = false;
+      });
     } on DioException catch (e) {
-      if (e.response?.statusCode == 403) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Warning"),
-              content:
-                  const Text("Email atau password salah, silakan coba lagi"),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("OK"),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Error"),
-              content: Text(e.message!),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("OK"),
-                ),
-              ],
-            );
-          },
-        );
-      }
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Warning"),
+            content: Text(e.response?.data['errors']['message']),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+
+      setState(() {
+        isLoading = false;
+      });
     }
-
-    // }on DioException catch (e) {
-
-    //   if(e.response?.statusCode == 403){
-    //     showDialog(
-    //       context: context,
-    //       builder: (BuildContext context) {
-    //         return AlertDialog(
-    //           title: const Text("Error"),
-    //           content: Text("Email atau password salah, silakan coba lagi"),
-    //           actions: <Widget>[
-    //             TextButton(
-    //               onPressed: () {
-    //                 Navigator.of(context).pop();
-    //               },
-    //               child: const Text("OK"),
-    //             ),
-    //           ],
-    //         );
-    //       },
-    //     );
-    //   }
-
-    // //   String errorMessage = 'An error occurred while signing in. Please try again.';
-    // //   if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-    // //     errorMessage = 'Email or password is incorrect. Please try again.';
-    // //     // Tampilkan dialog popup
-    // //     showDialog(
-    // //       context: context,
-    // //       builder: (BuildContext context) {
-    // //         return AlertDialog(
-    // //           title: const Text("Error"),
-    // //           content: Text(errorMessage),
-    // //           actions: <Widget>[
-    // //             TextButton(
-    // //               onPressed: () {
-    // //                 Navigator.of(context).pop();
-    // //               },
-    // //               child: const Text("OK"),
-    // //             ),
-    // //           ],
-    // //         );
-    // //       },
-    // //     );
-    // //   }
-    // }
   }
-//unused
-//   Future<void> userLogin() async {
-//     try {
-//       await FirebaseAuth.instance.signInWithEmailAndPassword(
-//         email: useremailcontroller.text,
-//         password: userpasswordcontroller.text,
-//       );
-//       User? user = FirebaseAuth.instance.currentUser;
-//       print('User after login: $user');
-//
-//       setState(() {
-//         currentUser = user;
-//       });
-//
-//       print(currentUser?.uid);
-//       Navigator.push(
-//         context,
-//         MaterialPageRoute(builder: (context) => const BottomNav()),
-//       );
-//     } on FirebaseAuthException catch (e) {
-//       String errorMessage = 'An error occurred while signing in. Please try again.';
-//       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-//         errorMessage = 'Email or password is incorrect. Please try again.';
-//         // Tampilkan dialog popup
-//         showDialog(
-//           context: context,
-//           builder: (BuildContext context) {
-//             return AlertDialog(
-//               title: const Text("Error"),
-//               content: Text(errorMessage),
-//               actions: <Widget>[
-//                 TextButton(
-//                   onPressed: () {
-//                     Navigator.of(context).pop();
-//                   },
-//                   child: const Text("OK"),
-//                 ),
-//               ],
-//             );
-//           },
-//         );
-//       }
-//     }
-//   }
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +226,7 @@ class _LoginState extends State<Login> {
                           controller: useremailcontroller,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please Enter Email';
+                              return 'Tolong Masukkan Email';
                             }
                             return null;
                           },
@@ -358,28 +258,41 @@ class _LoginState extends State<Login> {
                           style: const TextStyle(
                             color: Color.fromARGB(255, 0, 0, 0),
                           ),
-                          obscureText: true,
+                          obscureText: !_isPasswordVisible,
                           decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.lock,
-                                color: Color.fromARGB(255, 93, 92, 92)),
-                            hintText: 'Password',
-                            hintStyle: const TextStyle(
-                                color: Color.fromARGB(255, 93, 92, 92)),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 15.0, horizontal: 20.0),
-                          ),
+                              prefixIcon: const Icon(Icons.lock,
+                                  color: Color.fromARGB(255, 93, 92, 92)),
+                              hintText: 'Password',
+                              hintStyle: const TextStyle(
+                                  color: Color.fromARGB(255, 93, 92, 92)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 15.0, horizontal: 20.0),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
+                              )),
                         ),
                         const SizedBox(height: 10.0),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ForgotPassword()));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ForgotPassword(),
+                              ),
+                            );
                           },
                           child: Container(
                             alignment: Alignment.topRight,
@@ -396,44 +309,52 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         const SizedBox(height: 30.0),
-                        GestureDetector(
-                          onTap: () async {
-                            if (_formKey.currentState!.validate()) {
-                              String enteredEmail = useremailcontroller.text;
-                              String enteredPassword =
-                                  userpasswordcontroller.text;
+                        isLoading == false
+                            ? GestureDetector(
+                                onTap: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    String enteredEmail =
+                                        useremailcontroller.text;
+                                    String enteredPassword =
+                                        userpasswordcontroller.text;
 
-                              if (enteredEmail == 'admin' &&
-                                  enteredPassword == 'admin') {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const HomeAdmin()));
-                              } else {
-                                userLogin();
-                              }
-                            }
-                          },
-                          child: Material(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: const Color.fromARGB(255, 228, 99, 7),
-                            child: const SizedBox(
-                              width: 400.0,
-                              height: 50.0,
-                              child: Center(
-                                child: Text(
-                                  "Sign In",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18.0,
-                                    fontFamily: 'Poppins',
+                                    if (enteredEmail == 'admin' &&
+                                        enteredPassword == 'admin') {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomeAdmin(),
+                                        ),
+                                      );
+                                    } else {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      userLogin();
+                                    }
+                                  }
+                                },
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  color: const Color.fromARGB(255, 228, 99, 7),
+                                  child: const SizedBox(
+                                    width: 400.0,
+                                    height: 50.0,
+                                    child: Center(
+                                      child: Text(
+                                        "Sign In",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18.0,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        ),
+                              )
+                            : const CircularProgressIndicator(),
                         const SizedBox(height: 10.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

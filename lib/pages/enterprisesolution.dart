@@ -163,7 +163,7 @@ class _EnterpriseSolutionPageState extends State<EnterpriseSolutionPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const NotificationsPage(),
+                  builder: (context) => const NotificationPage(),
                 ),
               );
             },

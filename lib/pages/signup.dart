@@ -1,7 +1,4 @@
 // ignore_for_file: empty_catches, no_leading_underscores_for_local_identifiers, use_build_context_synchronously
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:idmall/pages/login.dart';
 import 'package:idmall/config/config.dart' as config;
@@ -29,7 +26,9 @@ class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isPasswordVisible = false;
+
   bool _isRepeatPasswordVisible = false;
+  bool isLoading = false;
 
   Future<void> registration() async {
     try {
@@ -43,34 +42,58 @@ class _SignUpState extends State<SignUp> {
           "password": passwordController.text,
         },
       );
-      if (response.statusCode == 200) {
-        jsonDecode(response.data);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.green,
-            content: Text(
-              "Registered Successfully",
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ),
-        );
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Success"),
+            content: Text(response.data['message']),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Login(),
+                    ),
+                  );
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const Login(),
-          ),
-        );
-      }
+      setState(
+        () {
+          isLoading = false;
+        },
+      );
     } on DioException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(
-            e.response?.data['errors']['message'],
-            style: const TextStyle(fontSize: 20.0),
-          ),
-        ),
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            icon: const Icon(Icons.error),
+            iconColor: Colors.red,
+            title: const Text("Warning"),
+            content: Text(e.response?.data['errors']['message']),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      setState(
+        () {
+          isLoading = false;
+        },
       );
     }
   }
@@ -229,7 +252,7 @@ class _SignUpState extends State<SignUp> {
                         } else if (!RegExp(
                                 r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_+{}|:"<>?/~`]).{8,}$')
                             .hasMatch(value)) {
-                          return 'Password must start with an uppercase letter and contain at least one lowercase letter, one number, and one special character';
+                          return 'Password must start with an uppercase letter \nand contain at least one lowercase letter, \none number, and one special character';
                         }
                         return null;
                       },
@@ -291,10 +314,12 @@ class _SignUpState extends State<SignUp> {
                             color: const Color.fromARGB(255, 0, 0, 0),
                           ),
                           onPressed: () {
-                            setState(() {
-                              _isRepeatPasswordVisible =
-                                  !_isRepeatPasswordVisible;
-                            });
+                            setState(
+                              () {
+                                _isRepeatPasswordVisible =
+                                    !_isRepeatPasswordVisible;
+                              },
+                            );
                           },
                         ),
                       ),
@@ -302,37 +327,40 @@ class _SignUpState extends State<SignUp> {
                     const SizedBox(
                       height: 30.0,
                     ),
-                    GestureDetector(
-                      onTap: () async {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            email = emailController.text;
-                            firstName = firstNameController.text;
-                            lastName = lastNameController.text;
-                            password = passwordController.text;
-                          });
-                        }
-                        registration();
-                      },
-                      child: SizedBox(
-                        height: 50.0,
-                        width: 400.0,
-                        child: Material(
-                          color: const Color.fromARGB(255, 228, 99, 7),
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: const Center(
-                            child: Text(
-                              "Daftar",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18.0,
-                                fontFamily: 'Poppins',
+                    isLoading == false
+                        ? GestureDetector(
+                            onTap: () async {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() {
+                                  email = emailController.text;
+                                  firstName = firstNameController.text;
+                                  lastName = lastNameController.text;
+                                  password = passwordController.text;
+                                  isLoading = true;
+                                });
+                                registration();
+                              }
+                            },
+                            child: SizedBox(
+                              height: 50.0,
+                              width: 400.0,
+                              child: Material(
+                                color: const Color.fromARGB(255, 228, 99, 7),
+                                borderRadius: BorderRadius.circular(20.0),
+                                child: const Center(
+                                  child: Text(
+                                    "Daftar",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18.0,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
+                          )
+                        : const CircularProgressIndicator(),
                     const SizedBox(height: 10.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

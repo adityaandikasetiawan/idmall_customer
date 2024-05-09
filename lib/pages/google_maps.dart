@@ -39,18 +39,24 @@ class MapSampleState extends State<MapSample> {
 
   Future<void> _goToSelectedArea(latitude, longitude, placeName) async {
     try {
-      setState(() {
-        _searchController.text = placeName;
-        _markers.add(Marker(
-          markerId: MarkerId('$latitude,$longitude'),
-          position: LatLng(latitude, longitude),
-          infoWindow: const InfoWindow(
-            title: 'Your location',
-            snippet: 'This is your current location',
-          ),
-          icon: BitmapDescriptor.defaultMarker,
-        ));
-      });
+      setState(
+        () {
+          _searchController.text = placeName;
+          _markers.clear();
+          _markers.add(
+            Marker(
+              markerId: MarkerId('$latitude,$longitude'),
+              position: LatLng(latitude, longitude),
+              infoWindow: InfoWindow(
+                title: 'Location',
+                snippet: placeName,
+              ),
+              icon: BitmapDescriptor.defaultMarker,
+            ),
+          );
+        },
+      );
+
       await _mapController?.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
@@ -121,7 +127,7 @@ class MapSampleState extends State<MapSample> {
         _lat = latitude;
         _long = longitude;
 
-        await _mapController?.animateCamera(
+        _mapController?.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
               target: LatLng(latitude, longitude),

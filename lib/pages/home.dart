@@ -1,16 +1,18 @@
 // ignore_for_file: empty_catches, avoid_print
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:idmall/pages/details.dart';
 import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/invoice.dart';
 import 'package:idmall/pages/invoice_testing.dart';
 import 'package:idmall/pages/pembayaran_existing.dart';
+import 'package:idmall/pages/upgrade_downgrade_detail.dart';
 import 'package:idmall/service/coverage_area.dart';
 import 'package:idmall/widget/widget_support.dart';
 import 'package:idmall/widget/notificationpage.dart';
-import 'package:idmall/pages/promo.dart';
 import 'package:idmall/widget/penawaranterbaru.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
@@ -25,6 +27,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String? name;
+  String? fullName;
   String greeting = '';
   String points = '10';
   String vouchers = '1';
@@ -46,7 +49,6 @@ class _HomeState extends State<Home> {
     setGreeting();
     getUserName();
     dashboardData();
-    billingData();
   }
 
   void setGreeting() {
@@ -68,14 +70,18 @@ class _HomeState extends State<Home> {
 
   Future<void> getUserName() async {
     final prefs = await SharedPreferences.getInstance();
+    String? fullNames = prefs.getString("fullName");
+    List<String> nameParts = fullNames!.split(" ");
+
     setState(() {
-      name = prefs.getString('fullName') ?? "";
+      name = nameParts[0];
+      fullName = fullNames;
     });
   }
 
   Future<void> dashboardData() async {
+    final prefs = await SharedPreferences.getInstance();
     try {
-      final prefs = await SharedPreferences.getInstance();
       final String token = prefs.getString('token') ?? "";
 
       final response = await dio.get(
@@ -86,7 +92,13 @@ class _HomeState extends State<Home> {
         }),
       );
 
-      print(response.data['data']['Status']);
+      final response2 = await dio.get(
+        "${config.backendBaseUrl}/customer/billing/due",
+        options: Options(headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        }),
+      );
 
       if (response.data['data'].length > 0) {
         await prefs.setString(
@@ -100,26 +112,8 @@ class _HomeState extends State<Home> {
           },
         );
       }
-    } on DioException catch (e) {
-      print(e.message);
-      print(e.error);
-    }
-  }
 
-  Future<void> billingData() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final String token = prefs.getString('token') ?? "";
-
-      final response = await dio.get(
-        "${config.backendBaseUrl}/customer/billing/due",
-        options: Options(headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token"
-        }),
-      );
-
-      if (response.data['data'].length > 0) {
+      if (response2.data['data'].length > 0) {
         setState(
           () {
             isDueDateActive = true;
@@ -127,9 +121,6 @@ class _HomeState extends State<Home> {
             DateTime dueDates =
                 DateTime.tryParse(response.data['data']['Due_Date'])!;
             dueDate = DateFormat('MMMM, yyyy').format(dueDates);
-            package = response.data['data']['Sub_Product'] ?? "";
-            customerID = response.data['data']['Task_ID'] ?? "";
-            status = response.data['data']['Status'] ?? "";
           },
         );
       }
@@ -147,31 +138,420 @@ class _HomeState extends State<Home> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "$greeting, ",
-                        style: AppWidget.boldTextFeildStyle()
-                            .copyWith(color: Colors.black, fontSize: 15),
-                      ),
-                      TextSpan(
-                        text: name ?? "Guest",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: Color.fromARGB(
-                              255, 0, 0, 0), // Ubah warna sesuai kebutuhan
-                          fontFamily:
-                              'Poppins', // Sesuaikan dengan gaya font yang Anda gunakan
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet<void>(
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(15.0),
+                    ),
+                  ),
+                  useSafeArea: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
                         ),
                       ),
-                    ],
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: ListView(
+                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "PROFIL ANDA",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          ListTile(
+                            onTap: () {
+                              // Tindakan saat bagian pertama ditekan
+                            },
+                            leading: const Icon(Icons.account_circle),
+                            title: Text("$fullName"),
+                            subtitle: Row(
+                              children: [
+                                Text("$status"),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                const Text(" - "),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text("$basePackage")
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text(
+                            "Nomor pelanggan yang Anda kelola",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ListTile(
+                            onTap: () {
+                              // Tindakan saat bagian pertama ditekan
+                            },
+                            leading: const Icon(Icons.home),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("$customerID"),
+                                const Row(
+                                  children: [
+                                    Text(
+                                      "Aktif",
+                                      style: TextStyle(color: Colors.orange),
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 15,
+                                      color: Colors.orange,
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                            subtitle: Text("$fullName"),
+                          ),
+                          const Divider(),
+                          Column(
+                            children: [
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Success"),
+                                        content: const Text(
+                                            "Berhasil pindah ke CID 1600xxxx"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.home),
+                                title: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("160xxxx"),
+                                  ],
+                                ),
+                                subtitle: const Text("Nama pelanggan lain"),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Success"),
+                                        content: const Text(
+                                            "Berhasil pindah ke CID 1600xxxx"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.home),
+                                title: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("160xxxx"),
+                                  ],
+                                ),
+                                subtitle: const Text("Nama pelanggan lain"),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Success"),
+                                        content: const Text(
+                                            "Berhasil pindah ke CID 1600xxxx"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.home),
+                                title: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("160xxxx"),
+                                  ],
+                                ),
+                                subtitle: const Text("Nama pelanggan lain"),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Success"),
+                                        content: const Text(
+                                            "Berhasil pindah ke CID 1600xxxx"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.home),
+                                title: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("160xxxx"),
+                                  ],
+                                ),
+                                subtitle: const Text("Nama pelanggan lain"),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Success"),
+                                        content: const Text(
+                                            "Berhasil pindah ke CID 1600xxxx"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.home),
+                                title: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("160xxxx"),
+                                  ],
+                                ),
+                                subtitle: const Text("Nama pelanggan lain"),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Success"),
+                                        content: const Text(
+                                            "Berhasil pindah ke CID 1600xxxx"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.home),
+                                title: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("160xxxx"),
+                                  ],
+                                ),
+                                subtitle: const Text("Nama pelanggan lain"),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Success"),
+                                        content: const Text(
+                                            "Berhasil pindah ke CID 1600xxxx"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.home),
+                                title: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("160xxxx"),
+                                  ],
+                                ),
+                                subtitle: const Text("Nama pelanggan lain"),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Success"),
+                                        content: const Text(
+                                            "Berhasil pindah ke CID 1600xxxx"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.home),
+                                title: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("160xxxx"),
+                                  ],
+                                ),
+                                subtitle: const Text("Nama pelanggan lain"),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Success"),
+                                        content: const Text(
+                                            "Berhasil pindah ke CID 1600xxxx"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.home),
+                                title: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("160xxxx"),
+                                  ],
+                                ),
+                                subtitle: const Text("Nama pelanggan lain"),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Row(
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "$greeting, ",
+                          style: AppWidget.boldTextFeildStyle()
+                              .copyWith(color: Colors.black, fontSize: 15),
+                        ),
+                        TextSpan(
+                          text: name ?? "Guest",
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Color.fromARGB(
+                              255,
+                              0,
+                              0,
+                              0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  const Icon(Icons.arrow_drop_down),
+                ],
+              ),
             ),
             Row(
               children: [
@@ -180,7 +560,7 @@ class _HomeState extends State<Home> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const NotificationsPage()),
+                          builder: (context) => const NotificationPage()),
                     );
                   },
                   child: Container(
@@ -207,7 +587,7 @@ class _HomeState extends State<Home> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const NotificationsPage()),
+                              builder: (context) => const NotificationPage()),
                         );
                       },
                     ),
@@ -350,7 +730,7 @@ class _HomeState extends State<Home> {
                             height: 15,
                           ),
                           const Text(
-                            "Periode bulan ini sudah jatuh tempo, segera lakukan pembyaran",
+                            "Periode bulan ini sudah jatuh tempo, segera lakukan pembayaran",
                             style: TextStyle(
                               fontSize: 10,
                               color: Colors.black,
@@ -544,7 +924,11 @@ class _HomeState extends State<Home> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => PromoPage()),
+                          MaterialPageRoute(
+                              builder: (context) => UpgradeDowngradeDetail(
+                                    task: customerID ?? "",
+                                    sid: '',
+                                  )),
                         );
                       },
                       child: Padding(

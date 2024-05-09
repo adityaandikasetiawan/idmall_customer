@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'package:idmall/pages/details.dart';
+import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/login.dart';
-// ignore: unused_import
-import 'package:idmall/service/database.dart';
-// ignore: unused_import
-import 'package:idmall/widget/button.dart';
 import 'package:idmall/widget/widget_support.dart';
 import 'package:idmall/pages/promo.dart';
-import 'package:idmall/pages/coverange.dart';
 import 'package:idmall/widget/penawaranterbaru.dart';
 
 class DashboardGuest extends StatefulWidget {
@@ -47,13 +42,6 @@ class _DashboardGuestState extends State<DashboardGuest> {
       });
     }
   }
-
-  // Future<void> getthesharedpref() async {
-  //   name = await SharedPreferenceHelper().getNameUser();
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  // }
 
   Stream? fooditemStream;
 
@@ -104,7 +92,8 @@ class _DashboardGuestState extends State<DashboardGuest> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Login()),
+                              builder: (context) => const Login(),
+                            ),
                           );
                         },
                         child: const Text(
@@ -133,7 +122,9 @@ class _DashboardGuestState extends State<DashboardGuest> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PromoPage()),
+                        MaterialPageRoute(
+                          builder: (context) => PromoPage(),
+                        ),
                       );
                     },
                     child: Padding(
@@ -192,7 +183,9 @@ class _DashboardGuestState extends State<DashboardGuest> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Coverage()),
+                      MaterialPageRoute(
+                        builder: (context) => const MapSample(),
+                      ),
                     );
                   },
                   child: Card(

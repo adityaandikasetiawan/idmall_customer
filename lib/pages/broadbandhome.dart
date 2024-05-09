@@ -22,7 +22,7 @@ class BroadbandHomePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NotificationsPage(),
+                        builder: (context) => const NotificationPage(),
                       ),
                     );
                   },
@@ -50,7 +50,7 @@ class BroadbandHomePage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const NotificationsPage(),
+                            builder: (context) => const NotificationPage(),
                           ),
                         );
                       },

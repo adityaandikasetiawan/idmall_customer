@@ -1,205 +1,113 @@
-// ignore_for_file: library_private_types_in_public_api
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:idmall/models/notification.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:idmall/config/config.dart' as config;
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
-  runApp(const MaterialApp(
-    home: NotificationsPage(),
-  ));
+class NotificationPage extends StatefulWidget {
+  const NotificationPage({super.key});
+
+  @override
+  State<NotificationPage> createState() => _NotificationPageState();
 }
 
-class NotificationsPage extends StatelessWidget {
-  const NotificationsPage({super.key});
+class _NotificationPageState extends State<NotificationPage> {
+  final Dio dio = Dio();
+  late List<NotificationResponse> notifications;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting();
+    fetchNotifications();
+  }
+
+  Future<List<NotificationResponse>> fetchNotifications() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token') ?? "";
+
+      final response = await dio.get(
+        "${config.backendBaseUrl}/notification/get/all",
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token"
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = response.data['data'] as List<dynamic>;
+        List<NotificationResponse> notifications = responseData
+            .map((data) => NotificationResponse.fromJson(data))
+            .toList();
+        return notifications;
+      } else {
+        throw Exception('Failed to load notifications');
+      }
+    } on DioException catch (e) {
+      throw Exception('Failed to fetch data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Notifications',
-            style: TextStyle(fontSize: 16),
-          ),
-          centerTitle: true,
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Pembayaran'),
-              Tab(text: 'Status Bar'),
-            ],
-            indicatorColor:
-                Colors.orange, // Warna latar belakang tab saat aktif
-            labelColor: Colors.orange, // Warna teks pada tab saat aktif
-          ),
-        ),
-        body: const TabBarView(
-          children: [
-            PromotionsPage(),
-            StatusBarPage(),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Notifications"),
+      ),
+      body: SingleChildScrollView(
+        child: FutureBuilder(
+            future: fetchNotifications(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                List<NotificationResponse>? notifications = snapshot.data;
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: notifications?.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text(DateFormat('MMMMEEEEd', 'id')
+                              .format(DateTime.tryParse(
+                                  notifications![index].createdAt)!)
+                              .toString()),
+                          subtitle: Column(
+                            children: [
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount:
+                                    notifications[index].notifications.length,
+                                itemBuilder: (context, index2) {
+                                  return ListTile(
+                                    title: Text(notifications[index]
+                                        .notifications[index2]
+                                        .title),
+                                    subtitle: Text(notifications[index]
+                                        .notifications[index2]
+                                        .message),
+                                  );
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                        const Divider(),
+                      ],
+                    );
+                  },
+                );
+              }
+            }),
       ),
     );
-  }
-}
-
-class PromotionsPage extends StatelessWidget {
-  const PromotionsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildPromotionCard(
-            context,
-            'images/promo1.png',
-            'Promosi 1',
-            'Deskripsi Promosi 1',
-          ),
-          _buildPromotionCard(
-            context,
-            'images/promo1.png',
-            'Promosi 4',
-            'Deskripsi Promosi 4',
-          ),
-          _buildPromotionCard(
-            context,
-            'images/promo2.png',
-            'Puasa tuh nahan lapar & haus, internetannya jangan ditahan!',
-            'Internet idPlay unlimited bebas kuota lagi promo, nih. Cocok buat kaum mendang-mending. Cus, cek promonya!',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPromotionCard(
-    BuildContext context,
-    String imagePath,
-    String title,
-    String description,
-  ) {
-    return Column(
-      children: [
-        Card(
-          margin: const EdgeInsets.all(0),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
-          ),
-          child: SizedBox(
-            height: 200,
-            width: 380,
-            child: ClipRRect(
-              borderRadius: BorderRadius.zero,
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
-        const Divider(
-          color: Colors.white,
-          thickness: 0.5,
-        ),
-        ListTile(
-          title: Text(
-            title,
-            style: const TextStyle(
-              color: Color.fromARGB(255, 0, 0, 0), // Warna teks menjadi orange
-            ),
-          ),
-          subtitle: Text(description),
-        ),
-      ],
-    );
-  }
-}
-
-class StatusBarPage extends StatefulWidget {
-  const StatusBarPage({super.key});
-
-  @override
-  _StatusBarPageState createState() => _StatusBarPageState();
-}
-
-class _StatusBarPageState extends State<StatusBarPage> {
-  int _currentStep = 0;
-  bool _stepOneComplete = false;
-  bool _stepTwoComplete = false;
-  bool _stepThreeComplete = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        Theme(
-          data: Theme.of(context).copyWith(),
-          child: Stepper(
-            currentStep: _currentStep,
-            onStepTapped: (int index) {
-              // Tidak melakukan apa-apa ketika langkah di-tap
-            },
-            onStepCancel: _currentStep == 2 ? null : _handleCancel,
-            onStepContinue: _currentStep == 2 ? null : _handleContinue,
-            steps: [
-              Step(
-                title: const Text('Step 1'),
-                content: const Text('Content for Step 1'),
-                isActive: !_stepOneComplete,
-                state:
-                    _stepOneComplete ? StepState.complete : StepState.indexed,
-              ),
-              Step(
-                title: const Text('Step 2'),
-                content: const Text('Content for Step 2'),
-                isActive: !_stepTwoComplete,
-                state:
-                    _stepTwoComplete ? StepState.complete : StepState.indexed,
-              ),
-              Step(
-                title: const Text('Step 3'),
-                content: const Text('Content for Step 3'),
-                isActive: !_stepThreeComplete,
-                state:
-                    _stepThreeComplete ? StepState.complete : StepState.indexed,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _handleContinue() {
-    setState(() {
-      if (_currentStep == 0) {
-        _stepOneComplete = true;
-      } else if (_currentStep == 1) {
-        _stepTwoComplete = true;
-      } else if (_currentStep == 2) {
-        _stepThreeComplete = true;
-      }
-      if (_currentStep < 2) {
-        _currentStep++;
-      }
-    });
-  }
-
-  void _handleCancel() {
-    setState(() {
-      if (_currentStep > 0) {
-        if (_currentStep == 1) {
-          _stepOneComplete = false;
-        } else if (_currentStep == 2) {
-          _stepTwoComplete = false;
-        } else if (_currentStep == 3) {
-          _stepThreeComplete = false;
-        }
-        _currentStep--;
-      }
-    });
   }
 }
