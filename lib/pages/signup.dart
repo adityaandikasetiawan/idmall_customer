@@ -64,13 +64,22 @@ class _SignUpState extends State<SignUp> {
           "password": passwordController.text,
         },
       );
+      print("register $response");
+
       if (response.statusCode == 200) {
-        jsonDecode(response.data);
+        // jsonDecode(response.data);
+        final verification = await dio.post(
+          "${config.backendBaseUrl}/send-verification-email",
+          data: {
+            "target_email": emailController.text,
+          },
+        );
+        print("verification $verification");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Colors.green,
             content: Text(
-              "Registered Successfully",
+              "Registered Successfully, Please check your email for verification",
               style: TextStyle(fontSize: 20.0),
             ),
           ),
@@ -83,7 +92,9 @@ class _SignUpState extends State<SignUp> {
           ),
         );
       }
+
     } on DioException catch (e) {
+      print("$e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
@@ -98,11 +109,12 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
+    print("$isAlreadySubscribed");
     firstNameController.text = widget.existingUserFirstName ?? "";
     lastNameController.text = widget.existingUserLastName ?? "";
     fullNameController.text = widget.existingUserFullName ?? "";
     emailController.text = widget.existingUserEmail ?? "";
-    isAlreadySubscribed = widget.isAlreadySubscribed.toString() ?? "0";
+    // isAlreadySubscribed = widget.isAlreadySubscribed.toString() ?? "0";
 
     super.initState();
   }
