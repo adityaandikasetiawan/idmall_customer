@@ -30,7 +30,7 @@ class _SignUpState extends State<SignUp> {
   String lastName = "";
   String fullName = "";
   String password = "";
-  String? isAlreadySubscribed;
+  String? isAlreadySubscribed = "0";
 
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
@@ -60,6 +60,17 @@ class _SignUpState extends State<SignUp> {
           "password": passwordController.text,
         },
       );
+
+      if(isAlreadySubscribed == "0"){
+        final verification = await dio.post(
+          "${config.backendBaseUrl}/send-verification-email",
+          data: {
+            "target_email": emailController.text,
+          },
+        );
+      }
+
+      print("register${response.statusCode}");
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -123,7 +134,12 @@ class _SignUpState extends State<SignUp> {
     lastNameController.text = widget.existingUserLastName ?? "";
     fullNameController.text = widget.existingUserFullName ?? "";
     emailController.text = widget.existingUserEmail ?? "";
-    isAlreadySubscribed = widget.isAlreadySubscribed.toString();
+    if(widget.isAlreadySubscribed != null){
+      isAlreadySubscribed = widget.isAlreadySubscribed.toString();
+    }else{
+      isAlreadySubscribed = "0";
+    }
+
 
     super.initState();
   }

@@ -131,44 +131,37 @@ class _LoginState extends State<Login> {
           'is_email_verified',
           response.data['data']['is_email_verified'].toString(),
         );
-      
+
         if (response.data['data']['is_connected_to_oss'].toString() == "1") {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => SignUp(
-                  existingUserFirstName: response.data['data']['first_name'],
-                  existingUserLastName: response.data['data']['last_name'],
-                  existingUserFullName: fullName,
-                  existingUserEmail: email,
-                  isAlreadySubscribed:
+              builder: (context) =>
+                  SignUp(
+                      existingUserFirstName: response
+                          .data['data']['first_name'],
+                      existingUserLastName: response.data['data']['last_name'],
+                      existingUserFullName: fullName,
+                      existingUserEmail: email,
+                      isAlreadySubscribed:
                       response.data['data']['is_connected_to_oss'].toString()),
             ),
-            (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
           );
         } else {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => NavigationScreen(
-                customerID: taskid,
-                status: status,
-              ),
+              builder: (context) =>
+                  NavigationScreen(
+                    customerID: taskid,
+                    status: status,
+                  ),
             ),
-            (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
           );
         }
       }
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NavigationScreen(
-            customerID: taskid,
-            status: status,
-          ),
-        ),
-        (Route<dynamic> route) => false,
-      );
 
       setState(() {
         isLoading = false;
