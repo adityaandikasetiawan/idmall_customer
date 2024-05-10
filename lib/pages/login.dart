@@ -131,7 +131,7 @@ class _LoginState extends State<Login> {
           'is_email_verified',
           response.data['data']['is_email_verified'].toString(),
         );
-
+      
         if (response.data['data']['is_connected_to_oss'].toString() == "1") {
           Navigator.pushAndRemoveUntil(
             context,
