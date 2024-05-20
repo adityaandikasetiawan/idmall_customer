@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
+import 'package:idmall/config/config.dart' as config;
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -120,6 +121,25 @@ void main() async {
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+  final prefs = await SharedPreferences.getInstance();
+  try {
+    final String token = prefs.getString('token') ?? "";
+
+    final response = await dio.get(
+      "${config.backendBaseUrl}/customer/dashboard/detail-customer",
+      options: Options(headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      }),
+    );
+
+    if (response.data['data'].length > 0) {
+      await prefs.setString(
+          "token", response.data['data']['Updated_Auth_Token']);
+    }
+  } catch (e) {
+    print(e);
+  }
 }
 
 // ignore: must_be_immutable

@@ -222,12 +222,6 @@ class _SignUpState extends State<SignUp> {
                             padding: const EdgeInsets.only(left: 10.0),
                             child: TextFormField(
                               controller: lastNameController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please Enter Last Name';
-                                }
-                                return null;
-                              },
                               style: const TextStyle(
                                   color: Color.fromARGB(255, 0, 0, 0)),
                               decoration: InputDecoration(

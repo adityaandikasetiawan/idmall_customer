@@ -118,6 +118,10 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
+                    const SizedBox(
+                        height:
+                            0.05), // Decreased the height to move the image up
+
                     FadeAnimation(
                       1.6,
                       AnimatedBuilder(

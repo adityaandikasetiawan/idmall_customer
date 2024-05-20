@@ -9,6 +9,7 @@ import 'package:idmall/models/odp_list.dart';
 import 'package:idmall/pages/gmaps_search_location.dart';
 import 'package:idmall/pages/product.dart';
 import 'package:idmall/config/config.dart' as config;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/google_api_key.dart' as googleKey;
 
@@ -29,6 +30,7 @@ class MapSampleState extends State<MapSample> {
   List<ODPList> apiData = [];
   LatLng currentLocation = const LatLng(0, 0);
   final Set<Marker> _markers = {};
+  bool isAllowed = false;
 
   @override
   void initState() {
@@ -88,7 +90,6 @@ class MapSampleState extends State<MapSample> {
 
   Set<Circle> _buildCircles() {
     Set<Circle> circles = {};
-
     // Loop melalui data API untuk membuat lingkaran
     for (var data in apiData) {
       double? latitude = double.tryParse(data.latitude.trim()) ?? 0;
@@ -111,47 +112,106 @@ class MapSampleState extends State<MapSample> {
   }
 
   Future<void> getCurrentLocation() async {
-    const apiKey = googleKey.googleApiKey;
-    const url =
-        'https://www.googleapis.com/geolocation/v1/geolocate?key=$apiKey';
-
-    final dio = Dio();
-
-    try {
-      final response = await dio.post(url);
-
-      if (response.statusCode == 200) {
-        double latitude = response.data['location']['lat'];
-        double longitude = response.data['location']['lng'];
-
-        _lat = latitude;
-        _long = longitude;
-
-        _mapController?.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: LatLng(latitude, longitude),
-              zoom: 15,
-            ),
-          ),
-        );
-
+    var status = await Permission.location.status;
+    if (status.isDenied || status.isRestricted) {
+      if (await Permission.location.request().isGranted) {
+        // Izin diberikan
         setState(() {
-          _markers.add(Marker(
-            markerId: MarkerId('$latitude,$longitude'),
-            position: LatLng(latitude, longitude),
-            infoWindow: const InfoWindow(
-              title: 'Your location',
-              snippet: 'This is your current location',
-            ),
-            icon: BitmapDescriptor.defaultMarker,
-          ));
+          isAllowed = true;
         });
-      } else {
-        throw Exception('Failed to get current location');
+
+        const apiKey = googleKey.googleApiKey;
+        const url =
+            'https://www.googleapis.com/geolocation/v1/geolocate?key=$apiKey';
+
+        final dio = Dio();
+
+        try {
+          final response = await dio.post(url);
+
+          if (response.statusCode == 200) {
+            double latitude = response.data['location']['lat'];
+            double longitude = response.data['location']['lng'];
+
+            _lat = latitude;
+            _long = longitude;
+
+            _mapController?.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: LatLng(latitude, longitude),
+                  zoom: 15,
+                ),
+              ),
+            );
+
+            setState(() {
+              _markers.add(Marker(
+                markerId: MarkerId('$latitude,$longitude'),
+                position: LatLng(latitude, longitude),
+                infoWindow: const InfoWindow(
+                  title: 'Your location',
+                  snippet: 'This is your current location',
+                ),
+                icon: BitmapDescriptor.defaultMarker,
+              ));
+            });
+          } else {
+            throw Exception('Failed to get current location');
+          }
+        } catch (e) {
+          throw Exception('Failed to get current location: $e');
+        }
       }
-    } catch (e) {
-      throw Exception('Failed to get current location: $e');
+    } else if (status.isPermanentlyDenied) {
+      // Pengguna telah secara permanen menolak izin, mungkin perlu membimbing mereka ke pengaturan aplikasi
+      openAppSettings();
+    } else if (status.isGranted) {
+      setState(() {
+        isAllowed = true;
+      });
+      const apiKey = googleKey.googleApiKey;
+      const url =
+          'https://www.googleapis.com/geolocation/v1/geolocate?key=$apiKey';
+
+      final dio = Dio();
+
+      try {
+        final response = await dio.post(url);
+
+        if (response.statusCode == 200) {
+          double latitude = response.data['location']['lat'];
+          double longitude = response.data['location']['lng'];
+
+          _lat = latitude;
+          _long = longitude;
+
+          _mapController?.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(latitude, longitude),
+                zoom: 15,
+              ),
+            ),
+          );
+
+          setState(() {
+            _markers.add(Marker(
+              markerId: MarkerId('$latitude,$longitude'),
+              position: LatLng(latitude, longitude),
+              infoWindow: const InfoWindow(
+                title: 'Your location',
+                snippet: 'This is your current location',
+              ),
+              icon: BitmapDescriptor.defaultMarker,
+            ));
+          });
+        } else {
+          throw Exception('Failed to get current location');
+        }
+      } catch (e) {
+        throw Exception('Failed to get current location: $e');
+      }
     }
   }
 
@@ -160,71 +220,77 @@ class MapSampleState extends State<MapSample> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          final prefs = await SharedPreferences.getInstance();
-          final String token = prefs.getString('token') ?? "";
-          try {
-            final dio = Dio();
-            final response = await dio.get(
-              "${config.backendBaseUrl}/region/check_coverage",
-              queryParameters: {'longitude': _long, 'latitude': _lat},
-              options: Options(headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer $token"
-              }),
-            );
-            if (response.statusCode == 200) {
+          if (isAllowed) {
+            final prefs = await SharedPreferences.getInstance();
+            final String token = prefs.getString('token') ?? "";
+            try {
+              final dio = Dio();
+              final response = await dio.get(
+                "${config.backendBaseUrl}/region/check_coverage",
+                queryParameters: {'longitude': _long, 'latitude': _lat},
+                options: Options(headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer $token"
+                }),
+              );
+              if (response.statusCode == 200) {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Success'),
+                      content: const Text('Lokasi Anda tercover'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (builder) => ProductList(
+                                  latitude: _lat,
+                                  longitude: _long,
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Text('Lanjutkan'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Batal'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            } on DioException catch (e) {
               await showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: const Text('Success'),
-                    content: const Text('Lokasi Anda tercover'),
+                    title: const Text('Maaf'),
+                    content: Text(e.response?.data['message']),
                     actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (builder) => ProductList(
-                                latitude: _lat,
-                                longitude: _long,
-                              ),
-                            ),
-                          );
-                        },
-                        child: const Text('Lanjutkan'),
-                      ),
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: const Text('Batal'),
+                        child: const Text('OK'),
                       ),
                     ],
                   );
                 },
               );
             }
-          } on DioException catch (e) {
-            await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Maaf'),
-                  content: Text(e.response?.data['message']),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('OK'),
-                    ),
-                  ],
-                );
-              },
-            );
+          } else {
+            openAppSettings();
           }
         },
-        label: const Text('Check Coverage'),
+        label: isAllowed == true
+            ? const Text('Check Coverage')
+            : const Text("Enabled Location"),
         icon: const Icon(Icons.location_pin),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

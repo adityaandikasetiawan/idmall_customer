@@ -19,6 +19,7 @@ class _DashboardGuestState extends State<DashboardGuest> {
   String points = '10';
   String billing = 'Rp 179.000';
   String vouchers = '1';
+  bool isAllowed = false;
 
   @override
   void initState() {
@@ -181,12 +182,46 @@ class _DashboardGuestState extends State<DashboardGuest> {
               SizedBox(
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MapSample(),
-                      ),
-                    );
+                    if (!isAllowed) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Penggunaan Lokasi"),
+                            content: const Text(
+                              "Idmall mengumpulkan data terkait lokasi pengguna untuk mengidentifikasi ketersediaan layanan kami dengan lokasi pengguna",
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Tolak"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const MapSample(),
+                                    ),
+                                  );
+                                  isAllowed = true;
+                                },
+                                child: const Text("Terima"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MapSample(),
+                        ),
+                      );
+                    }
                   },
                   child: Card(
                     elevation: 4.0,

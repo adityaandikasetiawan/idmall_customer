@@ -10,7 +10,6 @@ class UnboardingContent {
   });
 }
 
-
 List<UnboardingContent> contents = [
   UnboardingContent(
     description: 'Aplikasi yang Memberi Kemudahan Untuk Kamu',

@@ -1132,11 +1132,35 @@ class _HomeState extends State<Home> {
                   margin: const EdgeInsets.only(bottom: 20.0),
                   child: InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MapSample(),
-                        ),
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Penggunaan Lokasi"),
+                            content: const Text(
+                              "Idmall mengumpulkan data terkait lokasi pengguna untuk mengidentifikasi ketersediaan layanan kami dengan lokasi pengguna",
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Tolak"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const MapSample(),
+                                    ),
+                                  );
+                                },
+                                child: const Text("Terima"),
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
                     child: Card(
