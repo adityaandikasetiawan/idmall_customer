@@ -62,10 +62,10 @@ class _InvoicePageState extends State<InvoicePage> {
       appBar: AppBar(
         title: const Text('Invoice'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: SingleChildScrollView(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
