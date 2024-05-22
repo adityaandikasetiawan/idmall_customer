@@ -1,9 +1,7 @@
 // ignore_for_file: empty_catches, avoid_print
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:idmall/pages/details.dart';
 import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/invoice.dart';
@@ -13,7 +11,6 @@ import 'package:idmall/pages/upgrade_downgrade_detail.dart';
 import 'package:idmall/service/coverage_area.dart';
 import 'package:idmall/widget/widget_support.dart';
 import 'package:idmall/widget/notificationpage.dart';
-import 'package:idmall/widget/penawaranterbaru.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:intl/intl.dart';
@@ -1218,25 +1215,25 @@ class _HomeState extends State<Home> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            // Navigasi ke halaman yang diinginkan
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PenawaranPage()), // Ganti dengan halaman yang diinginkan
-                            );
-                          },
-                          child: const Text(
-                            'Lihat Semuanya',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Color.fromARGB(255, 228, 99, 7),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     // Navigasi ke halaman yang diinginkan
+                        //     Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //           builder: (context) =>
+                        //               const PenawaranPage()), // Ganti dengan halaman yang diinginkan
+                        //     );
+                        //   },
+                        //   child: const Text(
+                        //     'Lihat Semuanya',
+                        //     style: TextStyle(
+                        //       fontSize: 10,
+                        //       color: Color.fromARGB(255, 228, 99, 7),
+                        //       fontWeight: FontWeight.bold,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                     const SizedBox(

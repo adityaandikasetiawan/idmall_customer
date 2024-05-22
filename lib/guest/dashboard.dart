@@ -281,25 +281,25 @@ class _DashboardGuestState extends State<DashboardGuest> {
                       // const SizedBox(
                       //   width: 150,
                       // ),
-                      GestureDetector(
-                        onTap: () {
-                          // Navigasi ke halaman yang diinginkan
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const PenawaranPage()), // Ganti dengan halaman yang diinginkan
-                          );
-                        },
-                        child: const Text(
-                          'Lihat Semuanya',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Color.fromARGB(255, 228, 99, 7),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     // Navigasi ke halaman yang diinginkan
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) =>
+                      //               const PenawaranPage()), // Ganti dengan halaman yang diinginkan
+                      //     );
+                      //   },
+                      //   child: const Text(
+                      //     'Lihat Semuanya',
+                      //     style: TextStyle(
+                      //       fontSize: 10,
+                      //       color: Color.fromARGB(255, 228, 99, 7),
+                      //       fontWeight: FontWeight.bold,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                   const SizedBox(
