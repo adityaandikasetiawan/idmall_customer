@@ -61,7 +61,7 @@ class _SignUpState extends State<SignUp> {
         },
       );
 
-      if(isAlreadySubscribed == "0"){
+      if (isAlreadySubscribed == "0") {
         final verification = await dio.post(
           "${config.backendBaseUrl}/send-verification-email",
           data: {
@@ -69,8 +69,6 @@ class _SignUpState extends State<SignUp> {
           },
         );
       }
-
-      print("register${response.statusCode}");
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -130,16 +128,15 @@ class _SignUpState extends State<SignUp> {
   @override
   void initState() {
     print("$isAlreadySubscribed");
-    firstNameController.text = widget.existingUserFirstName ?? "";
-    lastNameController.text = widget.existingUserLastName ?? "";
+    // firstNameController.text = widget.existingUserFirstName ?? "";
+    // lastNameController.text = widget.existingUserLastName ?? "";
     fullNameController.text = widget.existingUserFullName ?? "";
     emailController.text = widget.existingUserEmail ?? "";
-    if(widget.isAlreadySubscribed != null){
+    if (widget.isAlreadySubscribed != null) {
       isAlreadySubscribed = widget.isAlreadySubscribed.toString();
-    }else{
+    } else {
       isAlreadySubscribed = "0";
     }
-
 
     super.initState();
   }
@@ -205,57 +202,57 @@ class _SignUpState extends State<SignUp> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 10.0),
-                            child: TextFormField(
-                              controller: firstNameController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please Enter First Name';
-                                }
-                                return null;
-                              },
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 0, 0, 0)),
-                              decoration: InputDecoration(
-                                hintText: 'Nama Depan',
-                                hintStyle: const TextStyle(
-                                    color: Color.fromARGB(255, 93, 92, 92)),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 15.0, horizontal: 20.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: TextFormField(
-                              controller: lastNameController,
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 0, 0, 0)),
-                              decoration: InputDecoration(
-                                hintText: 'Nama Belakang',
-                                hintStyle: const TextStyle(
-                                    color: Color.fromARGB(255, 93, 92, 92)),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 15.0, horizontal: 20.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.only(right: 10.0),
+                    //         child: TextFormField(
+                    //           controller: firstNameController,
+                    //           validator: (value) {
+                    //             if (value == null || value.isEmpty) {
+                    //               return 'Please Enter First Name';
+                    //             }
+                    //             return null;
+                    //           },
+                    //           style: const TextStyle(
+                    //               color: Color.fromARGB(255, 0, 0, 0)),
+                    //           decoration: InputDecoration(
+                    //             hintText: 'Nama Depan',
+                    //             hintStyle: const TextStyle(
+                    //                 color: Color.fromARGB(255, 93, 92, 92)),
+                    //             border: OutlineInputBorder(
+                    //               borderRadius: BorderRadius.circular(20.0),
+                    //             ),
+                    //             contentPadding: const EdgeInsets.symmetric(
+                    //                 vertical: 15.0, horizontal: 20.0),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.only(left: 10.0),
+                    //         child: TextFormField(
+                    //           controller: lastNameController,
+                    //           style: const TextStyle(
+                    //               color: Color.fromARGB(255, 0, 0, 0)),
+                    //           decoration: InputDecoration(
+                    //             hintText: 'Nama Belakang',
+                    //             hintStyle: const TextStyle(
+                    //                 color: Color.fromARGB(255, 93, 92, 92)),
+                    //             border: OutlineInputBorder(
+                    //               borderRadius: BorderRadius.circular(20.0),
+                    //             ),
+                    //             contentPadding: const EdgeInsets.symmetric(
+                    //                 vertical: 15.0, horizontal: 20.0),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 20),
                     TextFormField(
                       controller: fullNameController,
                       validator: (value) {
@@ -303,9 +300,6 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const SizedBox(height: 20),
-                    // Remaining form fields...
-                    // TextFormField for First Name, Last Name, Password, Repeat Password
                     TextFormField(
                       controller: passwordController,
                       validator: (value) {

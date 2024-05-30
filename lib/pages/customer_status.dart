@@ -46,6 +46,7 @@ class _CustomerStatusState extends State<CustomerStatus> {
   String? status;
 
   List<String> statusCreated = [
+    "CREATED",
     "QUOTATION",
     "ON SURVEY",
     "PENGAJUAN",

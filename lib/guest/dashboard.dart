@@ -4,7 +4,6 @@ import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/login.dart';
 import 'package:idmall/widget/widget_support.dart';
 import 'package:idmall/pages/promo.dart';
-import 'package:idmall/widget/penawaranterbaru.dart';
 
 class DashboardGuest extends StatefulWidget {
   const DashboardGuest({super.key});
@@ -268,10 +267,10 @@ class _DashboardGuestState extends State<DashboardGuest> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Penawaran Terbaru',
                         style: TextStyle(
                           fontSize: 14,

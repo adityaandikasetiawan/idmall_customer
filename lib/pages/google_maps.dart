@@ -266,12 +266,13 @@ class MapSampleState extends State<MapSample> {
                 );
               }
             } on DioException catch (e) {
+              // print(e.response?.data);
               await showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: const Text('Maaf'),
-                    content: Text(e.response?.data['message']),
+                    content: Text(e.response?.data['errors']['message']),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () {

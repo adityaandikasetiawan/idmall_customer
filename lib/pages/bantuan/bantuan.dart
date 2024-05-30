@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:idmall/pages/bantuan/pengaduan.dart';
 import 'package:idmall/pages/bantuan/pertanyaan.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -13,7 +13,7 @@ class Bantuan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
+    double screenHeight = MediaQuery.of(context).size.height * 1.5;
 
     return Scaffold(
       appBar: AppBar(
@@ -31,13 +31,7 @@ class Bantuan extends StatelessWidget {
               screenHeight,
               'PENGADUAN LAYANAN',
               'images/splash.png',
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const PengaduanPage()),
-                );
-              },
+              _launchWhatsApp,
             ),
             const SizedBox(height: 16), // Spasi antara kedua Card
             buildCard(
@@ -56,6 +50,26 @@ class Bantuan extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _launchWhatsApp() async {
+    const phoneNumber = '+628127000124'; // Ganti dengan nomor tujuan
+    const message =
+        'Hello, this is a test message.'; // Pesan yang ingin dikirim
+    final Uri whatsappUrl = Uri.parse(
+        'whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}'); // Skema URI WhatsApp
+
+    if (await canLaunchUrl(whatsappUrl)) {
+      await launchUrl(whatsappUrl);
+    } else {
+      final Uri fallbackUrl = Uri.parse(
+          'https://wa.me/$phoneNumber?text=${Uri.encodeComponent(message)}');
+      if (await canLaunchUrl(fallbackUrl)) {
+        await launchUrl(fallbackUrl);
+      } else {
+        throw 'Could not launch $whatsappUrl or $fallbackUrl';
+      }
+    }
   }
 
   Widget buildCard(
@@ -130,12 +144,14 @@ class Bantuan extends StatelessWidget {
                         backgroundColor: Colors.transparent,
                         side: const BorderSide(color: Colors.orange, width: 2),
                       ),
-                      child: Text(
-                        buttonText,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                      child: Expanded(
+                        child: Text(
+                          buttonText,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
