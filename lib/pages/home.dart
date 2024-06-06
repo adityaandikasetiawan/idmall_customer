@@ -3,11 +3,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:idmall/models/customer_by_email.dart';
+import 'package:idmall/pages/InvoiceGood.dart';
 import 'package:idmall/pages/details.dart';
+import 'package:idmall/pages/fab_testing.dart';
 import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/invoice.dart';
 import 'package:idmall/pages/invoice_testing.dart';
 import 'package:idmall/pages/pembayaran_existing.dart';
+import 'package:idmall/pages/pembayaran_testing.dart';
 import 'package:idmall/pages/upgrade_downgrade_detail.dart';
 import 'package:idmall/service/coverage_area.dart';
 import 'package:idmall/widget/widget_support.dart';
@@ -364,11 +367,11 @@ class _HomeState extends State<Home> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const NotificationPage()),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => const NotificationPage()),
+                    // );
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -391,11 +394,11 @@ class _HomeState extends State<Home> {
                       icon: const Icon(Icons.notifications),
                       color: const Color.fromARGB(255, 0, 0, 0),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const NotificationPage()),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => const NotificationPage()),
+                        // );
                       },
                     ),
                   ),
@@ -403,16 +406,17 @@ class _HomeState extends State<Home> {
                 const SizedBox(width: 10),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Invoice(
-                          code: "",
-                          totalPrice: 0,
-                          taskID: customerID ?? "",
-                        ),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => InvoicePage(
+                    //           taskid: customerID ?? "",
+                    //           bankName: "",
+                    //           total: "",
+                    //           typePayment: "",
+                    //         ),
+                    //   ),
+                    // );
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -435,17 +439,17 @@ class _HomeState extends State<Home> {
                       icon: const Icon(Icons.shopping_cart),
                       color: const Color.fromARGB(255, 0, 0, 0),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => InvoicePage(
-                              total: "",
-                              bankName: "0",
-                              taskid: customerID ?? "",
-                              typePayment: "",
-                            ),
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => InvoicePage(
+                        //       taskid: customerID ?? "",
+                        //       bankName: "",
+                        //       total: "",
+                        //       typePayment: "",
+                        //     ),
+                        //   ),
+                        // );
                       },
                     ),
                   ),
@@ -465,6 +469,79 @@ class _HomeState extends State<Home> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                //card menuju FAB & pending payment
+                status == "QUOTATION" || status == "PENDING_PAYMENT_MOBILE"
+                    ? GestureDetector(
+                        onTap: () {
+                          if (status == "QUOATATION") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    FABTesting(taskID: customerID ?? ""),
+                              ),
+                            );
+                          } else if (status == "PENDING_PAYMENT_MOBILE") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PaymentMethod(
+                                  taskid: customerID ?? "",
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: SizedBox(
+                          width: double.infinity * 2,
+                          child: Card(
+                            elevation: 4.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    15), // Bentuk sudut container
+                                image: const DecorationImage(
+                                  image: AssetImage(
+                                      'images/bb_green_mint.jpg'), // Gambar background
+                                  fit: BoxFit
+                                      .cover, // Menyesuaikan gambar dengan ukuran container
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(18.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    status == "QUOTATION"
+                                        ? Text(
+                                            "Registrasi Anda sudah disetujui, mohon isi FORM AKTIVASI BERLANGGANAN",
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )
+                                        : Text(
+                                            "Registrasi Anda mencapai tahap pembayaran, silahkan melanjutkan ke proses pembayaran",
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+
                 //card billing, point, etc
                 status == "ACTIVE" || status == "DU" || status == "FREEZE"
                     ? SizedBox(
@@ -635,7 +712,7 @@ class _HomeState extends State<Home> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'New Promotions !!!',
+                                    'Downgrade / Upgrade',
                                     style: TextStyle(
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.bold,

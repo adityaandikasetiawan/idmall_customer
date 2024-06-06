@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:idmall/models/product.dart';
 import 'package:idmall/pages/form_suervey.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:idmall/config/config.dart' as config;
+import 'package:idmall/config/google_api_key.dart' as googleKey;
 
 class ProductList extends StatefulWidget {
   final double latitude;
@@ -12,210 +17,132 @@ class ProductList extends StatefulWidget {
 }
 
 class _ProductListState extends State<ProductList> {
+  List<Product> apiData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getProductList();
+  }
+
+  Future<String?> getProvince() async {
+    final dio = Dio();
+    double lat = widget.latitude;
+    double lng = widget.longitude;
+    const apiKey = googleKey.googleApiKey;
+
+    final url =
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$apiKey';
+
+    final response = await dio.get(url);
+    if (response.statusCode == 200) {
+      final results = response.data['results'] as List;
+
+      for (final result in results) {
+        final addressComponents = result['address_components'] as List;
+        for (final component in addressComponents) {
+          final types = component['types'] as List;
+          if (types.contains('administrative_area_level_1')) {
+            return component['long_name'];
+          }
+        }
+      }
+    } else {
+      throw Exception('Failed to load data');
+    }
+
+    return null;
+  }
+
+  Future<void> getProductList() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token') ?? "";
+    final dio = Dio();
+    final province = await getProvince();
+    String proviceName = province ?? "JABODETABEK";
+
+    if (province == "Jakarta") {
+      proviceName = "JABODETABEK";
+    }
+
+    final response = await dio.get(
+      "${config.backendBaseUrlProd}/common/products",
+      queryParameters: {
+        "product_type": "NORMAL",
+        "product_query": "Retail",
+        "region": proviceName
+      },
+      options: Options(headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      }),
+    );
+
+    setState(() {
+      apiData = (response.data['data'] as List)
+          .map((ele) => Product.fromJson(ele))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product List'),
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 20.0),
-        //     child: Row(
-        //       children: [
-        //         GestureDetector(
-        //           onTap: () {
-        //             Navigator.push(
-        //               context,
-        //               MaterialPageRoute(
-        //                 builder: (context) => NotificationsPage(),
-        //               ),
-        //             );
-        //           },
-        //           child: Container(
-        //             decoration: BoxDecoration(
-        //               borderRadius: BorderRadius.circular(15),
-        //               border: Border.all(
-        //                 color: Colors.black,
-        //               ),
-        //               color: Colors.transparent,
-        //             ),
-        //             child: IconButton(
-        //               icon: const Icon(Icons.notifications),
-        //               color: const Color.fromARGB(255, 0, 0, 0),
-        //               onPressed: () {
-        //                 Navigator.push(
-        //                   context,
-        //                   MaterialPageRoute(
-        //                     builder: (context) => NotificationsPage(),
-        //                   ),
-        //                 );
-        //               },
-        //             ),
-        //           ),
-        //         ),
-        //         const SizedBox(width: 10),
-        //         GestureDetector(
-        //           onTap: () {
-        //             Navigator.push(
-        //               context,
-        //               MaterialPageRoute(
-        //                 builder: (context) => ChatbotPage(),
-        //               ),
-        //             );
-        //           },
-        //           child: Container(
-        //             decoration: BoxDecoration(
-        //               borderRadius: BorderRadius.circular(15),
-        //               border: Border.all(
-        //                 color: Colors.black,
-        //               ),
-        //             ),
-        //             child: IconButton(
-        //               icon: Image.asset('images/widget/Chatbot.png',
-        //                   width: 15, height: 15),
-        //               onPressed: () {
-        //                 Navigator.push(
-        //                   context,
-        //                   MaterialPageRoute(
-        //                     builder: (context) => ChatbotPage(),
-        //                   ),
-        //                 );
-        //               },
-        //             ),
-        //           ),
-        //         ),
-        //         const SizedBox(width: 10),
-        //         GestureDetector(
-        //           onTap: () {
-        //             Navigator.push(
-        //               context,
-        //               MaterialPageRoute(
-        //                 builder: (context) => ShoppingCartPage(),
-        //               ),
-        //             );
-        //           },
-        //           child: Container(
-        //             decoration: BoxDecoration(
-        //               borderRadius: BorderRadius.circular(15),
-        //               border: Border.all(
-        //                 color: Colors.black,
-        //               ),
-        //             ),
-        //             child: IconButton(
-        //               icon: Icon(Icons.shopping_cart),
-        //               color: const Color.fromARGB(255, 0, 0, 0),
-        //               onPressed: () {
-        //                 Navigator.push(
-        //                   context,
-        //                   MaterialPageRoute(
-        //                     builder: (context) => ShoppingCartPage(),
-        //                   ),
-        //                 );
-        //               },
-        //             ),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  const Expanded(
-                    child: Text(
-                      'Broadband Home',
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
+      body: RefreshIndicator(
+        onRefresh: getProductList,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Broadband Home',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Image.asset(
-                      'images/broadbandhome.png', // Ganti dengan path gambar yang diinginkan
-                      width:
-                          235, // Sesuaikan dengan ukuran gambar yang diinginkan
-                      height:
-                          235, // Sesuaikan dengan ukuran gambar yang diinginkan
+                    Expanded(
+                      child: Image.asset(
+                        'images/broadbandhome.png',
+                        width: 235,
+                        height: 235,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            _buildCard(
-              tipe: 'idplay Retail Up To 10 Mbps',
-              title: 'BroadBand  Home 10 Mb',
-              price: 'Rp 179.000',
-              details: ['Unlimited data', '10 Mbps speed', 'Free installation'],
-              onPressed: () {},
-              imagePath:
-                  'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
-            ),
-            const SizedBox(height: 16.0),
-            _buildCard(
-              tipe: 'idplay Retail Up To 20 Mbps',
-              title: 'BroadBand  Home 20 Mb',
-              price: 'Rp 239.000',
-              details: [
-                'Dedicated support',
-                'Business-grade performance',
-                'Free modem rental'
-              ],
-              onPressed: () {},
-              imagePath:
-                  'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
-            ),
-            const SizedBox(height: 16.0),
-            _buildCard(
-              tipe: 'idplay Retail Up To 50 Mbps',
-              title: 'BroadBand  Home 50 Mb',
-              price: 'Rp 299.000',
-              details: [
-                'Customized solutions',
-                'for large enterprises',
-                '24/7 customer support'
-              ],
-              onPressed: () {},
-              imagePath:
-                  'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
-            ),
-            const SizedBox(height: 16.0),
-            _buildCard(
-              tipe: 'idplay Retail Up To 100 Mbps',
-              title: 'BroadBand  Home 100 Mb',
-              price: 'Rp 369.000',
-              details: [
-                'High-speed internet',
-                'for heavy users',
-                'Free router upgrade'
-              ],
-              onPressed: () {},
-              imagePath:
-                  'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
-            ),
-            const SizedBox(height: 16.0),
-            _buildCard(
-              tipe: 'idplay Retail Up To 200 Mbps',
-              title: 'BroadBand  Home 200 Mb',
-              price: 'Rp 569.000',
-              details: [
-                'Maximum speed',
-                'and performance',
-                'Free installation'
-              ],
-              onPressed: () {},
-              imagePath:
-                  'images/pakethome1.png', // Ganti dengan path gambar yang diinginkan
-            ),
-          ],
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: apiData.length,
+                itemBuilder: (context, index) {
+                  final product = apiData[index];
+                  return _buildCard(
+                    tipe: product.name,
+                    title: product.name,
+                    price: product.price.toString(),
+                    details: [
+                      'Dedicated support',
+                      'Business-grade performance',
+                      'Free modem rental'
+                    ],
+                    onPressed: () {},
+                    imagePath: 'images/pakethome1.png',
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

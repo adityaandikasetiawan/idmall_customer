@@ -8,8 +8,6 @@ import 'package:idmall/config/config.dart' as config;
 // ignore: library_prefixes
 import 'package:idmall/config/google_api_key.dart' as googleKey;
 
-import '../service/coverage_area.dart';
-
 class SearchLocation extends StatefulWidget {
   final String placesName;
   const SearchLocation({super.key, required this.placesName});
@@ -21,6 +19,7 @@ class SearchLocation extends StatefulWidget {
 class _SearchLocationState extends State<SearchLocation> {
   List<String> _predictions = [];
   final TextEditingController _searchController = TextEditingController();
+  Dio dio = Dio();
 
   @override
   void initState() {
@@ -31,7 +30,6 @@ class _SearchLocationState extends State<SearchLocation> {
   }
 
   Future<void> _getAutocompleteResults(String pattern) async {
-    Dio dio = Dio();
     const String apiKey = googleKey.googleApiKey;
     const String baseURL = config.googleAutocompleteUrl;
     final String inputParam = 'input=${Uri.encodeComponent(pattern)}';
@@ -62,7 +60,7 @@ class _SearchLocationState extends State<SearchLocation> {
     try {
       final response = await dio.get(requestURL);
 
-      // Ambil latitude dan longitude dari respons
+      // Ambil latitude dan longitude dari response
       final double latitude =
           response.data['results'][0]['geometry']['location']['lat'];
       final double longitude =
@@ -114,7 +112,6 @@ class _SearchLocationState extends State<SearchLocation> {
     final url =
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey';
 
-    final dio = Dio();
     try {
       final response = await dio.get(url);
       if (response.statusCode == 200) {
@@ -134,14 +131,17 @@ class _SearchLocationState extends State<SearchLocation> {
     const url =
         'https://www.googleapis.com/geolocation/v1/geolocate?key=$apiKey';
 
-    final dio = Dio();
-
     try {
       final response = await dio.post(url);
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
       if (response.statusCode == 200) {
-        double latitude = response.data['location']['lat'];
-        double longitude = response.data['location']['lng'];
+        // double latitude = response.data['location']['lat'];
+        // double longitude = response.data['location']['lng'];
+        double latitude = position.latitude;
+        double longitude = position.longitude;
+
         getPlaceName(latitude, longitude).then(
           (String placeName) => Navigator.pop(
             context,
@@ -271,10 +271,8 @@ class _SearchLocationState extends State<SearchLocation> {
                       title: Text(_predictions[index]),
                       onTap: () async {
                         _getPlaceDetails(_predictions[index]);
-                        // _searchController.text = _predictions[index];
                         setState(() {
-                          _predictions =
-                              []; // Setel kembali daftar prediksi menjadi kosong
+                          _predictions = [];
                         });
                       },
                     ),

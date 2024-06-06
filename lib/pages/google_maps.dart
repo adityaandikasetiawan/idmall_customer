@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:idmall/models/odp_list.dart';
 import 'package:idmall/pages/gmaps_search_location.dart';
@@ -75,7 +76,7 @@ class MapSampleState extends State<MapSample> {
     final String token = prefs.getString('token') ?? "";
     final dio = Dio();
     final response = await dio.get(
-      "${config.backendBaseUrl}/region/odp?page=1&list_per_page=100",
+      "${config.backendBaseUrlProd}/region/odp?page=1&list_per_page=100",
       options: Options(headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token"
@@ -125,18 +126,37 @@ class MapSampleState extends State<MapSample> {
             'https://www.googleapis.com/geolocation/v1/geolocate?key=$apiKey';
 
         final dio = Dio();
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
 
         try {
           final response = await dio.post(url);
 
           if (response.statusCode == 200) {
-            double latitude = response.data['location']['lat'];
-            double longitude = response.data['location']['lng'];
+            // double latitude = response.data['location']['lat'];
+            // double longitude = response.data['location']['lng'];
+
+            double latitude = position.latitude;
+            double longitude = position.longitude;
 
             _lat = latitude;
             _long = longitude;
 
-            _mapController?.animateCamera(
+            setState(() {
+              currentLocation = LatLng(latitude, longitude);
+
+              // _markers.add(Marker(
+              //   markerId: MarkerId('$latitude,$longitude'),
+              //   position: LatLng(latitude, longitude),
+              //   infoWindow: const InfoWindow(
+              //     title: 'Your location',
+              //     snippet: 'This is your current location',
+              //   ),
+              //   icon: BitmapDescriptor.defaultMarker,
+              // ));
+            });
+
+            await _mapController?.animateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
                   target: LatLng(latitude, longitude),
@@ -144,18 +164,6 @@ class MapSampleState extends State<MapSample> {
                 ),
               ),
             );
-
-            setState(() {
-              _markers.add(Marker(
-                markerId: MarkerId('$latitude,$longitude'),
-                position: LatLng(latitude, longitude),
-                infoWindow: const InfoWindow(
-                  title: 'Your location',
-                  snippet: 'This is your current location',
-                ),
-                icon: BitmapDescriptor.defaultMarker,
-              ));
-            });
           } else {
             throw Exception('Failed to get current location');
           }
@@ -175,18 +183,20 @@ class MapSampleState extends State<MapSample> {
           'https://www.googleapis.com/geolocation/v1/geolocate?key=$apiKey';
 
       final dio = Dio();
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
       try {
         final response = await dio.post(url);
 
         if (response.statusCode == 200) {
-          double latitude = response.data['location']['lat'];
-          double longitude = response.data['location']['lng'];
+          double latitude = position.latitude;
+          double longitude = position.longitude;
 
           _lat = latitude;
           _long = longitude;
 
-          _mapController?.animateCamera(
+          await _mapController?.animateCamera(
             CameraUpdate.newCameraPosition(
               CameraPosition(
                 target: LatLng(latitude, longitude),
@@ -196,15 +206,17 @@ class MapSampleState extends State<MapSample> {
           );
 
           setState(() {
-            _markers.add(Marker(
-              markerId: MarkerId('$latitude,$longitude'),
-              position: LatLng(latitude, longitude),
-              infoWindow: const InfoWindow(
-                title: 'Your location',
-                snippet: 'This is your current location',
-              ),
-              icon: BitmapDescriptor.defaultMarker,
-            ));
+            currentLocation = LatLng(latitude, longitude);
+
+            // _markers.add(Marker(
+            //   markerId: MarkerId('$latitude,$longitude'),
+            //   position: LatLng(latitude, longitude),
+            //   infoWindow: const InfoWindow(
+            //     title: 'Your location',
+            //     snippet: 'This is your current location',
+            //   ),
+            //   icon: BitmapDescriptor.defaultMarker,
+            // ));
           });
         } else {
           throw Exception('Failed to get current location');
@@ -217,147 +229,168 @@ class MapSampleState extends State<MapSample> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          if (isAllowed) {
-            final prefs = await SharedPreferences.getInstance();
-            final String token = prefs.getString('token') ?? "";
-            try {
-              final dio = Dio();
-              final response = await dio.get(
-                "${config.backendBaseUrl}/region/check_coverage",
-                queryParameters: {'longitude': _long, 'latitude': _lat},
-                options: Options(headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": "Bearer $token"
-                }),
-              );
-              if (response.statusCode == 200) {
+    return SafeArea(
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () async {
+            if (isAllowed) {
+              final prefs = await SharedPreferences.getInstance();
+              final String token = prefs.getString('token') ?? "";
+              try {
+                final dio = Dio();
+                final response = await dio.get(
+                  "${config.backendBaseUrlProd}/region/check_coverage",
+                  queryParameters: {'longitude': _long, 'latitude': _lat},
+                  options: Options(headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer $token"
+                  }),
+                );
+                if (response.statusCode == 200) {
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Success'),
+                        content: const Text('Lokasi Anda tercover'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (builder) => ProductList(
+                                    latitude: _lat,
+                                    longitude: _long,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Text('Lanjutkan'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Batal'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              } on DioException catch (e) {
+                // print(e.response?.data);
                 await showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: const Text('Success'),
-                      content: const Text('Lokasi Anda tercover'),
+                      title: const Text('Maaf'),
+                      content: Text(e.response?.data['errors']['message'] ??
+                          "Maaf terjadi kesalahan"),
                       actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (builder) => ProductList(
-                                  latitude: _lat,
-                                  longitude: _long,
-                                ),
-                              ),
-                            );
-                          },
-                          child: const Text('Lanjutkan'),
-                        ),
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: const Text('Batal'),
+                          child: const Text('OK'),
                         ),
                       ],
                     );
                   },
                 );
               }
-            } on DioException catch (e) {
-              // print(e.response?.data);
-              await showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Maaf'),
-                    content: Text(e.response?.data['errors']['message']),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  );
-                },
-              );
+            } else {
+              openAppSettings();
             }
-          } else {
-            openAppSettings();
-          }
-        },
-        label: isAllowed == true
-            ? const Text('Check Coverage')
-            : const Text("Enabled Location"),
-        icon: const Icon(Icons.location_pin),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                GoogleMap(
-                  onMapCreated: (controller) {
-                    setState(() {
-                      _mapController = controller;
-                    });
-                  },
-                  initialCameraPosition: CameraPosition(
-                    target: currentLocation,
-                    zoom: 10,
+          },
+          label: isAllowed == true
+              ? const Text('Check Coverage')
+              : const Text("Enabled Location"),
+          icon: const Icon(Icons.location_pin),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        body: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  GoogleMap(
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: false,
+                    onMapCreated: (controller) {
+                      setState(() {
+                        _mapController = controller;
+                      });
+                    },
+                    initialCameraPosition: CameraPosition(
+                      target: currentLocation,
+                      zoom: 10,
+                    ),
+                    circles: _buildCircles(),
+                    markers: _markers, // Set marker pada peta
                   ),
-                  circles: _buildCircles(),
-                  markers: _markers, // Set marker pada peta
-                ),
-                Positioned(
-                  top: 20.0,
-                  left: 8.0,
-                  right: 8.0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: _searchController,
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SearchLocation(
-                              placesName: _searchController.text,
+                  Positioned(
+                    bottom: 100,
+                    right: 10,
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: FloatingActionButton(
+                        onPressed: getCurrentLocation,
+                        backgroundColor: Colors.white.withOpacity(0.8),
+                        child: const Icon(
+                          Icons.my_location,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 20.0,
+                    left: 8.0,
+                    right: 8.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: _searchController,
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchLocation(
+                                placesName: _searchController.text,
+                              ),
                             ),
-                          ),
-                        ).then((result) {
-                          if (result != null) {
-                            double latitude = result['latitude'];
-                            double longitude = result['longitude'];
-                            _lat = result['latitude'];
-                            _long = result['longitude'];
-                            String name = result['name'];
-                            _goToSelectedArea(latitude, longitude, name);
-                          }
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        hintText: "Search Places...",
-                        filled: true,
-                        fillColor: Colors
-                            .white60, // Setel warna latar belakang menjadi putih
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(16.0),
+                          ).then((result) {
+                            if (result != null) {
+                              double latitude = result['latitude'];
+                              double longitude = result['longitude'];
+                              _lat = result['latitude'];
+                              _long = result['longitude'];
+                              String name = result['name'];
+                              _goToSelectedArea(latitude, longitude, name);
+                            }
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          hintText: "Search Places...",
+                          filled: true,
+                          fillColor: Colors
+                              .white60, // Setel warna latar belakang menjadi putih
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(16.0),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

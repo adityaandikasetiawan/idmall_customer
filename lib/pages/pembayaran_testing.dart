@@ -245,19 +245,22 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 "Authorization": "Bearer $token"
               }),
             );
+
             if (response3.statusCode == 200) {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (builder) => InvoicePage(
-                    taskid: widget.taskid,
-                    bankName: bankName,
-                    total: total!,
-                    typePayment: typePayment,
+                    taskid: widget.taskid ?? "",
+                    bankName: bankName ?? "",
+                    total: total ?? "0",
+                    typePayment: typePayment ?? "",
                   ),
                 ),
               );
             }
-          } catch (e) {}
+          } catch (e) {
+            print(e.toString());
+          }
         },
         child: SizedBox(
           width: cardWidth,

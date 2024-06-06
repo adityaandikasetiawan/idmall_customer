@@ -37,6 +37,7 @@ class _FormSurveyState extends State<FormSurvey> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _customerNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _services = TextEditingController();
   final TextEditingController _installationAddressController =
       TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -75,8 +76,6 @@ class _FormSurveyState extends State<FormSurvey> {
     String email = _emailController.text;
     String formLongitude = widget.longitude.toString();
     String formLatitude = widget.latitude.toString();
-    // File? file = _imageFile; // Access the selected file if needed;
-    // File? file = _imageFile;
     var explode = fullName.split(' ');
     String lastName = explode[explode.length - 1];
     String firstName = '';
@@ -89,7 +88,7 @@ class _FormSurveyState extends State<FormSurvey> {
     explode = postalCodeType.split('=>');
     postalCodeType = explode[0].trim();
     Map<String, dynamic> dataNya = {};
-    int.parse(widget.price.replaceAll(RegExp(r'[^0-9]'), ''));
+    // int.parse(widget.price.replaceAll(RegExp(r'[^0-9]'), ''));
     dataNya = {
       'first_name': firstName.toString(),
       'last_name': lastName.toString(),
@@ -98,14 +97,14 @@ class _FormSurveyState extends State<FormSurvey> {
       'phone': phone.toString(),
       'ktp': idCard.toString(),
       'zip_code': postalCodeType.toString(),
-      'services': selectedServiceType.toString(),
+      'services': _services.text,
       'longitude': formLongitude.toString(),
       'latitude': formLatitude.toString(),
-      'harga': widget.price.replaceAll(RegExp(r'[^0-9]'), '').toString()
+      // 'harga': widget.price.replaceAll(RegExp(r'[^0-9]'), '').toString()
+      'harga': widget.price,
     };
 
     try {
-      // Replace URL with your endpoint
       (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
           HttpClient()
             ..badCertificateCallback =
@@ -116,7 +115,6 @@ class _FormSurveyState extends State<FormSurvey> {
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           }));
-
       // Handle response
       Map<String, dynamic> result = response.data;
       showDialog(
@@ -139,12 +137,30 @@ class _FormSurveyState extends State<FormSurvey> {
       // Navigator.of(context).push(MaterialPageRoute(builder: (builder) => OrderPage()));
     } catch (e) {
       // Handle error
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text("Terjadi kesalahan"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     _selectedServiceType = widget.tipe;
+    _services.text = widget.tipe;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -264,7 +280,8 @@ class _FormSurveyState extends State<FormSurvey> {
               _buildTextField(
                   _idNumberController, 'Nomor Identitas (NIK/SIM/Passport)'),
               const SizedBox(height: 16.0),
-              _buildDropdownButtonFormField(),
+              // _buildDropdownButtonFormField(),
+              _buildTextField(_services, 'Layanan'),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
