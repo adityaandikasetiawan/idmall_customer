@@ -1,20 +1,16 @@
-// ignore_for_file: empty_catches, avoid_print
+// ignore_for_file: empty_catches, avoid_print, use_build_context_synchronously
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:idmall/models/customer_by_email.dart';
-import 'package:idmall/pages/InvoiceGood.dart';
 import 'package:idmall/pages/details.dart';
 import 'package:idmall/pages/fab_testing.dart';
 import 'package:idmall/pages/google_maps.dart';
-import 'package:idmall/pages/invoice.dart';
-import 'package:idmall/pages/invoice_testing.dart';
 import 'package:idmall/pages/pembayaran_existing.dart';
 import 'package:idmall/pages/pembayaran_testing.dart';
 import 'package:idmall/pages/upgrade_downgrade_detail.dart';
 import 'package:idmall/service/coverage_area.dart';
 import 'package:idmall/widget/widget_support.dart';
-import 'package:idmall/widget/notificationpage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:intl/intl.dart';
@@ -481,7 +477,8 @@ class _HomeState extends State<Home> {
                                     FABTesting(taskID: customerID ?? ""),
                               ),
                             );
-                          } else if (status == "PENDING_PAYMENT_MOBILE") {
+                          } else if (status == "PENDING_PAYMENT_MOBILE" ||
+                              status == "PENDING_PAYMENT") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -517,17 +514,17 @@ class _HomeState extends State<Home> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     status == "QUOTATION"
-                                        ? Text(
+                                        ? const Text(
                                             "Registrasi Anda sudah disetujui, mohon isi FORM AKTIVASI BERLANGGANAN",
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           )
-                                        : Text(
+                                        : const Text(
                                             "Registrasi Anda mencapai tahap pembayaran, silahkan melanjutkan ke proses pembayaran",
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
@@ -753,152 +750,6 @@ class _HomeState extends State<Home> {
                   ),
                 ),
 
-                // // Three icons
-                // SizedBox(height: 20),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: [
-                //     GestureDetector(
-                //       onTap: () {
-                //         Navigator.push(
-                //           context,
-                //           MaterialPageRoute(builder: (context) => PackagesPage()),
-                //         );
-                //       },
-                //       child: Column(
-                //         children: [
-                //           Container(
-                //             decoration: BoxDecoration(
-                //               shape: BoxShape.circle,
-                //               border: Border.all(
-                //                 color: Colors.black,
-                //               ),
-                //               boxShadow: const [
-                //                 BoxShadow(
-                //                   color: Color.fromARGB(255, 0, 0, 0),
-                //                 ),
-                //                 BoxShadow(
-                //                   color: Color.fromARGB(255, 255, 255, 255),
-                //                   spreadRadius: 7.0,
-                //                   blurRadius: 12.0,
-                //                 ),
-                //               ],
-                //             ),
-                //             child: Padding(
-                //               padding: const EdgeInsets.all(10.0),
-                //               child: Image.asset(
-                //                 'images/widget/paket.png',
-                //                 width: 50,
-                //                 height: 50,
-                //                 color: const Color.fromARGB(255, 0, 0, 0),
-                //               ),
-                //             ),
-                //           ),
-                //           const SizedBox(height: 5),
-                //           const Text(
-                //             'Paket',
-                //             style: TextStyle(
-                //               color: Color.fromARGB(255, 0, 0, 0),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //     GestureDetector(
-                //       onTap: () {
-                //         Navigator.push(
-                //           context,
-                //           MaterialPageRoute(builder: (context) => TroublePage()),
-                //         );
-                //       },
-                //       child: Column(
-                //         children: [
-                //           Container(
-                //             decoration: BoxDecoration(
-                //               shape: BoxShape.circle,
-                //               border: Border.all(
-                //                 color: Colors.black,
-                //               ),
-                //               boxShadow: const [
-                //                 BoxShadow(
-                //                   color: Color.fromARGB(255, 0, 0, 0),
-                //                 ),
-                //                 BoxShadow(
-                //                   color: Color.fromARGB(255, 255, 255, 255),
-                //                   spreadRadius: 7.0,
-                //                   blurRadius: 12.0,
-                //                 ),
-                //               ],
-                //             ),
-                //             child: Padding(
-                //               padding: const EdgeInsets.all(10.0),
-                //               child: Image.asset(
-                //                 'images/widget/gangguan.png',
-                //                 width: 50,
-                //                 height: 50,
-                //                 color: const Color.fromARGB(255, 0, 0, 0),
-                //               ),
-                //             ),
-                //           ),
-                //           const SizedBox(height: 5),
-                //           const Text(
-                //             'Gangguan',
-                //             style: TextStyle(
-                //               color: Color.fromARGB(255, 0, 0, 0),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //     GestureDetector(
-                //       onTap: () {
-                //         Navigator.push(
-                //           context,
-                //           MaterialPageRoute(builder: (context) => AllPage()),
-                //         );
-                //       },
-                //       child: Column(
-                //         children: [
-                //           Container(
-                //             decoration: BoxDecoration(
-                //               shape: BoxShape.circle,
-                //               border: Border.all(
-                //                 color: Colors.black,
-                //               ),
-                //               boxShadow: const [
-                //                 BoxShadow(
-                //                   color: Color.fromARGB(255, 0, 0, 0),
-                //                 ),
-                //                 BoxShadow(
-                //                   color: Color.fromARGB(255, 255, 255, 255),
-                //                   spreadRadius: 7.0,
-                //                   blurRadius: 12.0,
-                //                 ),
-                //               ],
-                //             ),
-                //             child: Padding(
-                //               padding: const EdgeInsets.all(10.0),
-                //               child: Image.asset(
-                //                 'images/widget/semua.png',
-                //                 width: 50,
-                //                 height: 50,
-                //                 color: const Color.fromARGB(255, 0, 0, 0),
-                //               ),
-                //             ),
-                //           ),
-                //           const SizedBox(height: 5),
-                //           const Text(
-                //             'Semua',
-                //             style: TextStyle(
-                //               color: Color.fromARGB(255, 0, 0, 0),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ],
-                // ),
-
                 // New Card
                 Container(
                   margin: const EdgeInsets.only(bottom: 20.0),
@@ -1021,16 +872,16 @@ class _HomeState extends State<Home> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const DetailPage(
-                                    title: 'IdPlay Home',
-                                    price: 'Rp. 179.000',
-                                    imagePath: 'images/promo1.png',
-                                  ),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => const DetailPage(
+                              //       title: 'IdPlay Home',
+                              //       price: 'Rp. 179.000',
+                              //       imagePath: 'images/promo1.png',
+                              //     ),
+                              //   ),
+                              // );
                             },
                             child: buildRoundedCarouselItem(
                               title: 'IdPlay Home',
@@ -1069,16 +920,16 @@ class _HomeState extends State<Home> {
                           ), // Tambahkan jarak horizontal antara slide
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const DetailPage(
-                                    title: 'IdPlay Home',
-                                    price: 'Rp. 270.000',
-                                    imagePath: 'images/promo3.png',
-                                  ),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => const DetailPage(
+                              //       title: 'IdPlay Home',
+                              //       price: 'Rp. 270.000',
+                              //       imagePath: 'images/promo3.png',
+                              //     ),
+                              //   ),
+                              // );
                             },
                             child: buildRoundedCarouselItem(
                               title: 'IdPlay Home',

@@ -3,8 +3,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
-import 'package:idmall/consts.dart';
 import 'package:idmall/pages/navigation.dart';
 import 'package:idmall/service/coverage_area.dart';
 import 'package:idmall/service/notification_controller.dart';
@@ -33,17 +31,17 @@ void main() async {
     if (value != null) {
       pref.setString('fcm_token', value);
       if (token != null && token != '') {
-        (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
-            HttpClient()
-              ..badCertificateCallback =
-                  (X509Certificate cert, String host, int port) => true;
         await dio.post(
-          "$linkLaravelAPI/customer/update-device-key",
-          data: {"token": value},
-          options: Options(headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer $token"
-          }),
+          "${config.backendBaseUrl}/update-device-key",
+          options: Options(
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer $token"
+            },
+          ),
+          data: {
+            "token": value,
+          },
         );
       }
     }
@@ -114,6 +112,7 @@ void main() async {
       ));
     }
   });
+
   runApp(MyApp(
     token: token,
   ));

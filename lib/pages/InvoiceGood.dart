@@ -15,7 +15,7 @@ class _TreeSelectPageState extends State<TreeSelectPage> {
   void initState() {
     super.initState();
     _nodes = [
-      Node(
+      const Node(
         label: 'yuniarto',
         key: '1',
         children: [
@@ -72,7 +72,7 @@ class _TreeSelectPageState extends State<TreeSelectPage> {
                       ),
                     );
                   },
-                  theme: TreeViewTheme(
+                  theme: const TreeViewTheme(
                     expanderTheme: ExpanderThemeData(
                       type: ExpanderType.caret,
                       modifier: ExpanderModifier.none,
@@ -100,7 +100,7 @@ class _TreeSelectPageState extends State<TreeSelectPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Close'),
+                  child: const Text('Close'),
                 ),
               ],
             );
@@ -142,18 +142,19 @@ class _TreeSelectPageState extends State<TreeSelectPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tree Select Example'),
+        title: const Text('Tree Select Example'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Select an item'),
+            const Text('Select an item'),
             GestureDetector(
               onTap: _showTreeDialog,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(4),
@@ -165,9 +166,9 @@ class _TreeSelectPageState extends State<TreeSelectPage> {
                       _selectedNodes.isEmpty
                           ? 'Select'
                           : _selectedNodes.join(', '),
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
-                    Icon(Icons.arrow_drop_down),
+                    const Icon(Icons.arrow_drop_down),
                   ],
                 ),
               ),

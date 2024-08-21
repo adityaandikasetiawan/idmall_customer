@@ -18,12 +18,13 @@ class FormSurvey extends StatefulWidget {
   final String tipe;
   final String price;
 
-  const FormSurvey(
-      {super.key,
-      required this.latitude,
-      required this.longitude,
-      required this.tipe,
-      required this.price});
+  const FormSurvey({
+    super.key,
+    required this.latitude,
+    required this.longitude,
+    required this.tipe,
+    required this.price,
+  });
   @override
   _FormSurveyState createState() => _FormSurveyState();
 }
@@ -141,8 +142,8 @@ class _FormSurveyState extends State<FormSurvey> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Error'),
-            content: Text("Terjadi kesalahan"),
+            title: const Text('Error'),
+            content: const Text("Terjadi kesalahan"),
             actions: <Widget>[
               TextButton(
                 onPressed: () {

@@ -257,7 +257,7 @@ class _SignUpState extends State<SignUp> {
                       controller: fullNameController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please Enter valid full name';
+                          return 'Mohon masukkan nama';
                         }
                         return null;
                       },
@@ -279,10 +279,10 @@ class _SignUpState extends State<SignUp> {
                       controller: emailController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please Enter Email';
+                          return 'Mohon masukkan email';
                         } else if (!value.contains('@') ||
                             !value.contains('.')) {
-                          return 'Please Enter a Valid Email';
+                          return 'Mohon masukkan email yang valid';
                         }
                         return null;
                       },
@@ -304,13 +304,13 @@ class _SignUpState extends State<SignUp> {
                       controller: passwordController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please Enter Password';
+                          return 'Mohon masukkan password';
                         } else if (value.length < 8) {
-                          return 'Password must be at least 8 characters long';
+                          return 'Panjang password minimal 8 karakter';
                         } else if (!RegExp(
                                 r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_+{}|:"<>?/~`]).{8,}$')
                             .hasMatch(value)) {
-                          return 'Password must start with an uppercase letter \nand contain at least one lowercase letter, \none number, and one special character';
+                          return 'Password harus dimulai dengan huruf kapital\n dan minimal terdiri dari satu huruf kecil, satu nomor\n dan satu spesial karakter';
                         }
                         return null;
                       },
@@ -346,9 +346,9 @@ class _SignUpState extends State<SignUp> {
                       controller: repeatPasswordController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please Enter Repeat Password';
+                          return 'Mohon masukkan ulang password';
                         } else if (value != passwordController.text) {
-                          return 'Passwords do not match';
+                          return 'Password tidak cocok';
                         }
                         return null;
                       },

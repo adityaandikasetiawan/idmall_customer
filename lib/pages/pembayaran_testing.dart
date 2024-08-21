@@ -250,10 +250,10 @@ class _PaymentMethodState extends State<PaymentMethod> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (builder) => InvoicePage(
-                    taskid: widget.taskid ?? "",
-                    bankName: bankName ?? "",
+                    taskid: widget.taskid,
+                    bankName: bankName,
                     total: total ?? "0",
-                    typePayment: typePayment ?? "",
+                    typePayment: typePayment,
                   ),
                 ),
               );
