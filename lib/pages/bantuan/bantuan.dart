@@ -31,6 +31,7 @@ class Bantuan extends StatelessWidget {
               screenHeight,
               'PENGADUAN LAYANAN',
               'images/splash.png',
+              'Mempunyai masalah dengan layanan? Adukan ke WhatsApp kami!',
               _launchWhatsApp,
             ),
             const SizedBox(height: 16), // Spasi antara kedua Card
@@ -38,6 +39,7 @@ class Bantuan extends StatelessWidget {
               screenHeight,
               'LIHAT PERTANYAAN',
               'images/splash.png',
+              'Punya pertanyaan seputar produk kami? lihat FAQ kami!',
               () {
                 Navigator.push(
                   context,
@@ -76,6 +78,7 @@ class Bantuan extends StatelessWidget {
     double screenHeight,
     String buttonText,
     String imagePath,
+    String textDescription,
     VoidCallback onPressed,
   ) {
     return Card(
@@ -125,8 +128,8 @@ class Bantuan extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 8),
-                  const Text(
-                    'Ini adalah deskripsi bantuan yang bisa berisi informasi atau instruksi untuk pengguna.',
+                  Text(
+                    "${textDescription}",
                     style: TextStyle(fontSize: 14, color: Colors.black),
                   ),
                   const SizedBox(height: 16),
@@ -144,8 +147,7 @@ class Bantuan extends StatelessWidget {
                         backgroundColor: Colors.transparent,
                         side: const BorderSide(color: Colors.orange, width: 2),
                       ),
-                      child: Expanded(
-                        child: Text(
+                      child: Text(
                           buttonText,
                           style: const TextStyle(
                             fontSize: 12,
@@ -153,7 +155,6 @@ class Bantuan extends StatelessWidget {
                             color: Colors.black,
                           ),
                         ),
-                      ),
                     ),
                   ),
                 ],
