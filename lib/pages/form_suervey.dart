@@ -115,6 +115,7 @@ class _FormSurveyState extends State<FormSurvey> {
           data: dataNya,
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
+            HttpHeaders.cacheControlHeader: "no-cache"
           }));
       // Handle response
       Map<String, dynamic> result = response.data;

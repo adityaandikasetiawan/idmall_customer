@@ -34,7 +34,8 @@ class _CoverageState extends State<Coverage> {
       '${config.backendBaseUrl}/region/odp?page=1&list_per_page=44',
       options: Options(headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
+        "Cache-Control" : "no-cache"
       }),
     );
 

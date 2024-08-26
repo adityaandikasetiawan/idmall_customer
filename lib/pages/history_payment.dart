@@ -30,7 +30,8 @@ class _HistoryPaymentState extends State<HistoryPayment> {
       "${config.backendBaseUrl}/customer/billing/histories",
       options: Options(headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
+        "Cache-Control": "no-cache"
       }),
     );
     for (var ele in response.data['data']) {

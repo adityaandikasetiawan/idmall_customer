@@ -56,7 +56,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
         "${config.backendBaseUrl}/customer/dashboard/detail-customer",
         options: Options(headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token"
+          "Authorization": "Bearer $token",
+          "Cache-Control": "no-cache"
         }),
       );
       if (response.data['data'].length > 0) {

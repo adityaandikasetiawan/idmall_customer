@@ -1,7 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
@@ -168,7 +167,6 @@ class _FormChangePasswordState extends State<FormChangePassword> {
       ),
       child: TextFormField(
         controller: controller,
-        obscureText: true,
         decoration: InputDecoration(
           labelText: labelText,
           contentPadding:

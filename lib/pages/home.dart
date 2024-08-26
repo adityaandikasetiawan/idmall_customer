@@ -86,7 +86,8 @@ class _HomeState extends State<Home> {
         "${config.backendBaseUrl}/customer/dashboard/detail-customer",
         options: Options(headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token"
+          "Authorization": "Bearer $token",
+          "Cache-Control": "no-cache"
         }),
       );
 
@@ -94,7 +95,8 @@ class _HomeState extends State<Home> {
         "${config.backendBaseUrl}/customer/billing/due",
         options: Options(headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token"
+          "Authorization": "Bearer $token",
+          "Cache-Control": "no-cache"
         }),
       );
 
@@ -102,7 +104,8 @@ class _HomeState extends State<Home> {
         "${config.backendBaseUrl}/customer/billing/list",
         options: Options(headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token"
+          "Authorization": "Bearer $token",
+          "Cache-Control": "no-cache"
         }),
       );
 
@@ -251,7 +254,8 @@ class _HomeState extends State<Home> {
                                       "${config.backendBaseUrl}/billing/get",
                                       options: Options(headers: {
                                         "Content-Type": "application/json",
-                                        "Authorization": "Bearer $token"
+                                        "Authorization": "Bearer $token",
+                                        "Cache-Control": "no-cache"
                                       }),
                                       data: {
                                         "task_id":
