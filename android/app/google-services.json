@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "920778818629",
+    "project_id": "idmall-project",
+    "storage_bucket": "idmall-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920778818629:android:a95ff96d10a1df2cb80f2c",
+        "android_client_info": {
+          "package_name": "com.example.coffee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlRUl12A1bA9l90_diwcqR6HpiFGX9LW8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920778818629:android:a4aacb85084d216cb80f2c",
+        "android_client_info": {
+          "package_name": "com.example.idmall"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlRUl12A1bA9l90_diwcqR6HpiFGX9LW8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920778818629:android:1ddad36c286d41cbb80f2c",
+        "android_client_info": {
+          "package_name": "com.supercorridor.idmall"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlRUl12A1bA9l90_diwcqR6HpiFGX9LW8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
