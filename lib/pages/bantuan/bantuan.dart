@@ -55,9 +55,9 @@ class Bantuan extends StatelessWidget {
   }
 
   void _launchWhatsApp() async {
-    const phoneNumber = '+628127000124'; // Ganti dengan nomor tujuan
+    const phoneNumber = '+6282289986477'; // Ganti dengan nomor tujuan
     const message =
-        'Hello, this is a test message.'; // Pesan yang ingin dikirim
+        'Hello.'; // Pesan yang ingin dikirim
     final Uri whatsappUrl = Uri.parse(
         'whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}'); // Skema URI WhatsApp
 
