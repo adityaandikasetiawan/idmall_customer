@@ -363,49 +363,49 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
+            // Row(
+            //   children: [
+            //     GestureDetector(
+            //       onTap: () {
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(
                     //       builder: (context) => const NotificationPage()),
                     // );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: Colors.black,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                        ),
-                        BoxShadow(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          spreadRadius: 7.0,
-                          blurRadius: 12.0,
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.notifications),
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                      onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => const NotificationPage()),
-                        // );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
+            //       },
+            //       child: Container(
+            //         decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(15),
+            //           border: Border.all(
+            //             color: Colors.black,
+            //           ),
+            //           boxShadow: const [
+            //             BoxShadow(
+            //               color: Color.fromARGB(255, 0, 0, 0),
+            //             ),
+            //             BoxShadow(
+            //               color: Color.fromARGB(255, 255, 255, 255),
+            //               spreadRadius: 7.0,
+            //               blurRadius: 12.0,
+            //             ),
+            //           ],
+            //         ),
+                    // child: IconButton(
+                    //   icon: const Icon(Icons.notifications),
+                    //   color: const Color.fromARGB(255, 0, 0, 0),
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //           builder: (context) => const NotificationPage()),
+                    //     );
+                    //   },
+                    // ),
+            //       ),
+            //     ),
+            //     const SizedBox(width: 10),
+            //     GestureDetector(
+            //       onTap: () {
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(
@@ -417,45 +417,45 @@ class _HomeState extends State<Home> {
                     //         ),
                     //   ),
                     // );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: Colors.black,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                        ),
-                        BoxShadow(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          spreadRadius: 7.0,
-                          blurRadius: 12.0,
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.shopping_cart),
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                      onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => InvoicePage(
-                        //       taskid: customerID ?? "",
-                        //       bankName: "",
-                        //       total: "",
-                        //       typePayment: "",
-                        //     ),
-                        //   ),
-                        // );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            //       },
+            //       child: Container(
+            //         decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(15),
+            //           border: Border.all(
+            //             color: Colors.black,
+            //           ),
+            //           boxShadow: const [
+            //             BoxShadow(
+            //               color: Color.fromARGB(255, 0, 0, 0),
+            //             ),
+            //             BoxShadow(
+            //               color: Color.fromARGB(255, 255, 255, 255),
+            //               spreadRadius: 7.0,
+            //               blurRadius: 12.0,
+            //             ),
+            //           ],
+            //         ),
+                    // child: IconButton(
+                    //   icon: const Icon(Icons.shopping_cart),
+                    //   color: const Color.fromARGB(255, 0, 0, 0),
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => InvoicePage(
+                    //           taskid: customerID ?? "",
+                    //           bankName: "",
+                    //           total: "",
+                    //           typePayment: "",
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

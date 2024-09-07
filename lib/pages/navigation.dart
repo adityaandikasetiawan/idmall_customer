@@ -123,7 +123,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
             padding: const EdgeInsets.all(
                 8), // Sesuaikan ukuran padding inner circle sesuai kebutuhan
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                print("clicked home button");
+                // Navigator.pushReplacement<void, void>(
+                //   context,
+                //   MaterialPageRoute<void>(
+                //     builder: (BuildContext context) => const Home(),
+                //   ),
+                // );
+              },
               icon: Image.asset(
                 'images/idmall_logo.png', // Ubah 'your_image.png' sesuai dengan nama dan lokasi gambar Anda
                 height: 60,
