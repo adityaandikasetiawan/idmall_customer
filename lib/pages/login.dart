@@ -21,29 +21,24 @@ class Login extends StatefulWidget {
 
 class LoginResponse {
   final String email;
-  final String firstName;
-  final String lastName;
+  final String fullName;
   final String token;
 
   const LoginResponse(
     this.email,
-    this.firstName,
-    this.lastName,
+    this.fullName,
     this.token,
   );
 
   LoginResponse.fromJson(Map<String, dynamic> json)
       : email = json['email'] as String,
-        firstName = json['first_name'] as String,
-        lastName = json['last_name'] as String,
+        fullName = json['full_name'] as String,
         token = json['token'] as String;
 
   Map<String, dynamic> toJson() => {
         'email': email,
-        'firstName': firstName,
-        'fullName': '$firstName $lastName',
-        'lastName': lastName,
-        'token': token
+        'fullName': fullName,
+        'token': token,
       };
 }
 
@@ -100,16 +95,9 @@ class _LoginState extends State<Login> {
       });
 
       var response = await loginWithEmailPassword(payload);
-      print(response.data['data']);
       if (response.statusCode == 200) {
         var token = response.data['data']['token'];
-        if (response.data['data']['first_name'] != null) {
-          fullName = response.data['data']['first_name'] +
-              ' ' +
-              response.data['data']['last_name'];
-        } else {
-          fullName = response.data['data']['name'];
-        }
+        fullName = response.data['data']['full_name'];
 
         if (response.data['data']['subscription_status'] != null) {
           status = response.data['data']['subscription_status'];
@@ -123,8 +111,6 @@ class _LoginState extends State<Login> {
         final SharedPreferences prefs = await _prefs;
         prefs.setString('token', token);
         prefs.setString('fullName', fullName);
-        prefs.setString('firstName', response.data['data']['first_name'] ?? "");
-        prefs.setString('lastName', response.data['data']['last_name'] ?? "");
         prefs.setString('email', email);
         prefs.setString('user_id', userId.toString());
         prefs.setString(
@@ -136,29 +122,26 @@ class _LoginState extends State<Login> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  SignUp(
-                      existingUserFirstName: response
-                          .data['data']['first_name'],
-                      existingUserLastName: response.data['data']['last_name'],
-                      existingUserFullName: fullName,
-                      existingUserEmail: email,
-                      isAlreadySubscribed:
+              builder: (context) => SignUp(
+                  existingUserFirstName: response.data['data']['first_name'],
+                  existingUserLastName: response.data['data']['last_name'],
+                  existingUserFullName: fullName,
+                  existingUserEmail: email,
+                  isAlreadySubscribed:
                       response.data['data']['is_connected_to_oss'].toString()),
             ),
-                (Route<dynamic> route) => false,
+            (Route<dynamic> route) => false,
           );
         } else {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  NavigationScreen(
-                    customerID: taskid,
-                    status: status,
-                  ),
+              builder: (context) => NavigationScreen(
+                customerID: taskid,
+                status: status,
+              ),
             ),
-                (Route<dynamic> route) => false,
+            (Route<dynamic> route) => false,
           );
         }
       }

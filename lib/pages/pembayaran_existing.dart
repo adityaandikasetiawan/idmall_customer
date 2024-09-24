@@ -11,9 +11,11 @@ import 'package:intl/intl.dart';
 
 class PaymentMethodExisting extends StatefulWidget {
   final String taskid;
+  final String billStatus;
   const PaymentMethodExisting({
     super.key,
     required this.taskid,
+    required this.billStatus,
   });
 
   @override
@@ -168,48 +170,73 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                 ],
               ),
               const SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Status:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    widget.billStatus,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
               const Divider(),
-              const SizedBox(height: 8.0),
-              const Text(
-                'Metode Pembayaran:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20.0),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: paymentMethodListBank.length,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return buildPaymentMethodCard(
-                    paymentMethodListBank[index].iconURL,
-                    paymentMethodListBank[index].code,
-                    paymentMethodListBank[index].name,
-                    "BANK",
-                    context,
-                    cardWidth: MediaQuery.of(context).size.width,
-                    cardHeight: 120,
-                    imageWidth: 80,
-                    imageHeight: 80,
-                  );
-                },
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: paymentMethodListOutlet.length,
-                itemBuilder: (context, index) {
-                  return buildPaymentMethodCard(
-                    paymentMethodListOutlet[index].iconURL,
-                    paymentMethodListOutlet[index].code,
-                    paymentMethodListOutlet[index].name,
-                    "OUTLET",
-                    context,
-                    cardWidth: MediaQuery.of(context).size.width,
-                    cardHeight: 120,
-                    imageWidth: 80,
-                    imageHeight: 80,
-                  );
-                },
-              ),
+              widget.billStatus != "Terbayar"
+                  ? Column(
+                      children: [
+                        const SizedBox(height: 8.0),
+                        const Text(
+                          'Metode Pembayaran:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 20.0),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: paymentMethodListBank.length,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return buildPaymentMethodCard(
+                              paymentMethodListBank[index].iconURL,
+                              paymentMethodListBank[index].code,
+                              paymentMethodListBank[index].name,
+                              "BANK",
+                              context,
+                              cardWidth: MediaQuery.of(context).size.width,
+                              cardHeight: 120,
+                              imageWidth: 80,
+                              imageHeight: 80,
+                            );
+                          },
+                        ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: paymentMethodListOutlet.length,
+                          itemBuilder: (context, index) {
+                            return buildPaymentMethodCard(
+                              paymentMethodListOutlet[index].iconURL,
+                              paymentMethodListOutlet[index].code,
+                              paymentMethodListOutlet[index].name,
+                              "OUTLET",
+                              context,
+                              cardWidth: MediaQuery.of(context).size.width,
+                              cardHeight: 120,
+                              imageWidth: 80,
+                              imageHeight: 80,
+                            );
+                          },
+                        ),
+                      ],
+                    )
+                  : const SizedBox(
+                      height: 0,
+                    ),
             ],
           ),
         ),

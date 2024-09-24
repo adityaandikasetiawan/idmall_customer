@@ -32,6 +32,7 @@ class _HomeState extends State<Home> {
   String? basePackage = "";
   String? customerID = "";
   String? status = "";
+  String billStatus = "";
 
   //endpoint h-7 billing
   String? billing = "";
@@ -113,24 +114,30 @@ class _HomeState extends State<Home> {
       if (response.data['data'].length > 0) {
         await prefs.setString(
             "token", response.data['data']['Updated_Auth_Token']);
-        setState(
-          () {
-            package = response.data['data']['Package_Name'] ?? "";
-            basePackage = response.data['data']['Base_Package_Name'] ?? "";
-            customerID = response.data['data']['Task_ID'] ?? "";
-            status = response.data['data']['Status'] ?? "";
+
+        final response4 = await dio.get(
+          "${config.backendBaseUrl}/customer/dashboard",
+          options: Options(headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token"
+          }),
+          data: {
+            "task_id": response.data['data']['Task_ID'],
           },
         );
-      }
 
-      if (response2.data['data'].length > 0) {
         setState(
           () {
+            package = response4.data['data']['Product_Name'] ?? "";
+            basePackage = response4.data['data']['Product_Code'] ?? "";
+            customerID = response4.data['data']['Task_ID'] ?? "";
+            status = response.data['data']['Status'] ?? "";
             isDueDateActive = true;
-            billing = oCcy.format(response.data['data']['AR_Val']);
+            billStatus = response4.data['data']['Bill_Status'] ?? "";
+            billing = oCcy.format(response4.data['data']['AR_Remain']);
             DateTime dueDates =
-                DateTime.tryParse(response.data['data']['Due_Date'])!;
-            dueDate = DateFormat('MMMM, yyyy').format(dueDates);
+                DateTime.tryParse(response4.data['data']['Period'] + "-01")!;
+            dueDate = DateFormat('MMM, yyyy').format(dueDates);
           },
         );
       }
@@ -611,7 +618,7 @@ class _HomeState extends State<Home> {
                             height: 15,
                           ),
                           const Text(
-                            "Periode bulan ini sudah jatuh tempo, segera lakukan pembayaran",
+                            "Periode tagihan bulan ini",
                             style: TextStyle(
                               fontSize: 10,
                               color: Colors.black,
@@ -625,6 +632,7 @@ class _HomeState extends State<Home> {
                                 MaterialPageRoute(
                                   builder: (context) => PaymentMethodExisting(
                                     taskid: "$customerID",
+                                    billStatus: billStatus,
                                   ),
                                 ),
                               );
@@ -632,10 +640,9 @@ class _HomeState extends State<Home> {
                             child: SizedBox(
                               width: double.infinity * 2,
                               child: Card(
-                                elevation: 4, // Tingkat elevasi card
+                                elevation: 4,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      15), // Bentuk sudut card
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -649,7 +656,7 @@ class _HomeState extends State<Home> {
                                     ),
                                   ),
                                   child: Padding(
-                                    padding: const EdgeInsets.all(18.0),
+                                    padding: const EdgeInsets.all(10.0),
                                     child: ListTile(
                                       title: Text(
                                         "$dueDate",
@@ -659,13 +666,27 @@ class _HomeState extends State<Home> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      subtitle: Text(
-                                        "$billing",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "$billing",
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            billStatus,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       trailing:
                                           const Icon(Icons.arrow_forward_ios),
