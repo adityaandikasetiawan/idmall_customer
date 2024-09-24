@@ -79,7 +79,8 @@ class MapSampleState extends State<MapSample> {
       "${config.backendBaseUrlProd}/region/odp?page=1&list_per_page=100",
       options: Options(headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
+        "Cache-Control": "no-cache"
       }),
     );
     for (var ele in response.data['data']) {
@@ -243,7 +244,8 @@ class MapSampleState extends State<MapSample> {
                   queryParameters: {'longitude': _long, 'latitude': _lat},
                   options: Options(headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer $token"
+                    "Authorization": "Bearer $token",
+                    "Cache-Control": "no-cache"
                   }),
                 );
                 if (response.statusCode == 200) {

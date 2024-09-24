@@ -11,12 +11,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:idmall/models/zip_code.dart';
 import 'package:idmall/config/config.dart' as config;
+import 'dart:developer' as dev;
 
 class FormSurvey extends StatefulWidget {
   final double latitude;
   final double longitude;
   final String tipe;
   final String price;
+  final String productCode;
 
   const FormSurvey({
     super.key,
@@ -24,6 +26,7 @@ class FormSurvey extends StatefulWidget {
     required this.longitude,
     required this.tipe,
     required this.price,
+    required this.productCode
   });
   @override
   _FormSurveyState createState() => _FormSurveyState();
@@ -48,7 +51,6 @@ class _FormSurveyState extends State<FormSurvey> {
   Future<Null> getNameUser() async {
     WidgetsFlutterBinding.ensureInitialized();
     final SharedPreferences prefs = await _prefs;
-
     setState(() {
       fullName = prefs.getString('fullName');
       email = prefs.getString('email');
@@ -63,6 +65,7 @@ class _FormSurveyState extends State<FormSurvey> {
   @override
   void initState() {
     super.initState();
+    print("code: ${widget.productCode}");
     getNameUser();
   }
 
@@ -93,6 +96,7 @@ class _FormSurveyState extends State<FormSurvey> {
     dataNya = {
       'first_name': firstName.toString(),
       'last_name': lastName.toString(),
+      'fullname': fullName.toString(),
       'email': email.toString(),
       'address': address.toString(),
       'phone': phone.toString(),
@@ -103,6 +107,7 @@ class _FormSurveyState extends State<FormSurvey> {
       'latitude': formLatitude.toString(),
       // 'harga': widget.price.replaceAll(RegExp(r'[^0-9]'), '').toString()
       'harga': widget.price,
+      'product_code': widget.productCode
     };
 
     try {
@@ -115,6 +120,7 @@ class _FormSurveyState extends State<FormSurvey> {
           data: dataNya,
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
+            HttpHeaders.cacheControlHeader: "no-cache"
           }));
       // Handle response
       Map<String, dynamic> result = response.data;

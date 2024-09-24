@@ -258,7 +258,8 @@ class _FABTestingState extends State<FABTesting> {
               '${config.backendBaseUrl}/submit-fab/${widget.taskID}',
               options: Options(headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer $token"
+                "Authorization": "Bearer $token",
+                "Cache-Control": "no-cache"
               }),
             );
             if (finalResponse.data['status'] == "success") {
@@ -333,7 +334,8 @@ class _FABTestingState extends State<FABTesting> {
                     data: formData,
                     options: Options(headers: {
                       "Content-Type": "multipart/form-data",
-                      "Authorization": "Bearer $token"
+                      "Authorization": "Bearer $token",
+                      "Cache-Control": "no-cache"
                     }),
                   );
 

@@ -191,7 +191,8 @@ class _HistoryActivationPageState extends State<HistoryActivationPage> {
       "${config.backendBaseUrl}/transaction/history",
       options: Options(headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
+        "Cache-Control": "no-cache"
       }),
     );
     if (response.data['status'] == 'success') {

@@ -36,7 +36,8 @@ void main() async {
           options: Options(
             headers: {
               "Content-Type": "application/json",
-              "Authorization": "Bearer $token"
+              "Authorization": "Bearer $token",
+              "Cache-Control": "no-cache"
             },
           ),
           data: {
@@ -128,7 +129,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       "${config.backendBaseUrl}/customer/dashboard/detail-customer",
       options: Options(headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
+        "Cache-Control": "no-cache"
       }),
     );
 

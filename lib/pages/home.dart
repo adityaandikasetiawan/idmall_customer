@@ -87,7 +87,8 @@ class _HomeState extends State<Home> {
         "${config.backendBaseUrl}/customer/dashboard/detail-customer",
         options: Options(headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token"
+          "Authorization": "Bearer $token",
+          "Cache-Control": "no-cache"
         }),
       );
 
@@ -95,7 +96,8 @@ class _HomeState extends State<Home> {
         "${config.backendBaseUrl}/customer/billing/due",
         options: Options(headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token"
+          "Authorization": "Bearer $token",
+          "Cache-Control": "no-cache"
         }),
       );
 
@@ -103,7 +105,8 @@ class _HomeState extends State<Home> {
         "${config.backendBaseUrl}/customer/billing/list",
         options: Options(headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token"
+          "Authorization": "Bearer $token",
+          "Cache-Control": "no-cache"
         }),
       );
 
@@ -258,7 +261,8 @@ class _HomeState extends State<Home> {
                                       "${config.backendBaseUrl}/billing/get",
                                       options: Options(headers: {
                                         "Content-Type": "application/json",
-                                        "Authorization": "Bearer $token"
+                                        "Authorization": "Bearer $token",
+                                        "Cache-Control": "no-cache"
                                       }),
                                       data: {
                                         "task_id":
@@ -366,49 +370,49 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
+            // Row(
+            //   children: [
+            //     GestureDetector(
+            //       onTap: () {
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(
                     //       builder: (context) => const NotificationPage()),
                     // );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: Colors.black,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                        ),
-                        BoxShadow(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          spreadRadius: 7.0,
-                          blurRadius: 12.0,
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.notifications),
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                      onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => const NotificationPage()),
-                        // );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
+            //       },
+            //       child: Container(
+            //         decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(15),
+            //           border: Border.all(
+            //             color: Colors.black,
+            //           ),
+            //           boxShadow: const [
+            //             BoxShadow(
+            //               color: Color.fromARGB(255, 0, 0, 0),
+            //             ),
+            //             BoxShadow(
+            //               color: Color.fromARGB(255, 255, 255, 255),
+            //               spreadRadius: 7.0,
+            //               blurRadius: 12.0,
+            //             ),
+            //           ],
+            //         ),
+                    // child: IconButton(
+                    //   icon: const Icon(Icons.notifications),
+                    //   color: const Color.fromARGB(255, 0, 0, 0),
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //           builder: (context) => const NotificationPage()),
+                    //     );
+                    //   },
+                    // ),
+            //       ),
+            //     ),
+            //     const SizedBox(width: 10),
+            //     GestureDetector(
+            //       onTap: () {
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(
@@ -420,45 +424,45 @@ class _HomeState extends State<Home> {
                     //         ),
                     //   ),
                     // );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: Colors.black,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                        ),
-                        BoxShadow(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          spreadRadius: 7.0,
-                          blurRadius: 12.0,
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.shopping_cart),
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                      onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => InvoicePage(
-                        //       taskid: customerID ?? "",
-                        //       bankName: "",
-                        //       total: "",
-                        //       typePayment: "",
-                        //     ),
-                        //   ),
-                        // );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            //       },
+            //       child: Container(
+            //         decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(15),
+            //           border: Border.all(
+            //             color: Colors.black,
+            //           ),
+            //           boxShadow: const [
+            //             BoxShadow(
+            //               color: Color.fromARGB(255, 0, 0, 0),
+            //             ),
+            //             BoxShadow(
+            //               color: Color.fromARGB(255, 255, 255, 255),
+            //               spreadRadius: 7.0,
+            //               blurRadius: 12.0,
+            //             ),
+            //           ],
+            //         ),
+                    // child: IconButton(
+                    //   icon: const Icon(Icons.shopping_cart),
+                    //   color: const Color.fromARGB(255, 0, 0, 0),
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => InvoicePage(
+                    //           taskid: customerID ?? "",
+                    //           bankName: "",
+                    //           total: "",
+                    //           typePayment: "",
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),
@@ -893,16 +897,18 @@ class _HomeState extends State<Home> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => const DetailPage(
-                              //       title: 'IdPlay Home',
-                              //       price: 'Rp. 179.000',
-                              //       imagePath: 'images/promo1.png',
-                              //     ),
-                              //   ),
-                              // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const DetailPage(
+                                    title: 'IdPlay Home',
+                                    price: 'Rp. 179.000',
+                                    imagePath: 'images/promo1.png',
+                                    description: '1. Streaming Video HD Tanpa Buffering.\n2. Panggilan Video Berkualitas Tinggi.\n3. Koneksi Stabil Untuk 1-3 Perangkat.',
+
+                                  ),
+                                ),
+                              );
                             },
                             child: buildRoundedCarouselItem(
                               title: 'IdPlay Home',
@@ -924,6 +930,7 @@ class _HomeState extends State<Home> {
                                     title: 'IdPlay Home',
                                     price: 'Rp. 230.000',
                                     imagePath: 'images/promo2.png',
+                                    description: '1. Ideal untuk bisnis menengah yang membutuhkan akses cepat untuk aplikasi cloud dan video conferencing berkualitas tinggi.\n2. Bandwidth yang cukup untuk mendukung beberapa pengguna sekaligus.\n3. Dukungan teknis 24/7.',
                                   ),
                                 ),
                               );
@@ -941,16 +948,19 @@ class _HomeState extends State<Home> {
                           ), // Tambahkan jarak horizontal antara slide
                           GestureDetector(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => const DetailPage(
-                              //       title: 'IdPlay Home',
-                              //       price: 'Rp. 270.000',
-                              //       imagePath: 'images/promo3.png',
-                              //     ),
-                              //   ),
-                              // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const DetailPage(
+                                    title: 'IdPlay Home',
+                                    price: 'Rp. 270.000',
+                                    imagePath: 'images/promo3.png',
+                                    description: '1. Direkomendasikan untuk bisnis dengan penggunaan data tinggi seperti e-commerce, video streaming, dan kolaborasi online.\n2. Kecepatan tinggi untuk mengunduh dan mengunggah file besar.\n3. Dukungan teknis prioritas 24/7.',
+
+
+                                  ),
+                                ),
+                              );
                             },
                             child: buildRoundedCarouselItem(
                               title: 'IdPlay Home',

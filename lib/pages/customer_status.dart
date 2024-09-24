@@ -98,7 +98,8 @@ class _CustomerStatusState extends State<CustomerStatus> {
           "${config.backendBaseUrl}/sales/detail-status-customer",
           options: Options(headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer $token"
+            "Authorization": "Bearer $token",
+            "Cache-Control": "no-cache"
           }),
           data: {
             "status": widget.status,

@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:idmall/config/google_api_key.dart' as googleKey;
+import 'dart:developer';
+import 'package:flutter/material.dart';
 
 class ProductList extends StatefulWidget {
   final double latitude;
@@ -83,6 +85,8 @@ class _ProductListState extends State<ProductList> {
           .map((ele) => Product.fromJson(ele))
           .toList();
     });
+
+
   }
 
   @override
@@ -131,6 +135,7 @@ class _ProductListState extends State<ProductList> {
                     tipe: product.name,
                     title: product.name,
                     price: product.price.toString(),
+                    productCode: product.code.toString(),
                     details: [
                       'Dedicated support',
                       'Business-grade performance',
@@ -152,6 +157,7 @@ class _ProductListState extends State<ProductList> {
     required String tipe,
     required String title,
     required String price,
+    required String productCode,
     required List<String> details,
     required VoidCallback onPressed,
     required String imagePath,
@@ -233,6 +239,7 @@ class _ProductListState extends State<ProductList> {
                             longitude: widget.longitude,
                             tipe: tipe,
                             price: price,
+                            productCode: productCode
                           )));
                 },
                 style: ElevatedButton.styleFrom(
