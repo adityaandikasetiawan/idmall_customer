@@ -1,4 +1,4 @@
-// ignore_for_file: empty_catches, avoid_print, use_build_context_synchronously
+// ignore_for_file: empty_catches, avoid_print, use_build_context_synchronously, deprecated_member_use
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
   String? name;
   String? fullName;
   String greeting = '';
-  String points = '10';
+  int points = 0;
   String vouchers = '1';
   String? package = "";
   String? basePackage = "";
@@ -37,6 +37,7 @@ class _HomeState extends State<Home> {
   //endpoint h-7 billing
   String? billing = "";
   String? dueDate = "";
+  String dataUsed = "";
   bool isDueDateActive = false;
 
   final oCcy = NumberFormat("#,##0", "en_US");
@@ -135,9 +136,13 @@ class _HomeState extends State<Home> {
             basePackage = response4.data['data']['Product_Code'] ?? "";
             customerID = response4.data['data']['Task_ID'] ?? "";
             status = response.data['data']['Status'] ?? "";
+            points = response4.data['data']['Points'];
             isDueDateActive = true;
             billStatus = response4.data['data']['Bill_Status'] ?? "";
-            billing = oCcy.format(response4.data['data']['AR_Remain']);
+            billing = oCcy.format(response4.data['data']['Total_Payment']);
+            int number = response4.data['data']['GB_in'];
+            double formattedNumber = number.toDouble();
+            dataUsed = formattedNumber.toStringAsFixed(2);
             DateTime dueDates =
                 DateTime.tryParse(response4.data['data']['Period'] + "-01")!;
             dueDate = DateFormat('MMM, yyyy').format(dueDates);
@@ -275,6 +280,12 @@ class _HomeState extends State<Home> {
                                         response.data['data'][0]
                                             ['Updated_Auth_Token'],
                                       );
+                                      await prefs.setString(
+                                        "fullName",
+                                        response.data['data'][0]
+                                            ['Customer_Sub_Name'],
+                                      );
+                                      getUserName();
                                       setState(
                                         () {
                                           package = response.data['data'][0]
@@ -341,32 +352,47 @@ class _HomeState extends State<Home> {
                   },
                 );
               },
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "$greeting, ",
-                          style: AppWidget.boldTextFeildStyle()
-                              .copyWith(color: Colors.black, fontSize: 15),
-                        ),
-                        TextSpan(
-                          text: name ?? "Guest",
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Color.fromARGB(
-                              255,
-                              0,
-                              0,
-                              0,
+                  Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "$greeting, ",
+                              style: AppWidget.boldTextFeildStyle()
+                                  .copyWith(color: Colors.black, fontSize: 15),
                             ),
-                          ),
+                            TextSpan(
+                              text: name ?? "Guest",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                color: Color.fromARGB(
+                                  255,
+                                  0,
+                                  0,
+                                  0,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                      const Icon(Icons.arrow_drop_down),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "$points pts",
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
-                  const Icon(Icons.arrow_drop_down),
                 ],
               ),
             ),
@@ -374,11 +400,11 @@ class _HomeState extends State<Home> {
             //   children: [
             //     GestureDetector(
             //       onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => const NotificationPage()),
-                    // );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //       builder: (context) => const NotificationPage()),
+            // );
             //       },
             //       child: Container(
             //         decoration: BoxDecoration(
@@ -397,33 +423,33 @@ class _HomeState extends State<Home> {
             //             ),
             //           ],
             //         ),
-                    // child: IconButton(
-                    //   icon: const Icon(Icons.notifications),
-                    //   color: const Color.fromARGB(255, 0, 0, 0),
-                    //   onPressed: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //           builder: (context) => const NotificationPage()),
-                    //     );
-                    //   },
-                    // ),
+            // child: IconButton(
+            //   icon: const Icon(Icons.notifications),
+            //   color: const Color.fromARGB(255, 0, 0, 0),
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) => const NotificationPage()),
+            //     );
+            //   },
+            // ),
             //       ),
             //     ),
             //     const SizedBox(width: 10),
             //     GestureDetector(
             //       onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => InvoicePage(
-                    //           taskid: customerID ?? "",
-                    //           bankName: "",
-                    //           total: "",
-                    //           typePayment: "",
-                    //         ),
-                    //   ),
-                    // );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => InvoicePage(
+            //           taskid: customerID ?? "",
+            //           bankName: "",
+            //           total: "",
+            //           typePayment: "",
+            //         ),
+            //   ),
+            // );
             //       },
             //       child: Container(
             //         decoration: BoxDecoration(
@@ -442,23 +468,23 @@ class _HomeState extends State<Home> {
             //             ),
             //           ],
             //         ),
-                    // child: IconButton(
-                    //   icon: const Icon(Icons.shopping_cart),
-                    //   color: const Color.fromARGB(255, 0, 0, 0),
-                    //   onPressed: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) => InvoicePage(
-                    //           taskid: customerID ?? "",
-                    //           bankName: "",
-                    //           total: "",
-                    //           typePayment: "",
-                    //         ),
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
+            // child: IconButton(
+            //   icon: const Icon(Icons.shopping_cart),
+            //   color: const Color.fromARGB(255, 0, 0, 0),
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => InvoicePage(
+            //           taskid: customerID ?? "",
+            //           bankName: "",
+            //           total: "",
+            //           typePayment: "",
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // ),
             //       ),
             //     ),
             //   ],
@@ -472,10 +498,215 @@ class _HomeState extends State<Home> {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
-            margin: const EdgeInsets.only(top: 50.0, left: 20.0, right: 20.0),
+            margin: const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                status == "ACTIVE" || status == "DU" || status == "FREEZE"
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaymentMethodExisting(
+                                      taskid: "$customerID",
+                                      billStatus: billStatus,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: const DecorationImage(
+                                    image: AssetImage(
+                                        'images/background_card.png'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  // boxShadow: [
+                                  //   BoxShadow(
+                                  //     color: Colors.grey.withOpacity(0.3),
+                                  //     blurRadius: 8,
+                                  //     offset: Offset(4, 4),
+                                  //   ),
+                                  // ],
+                                  border: Border.all(
+                                    color: Colors.grey.withOpacity(0.5),
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              "Tagihan Internet",
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.check_circle,
+                                            color: Colors.green,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      child: Text(
+                                        "Rp.$billing",
+                                        style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Divider(height: 1),
+                                    const SizedBox(height: 8),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            billStatus,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black54,
+                                            ),
+                                          ),
+                                          Text(
+                                            "$dueDate",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                image: const DecorationImage(
+                                  image:
+                                      AssetImage('images/background_card.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                                // boxShadow: [
+                                //   BoxShadow(
+                                //     color: Colors.grey.withOpacity(0.3),
+                                //     blurRadius: 8,
+                                //     offset: Offset(4, 4),
+                                //   ),
+                                // ],
+                                border: Border.all(
+                                  color: Colors.grey.withOpacity(0.5),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Penggunaan Bulan Ini",
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.wifi,
+                                          color: Colors.red,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        children: [
+                                          TextSpan(text: dataUsed),
+                                          WidgetSpan(
+                                            child: Transform.translate(
+                                              offset: const Offset(2, -12),
+                                              child: const Text(
+                                                'GB',
+                                                textScaleFactor: 0.8,
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  const Divider(height: 1),
+                                  const SizedBox(height: 8),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
+                                    child: Text(
+                                      "$package",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox(
+                        height: 0,
+                      ),
                 //card menuju FAB & pending payment
                 status == "QUOTATION" || status == "PENDING_PAYMENT_MOBILE"
                     ? GestureDetector(
@@ -551,158 +782,158 @@ class _HomeState extends State<Home> {
                     : const SizedBox(),
 
                 //card billing, point, etc
-                status == "ACTIVE" || status == "DU" || status == "FREEZE"
-                    ? SizedBox(
-                        key: UniqueKey(),
-                        width: double.infinity * 2,
-                        child: Card(
-                          elevation: 4.0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(15), // Bentuk sudut card
-                          ),
-                          // Mengubah warna background menjadi biru dongker
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                  15), // Bentuk sudut container
-                              image: const DecorationImage(
-                                image: AssetImage(
-                                    'images/bb_green_mint.jpg'), // Gambar background
-                                fit: BoxFit
-                                    .cover, // Menyesuaikan gambar dengan ukuran container
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(18.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "$customerID",
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    "$package",
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    "$status",
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    : const SizedBox(),
+                // status == "ACTIVE" || status == "DU" || status == "FREEZE"
+                //     ? SizedBox(
+                //         key: UniqueKey(),
+                //         width: double.infinity * 2,
+                //         child: Card(
+                //           elevation: 4.0,
+                //           shape: RoundedRectangleBorder(
+                //             borderRadius:
+                //                 BorderRadius.circular(15), // Bentuk sudut card
+                //           ),
+                //           // Mengubah warna background menjadi biru dongker
+                //           child: Container(
+                //             decoration: BoxDecoration(
+                //               borderRadius: BorderRadius.circular(
+                //                   15), // Bentuk sudut container
+                //               image: const DecorationImage(
+                //                 image: AssetImage(
+                //                     'images/bb_green_mint.jpg'), // Gambar background
+                //                 fit: BoxFit
+                //                     .cover, // Menyesuaikan gambar dengan ukuran container
+                //               ),
+                //             ),
+                //             child: Padding(
+                //               padding: const EdgeInsets.all(18.0),
+                //               child: Column(
+                //                 mainAxisAlignment: MainAxisAlignment.start,
+                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                //                 children: [
+                //                   Text(
+                //                     "$customerID",
+                //                     style: const TextStyle(
+                //                       color: Colors.white,
+                //                       fontSize: 14,
+                //                       fontWeight: FontWeight.bold,
+                //                     ),
+                //                   ),
+                //                   Text(
+                //                     "$package",
+                //                     style: const TextStyle(
+                //                       color: Colors.white,
+                //                       fontSize: 14,
+                //                       fontWeight: FontWeight.bold,
+                //                     ),
+                //                   ),
+                //                   Text(
+                //                     "$status",
+                //                     style: const TextStyle(
+                //                       color: Colors.white,
+                //                       fontSize: 14,
+                //                       fontWeight: FontWeight.bold,
+                //                     ),
+                //                   ),
+                //                 ],
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //       )
+                //     : const SizedBox(),
 
-                isDueDateActive == true &&
-                        (status == "ACTIVE" ||
-                            status == "DU" ||
-                            status == "FREEZE")
-                    ? Column(
-                        key: UniqueKey(),
-                        children: [
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          const Text(
-                            "Periode tagihan bulan ini",
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentMethodExisting(
-                                    taskid: "$customerID",
-                                    billStatus: billStatus,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: SizedBox(
-                              width: double.infinity * 2,
-                              child: Card(
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        15), // Bentuk sudut container
-                                    image: const DecorationImage(
-                                      image: AssetImage(
-                                          'images/bb_red_orange.jpg'), // Gambar background
-                                      fit: BoxFit
-                                          .cover, // Menyesuaikan gambar dengan ukuran container
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: ListTile(
-                                      title: Text(
-                                        "$dueDate",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "$billing",
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            billStatus,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      trailing:
-                                          const Icon(Icons.arrow_forward_ios),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : const SizedBox(),
+                // isDueDateActive == true &&
+                //         (status == "ACTIVE" ||
+                //             status == "DU" ||
+                //             status == "FREEZE")
+                //     ? Column(
+                //         key: UniqueKey(),
+                //         children: [
+                //           const SizedBox(
+                //             height: 15,
+                //           ),
+                //           const Text(
+                //             "Periode tagihan bulan ini",
+                //             style: TextStyle(
+                //               fontSize: 10,
+                //               color: Colors.black,
+                //               fontWeight: FontWeight.bold,
+                //             ),
+                //           ),
+                //           GestureDetector(
+                //             onTap: () {
+                //               Navigator.push(
+                //                 context,
+                //                 MaterialPageRoute(
+                //                   builder: (context) => PaymentMethodExisting(
+                //                     taskid: "$customerID",
+                //                     billStatus: billStatus,
+                //                   ),
+                //                 ),
+                //               );
+                //             },
+                //             child: SizedBox(
+                //               width: double.infinity * 2,
+                //               child: Card(
+                //                 elevation: 4,
+                //                 shape: RoundedRectangleBorder(
+                //                   borderRadius: BorderRadius.circular(15),
+                //                 ),
+                //                 child: Container(
+                //                   decoration: BoxDecoration(
+                //                     borderRadius: BorderRadius.circular(
+                //                         15), // Bentuk sudut container
+                //                     image: const DecorationImage(
+                //                       image: AssetImage(
+                //                           'images/bb_red_orange.jpg'), // Gambar background
+                //                       fit: BoxFit
+                //                           .cover, // Menyesuaikan gambar dengan ukuran container
+                //                     ),
+                //                   ),
+                //                   child: Padding(
+                //                     padding: const EdgeInsets.all(10.0),
+                //                     child: ListTile(
+                //                       title: Text(
+                //                         "$dueDate",
+                //                         style: const TextStyle(
+                //                           color: Colors.white,
+                //                           fontSize: 20,
+                //                           fontWeight: FontWeight.bold,
+                //                         ),
+                //                       ),
+                //                       subtitle: Column(
+                //                         crossAxisAlignment:
+                //                             CrossAxisAlignment.start,
+                //                         children: [
+                //                           Text(
+                //                             "$billing",
+                //                             style: const TextStyle(
+                //                               color: Colors.white,
+                //                               fontSize: 20,
+                //                               fontWeight: FontWeight.bold,
+                //                             ),
+                //                           ),
+                //                           Text(
+                //                             billStatus,
+                //                             style: const TextStyle(
+                //                               color: Colors.white,
+                //                               fontSize: 10,
+                //                               fontWeight: FontWeight.bold,
+                //                             ),
+                //                           ),
+                //                         ],
+                //                       ),
+                //                       trailing:
+                //                           const Icon(Icons.arrow_forward_ios),
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       )
+                //     : const SizedBox(),
 
                 // New Promotion Card
                 Container(
@@ -734,7 +965,7 @@ class _HomeState extends State<Home> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Downgrade / Upgrade',
+                                    'Upgrade',
                                     style: TextStyle(
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.bold,
@@ -904,8 +1135,8 @@ class _HomeState extends State<Home> {
                                     title: 'IdPlay Home',
                                     price: 'Rp. 179.000',
                                     imagePath: 'images/promo1.png',
-                                    description: '1. Streaming Video HD Tanpa Buffering.\n2. Panggilan Video Berkualitas Tinggi.\n3. Koneksi Stabil Untuk 1-3 Perangkat.',
-
+                                    description:
+                                        '1. Streaming Video HD Tanpa Buffering.\n2. Panggilan Video Berkualitas Tinggi.\n3. Koneksi Stabil Untuk 1-3 Perangkat.',
                                   ),
                                 ),
                               );
@@ -930,7 +1161,8 @@ class _HomeState extends State<Home> {
                                     title: 'IdPlay Home',
                                     price: 'Rp. 230.000',
                                     imagePath: 'images/promo2.png',
-                                    description: '1. Ideal untuk bisnis menengah yang membutuhkan akses cepat untuk aplikasi cloud dan video conferencing berkualitas tinggi.\n2. Bandwidth yang cukup untuk mendukung beberapa pengguna sekaligus.\n3. Dukungan teknis 24/7.',
+                                    description:
+                                        '1. Ideal untuk bisnis menengah yang membutuhkan akses cepat untuk aplikasi cloud dan video conferencing berkualitas tinggi.\n2. Bandwidth yang cukup untuk mendukung beberapa pengguna sekaligus.\n3. Dukungan teknis 24/7.',
                                   ),
                                 ),
                               );
@@ -955,9 +1187,8 @@ class _HomeState extends State<Home> {
                                     title: 'IdPlay Home',
                                     price: 'Rp. 270.000',
                                     imagePath: 'images/promo3.png',
-                                    description: '1. Direkomendasikan untuk bisnis dengan penggunaan data tinggi seperti e-commerce, video streaming, dan kolaborasi online.\n2. Kecepatan tinggi untuk mengunduh dan mengunggah file besar.\n3. Dukungan teknis prioritas 24/7.',
-
-
+                                    description:
+                                        '1. Direkomendasikan untuk bisnis dengan penggunaan data tinggi seperti e-commerce, video streaming, dan kolaborasi online.\n2. Kecepatan tinggi untuk mengunduh dan mengunggah file besar.\n3. Dukungan teknis prioritas 24/7.',
                                   ),
                                 ),
                               );

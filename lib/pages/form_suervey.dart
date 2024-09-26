@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:idmall/models/zip_code.dart';
 import 'package:idmall/config/config.dart' as config;
-import 'dart:developer' as dev;
 
 class FormSurvey extends StatefulWidget {
   final double latitude;
@@ -20,14 +19,13 @@ class FormSurvey extends StatefulWidget {
   final String price;
   final String productCode;
 
-  const FormSurvey({
-    super.key,
-    required this.latitude,
-    required this.longitude,
-    required this.tipe,
-    required this.price,
-    required this.productCode
-  });
+  const FormSurvey(
+      {super.key,
+      required this.latitude,
+      required this.longitude,
+      required this.tipe,
+      required this.price,
+      required this.productCode});
   @override
   _FormSurveyState createState() => _FormSurveyState();
 }
