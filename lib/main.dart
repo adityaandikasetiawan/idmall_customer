@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:idmall/pages/navigation.dart';
 import 'package:idmall/service/coverage_area.dart';
 import 'package:idmall/service/notification_controller.dart';
@@ -172,7 +173,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     // return const CheckSharedPreferences();
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Idmall',
       home: widget.token == '' ? const Splash() : const NavigationScreen(),

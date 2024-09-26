@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:idmall/config/config.dart';
+import 'package:idmall/pages/feedback.dart';
 import 'package:idmall/pages/helpcenter.dart';
 import 'package:idmall/pages/login.dart';
 import 'package:idmall/pages/settings.dart';
@@ -254,6 +255,31 @@ class _AccountState extends State<Account> {
                   );
                 },
               ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.grey, width: 1),
+                  ),
+                  child: const Icon(Icons.move_to_inbox_rounded),
+                ),
+                title: const Text('Saran & Masukkan'),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                ), // Icon panah ke kanan
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FeedbackPage(),
+                    ),
+                  );
+                },
+              ),
+
               const SizedBox(height: 20),
               Align(
                 alignment: Alignment.center,
