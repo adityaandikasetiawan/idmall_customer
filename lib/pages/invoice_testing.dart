@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:idmall/pages/navigation.dart';
 import 'package:intl/intl.dart';
 
@@ -10,12 +11,14 @@ class InvoicePage extends StatefulWidget {
   final String bankName;
   final String typePayment;
   final String total;
+  final String paymentCode;
   const InvoicePage({
     super.key,
     required this.taskid,
     required this.bankName,
     required this.total,
     required this.typePayment,
+    required this.paymentCode,
   });
 
   @override
@@ -56,6 +59,14 @@ class _InvoicePageState extends State<InvoicePage> {
     );
   }
 
+  void _copyToClipboard() {
+    Clipboard.setData(ClipboardData(text: widget.paymentCode)).then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Copied to clipboard!")),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +101,16 @@ class _InvoicePageState extends State<InvoicePage> {
                   ),
                   ListTile(
                     title: const Text('Nomor Rekening'),
-                    subtitle: Text(widget.taskid),
+                    subtitle: Row(
+                      children: [
+                        Text(widget.paymentCode),
+                        IconButton(
+                          icon: Icon(Icons.copy),
+                          onPressed: _copyToClipboard,
+                          tooltip: 'Copy to clipboard',
+                        ),
+                      ],
+                    ),
                   ),
                   ListTile(
                     title: const Text('Total Pembayaran'),

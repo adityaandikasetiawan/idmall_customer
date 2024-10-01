@@ -1,4 +1,4 @@
-// ignore_for_file: empty_catches, use_build_context_synchronously
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -19,7 +19,6 @@ class SearchLocation extends StatefulWidget {
 class _SearchLocationState extends State<SearchLocation> {
   List<String> _predictions = [];
   final TextEditingController _searchController = TextEditingController();
-  Dio dio = Dio();
 
   @override
   void initState() {
@@ -30,11 +29,13 @@ class _SearchLocationState extends State<SearchLocation> {
   }
 
   Future<void> _getAutocompleteResults(String pattern) async {
+    Dio dio = Dio();
     const String apiKey = googleKey.googleApiKey;
     const String baseURL = config.googleAutocompleteUrl;
     final String inputParam = 'input=${Uri.encodeComponent(pattern)}';
     const String apiKeyParam = 'key=$apiKey';
-    final String requestURL = '$baseURL?$inputParam&$apiKeyParam';
+    const String language = 'language=id';
+    final String requestURL = '$baseURL?$inputParam&$language&$apiKeyParam';
 
     try {
       if (pattern.isNotEmpty || widget.placesName != "") {
@@ -46,10 +47,13 @@ class _SearchLocationState extends State<SearchLocation> {
               .toList();
         });
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Error fetching autocomplete results: $e');
+    }
   }
 
   Future<LatLng?> _getPlaceDetails(String placeName) async {
+    final Dio dio = Dio();
     const String apiKey = googleKey.googleApiKey;
     const String baseURL = config.googleGeolocationURL;
     final String addressParam = 'address=${Uri.encodeComponent(placeName)}';
@@ -60,14 +64,28 @@ class _SearchLocationState extends State<SearchLocation> {
     try {
       final response = await dio.get(requestURL);
 
-      // Ambil latitude dan longitude dari response
+      String zipcode = "";
+
       final double latitude =
           response.data['results'][0]['geometry']['location']['lat'];
       final double longitude =
           response.data['results'][0]['geometry']['location']['lng'];
-      Navigator.pop(context,
-          {'latitude': latitude, 'longitude': longitude, 'name': placeName});
-    } catch (e) {}
+      for (var result in response.data['results']) {
+        for (var component in result['address_components']) {
+          if (component['types'].contains('postal_code')) {
+            zipcode = component['long_name'];
+          }
+        }
+      }
+      Navigator.pop(context, {
+        'latitude': latitude,
+        'longitude': longitude,
+        'name': placeName,
+        'zipcode': zipcode
+      });
+    } catch (e) {
+      print('Error fetching place details: $e');
+    }
     return null;
   }
 
@@ -107,10 +125,14 @@ class _SearchLocationState extends State<SearchLocation> {
         desiredAccuracy: LocationAccuracy.high);
   }
 
-  Future<String> getPlaceName(double latitude, double longitude) async {
+  Future<Map<String, dynamic>> getPlaceName(
+      double latitude, double longitude) async {
     const apiKey = googleKey.googleApiKey;
     final url =
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey';
+
+    final dio = Dio();
+    String zipcode = "";
 
     try {
       final response = await dio.get(url);
@@ -118,12 +140,24 @@ class _SearchLocationState extends State<SearchLocation> {
         final decodedData = response.data;
         final results = decodedData['results'];
         if (results.isNotEmpty) {
-          return results[0]['formatted_address'];
+          for (var result in results) {
+            for (var component in result['address_components']) {
+              if (component['types'].contains('postal_code')) {
+                zipcode = component['long_name'];
+              }
+            }
+          }
+          return {
+            'placeName': results[0]['formatted_address'],
+            'zipcode': zipcode
+          };
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Error getting place name: $e');
+    }
 
-    return 'Unknown place';
+    return {};
   }
 
   Future<Map<String, dynamic>> getCurrentLocation2() async {
@@ -131,6 +165,7 @@ class _SearchLocationState extends State<SearchLocation> {
     const url =
         'https://www.googleapis.com/geolocation/v1/geolocate?key=$apiKey';
 
+    final dio = Dio();
     try {
       final response = await dio.post(url);
       Position position = await Geolocator.getCurrentPosition(
@@ -142,12 +177,19 @@ class _SearchLocationState extends State<SearchLocation> {
         double latitude = position.latitude;
         double longitude = position.longitude;
 
-        getPlaceName(latitude, longitude).then(
-          (String placeName) => Navigator.pop(
+        getPlaceName(latitude, longitude).then((
+          Map<String, dynamic> object,
+        ) {
+          Navigator.pop(
             context,
-            {'latitude': latitude, 'longitude': longitude, 'name': placeName},
-          ),
-        );
+            {
+              'latitude': latitude,
+              'longitude': longitude,
+              'name': object['placeName'],
+              'zipcode': object['zipcode'],
+            },
+          );
+        });
         return response.data['location'];
       } else {
         throw Exception('Failed to get current location');
@@ -162,7 +204,7 @@ class _SearchLocationState extends State<SearchLocation> {
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: CircleAvatar(
             backgroundColor: Colors.grey[400],
             child: const Icon(
@@ -176,13 +218,19 @@ class _SearchLocationState extends State<SearchLocation> {
           style: TextStyle(color: Colors.black54),
         ),
         actions: [
-          CircleAvatar(
-            backgroundColor: Colors.grey[400],
-            child: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.close),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: CircleAvatar(
+              backgroundColor: Colors.grey[400],
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                  Icons.close,
+                  size: 16,
+                ),
+              ),
             ),
           )
         ],
@@ -199,20 +247,21 @@ class _SearchLocationState extends State<SearchLocation> {
                 },
                 textInputAction: TextInputAction.search,
                 decoration: InputDecoration(
-                    hintText: "Search your location...",
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Icon(
-                        Icons.location_pin,
-                        color: Colors.grey[400],
-                      ),
+                  hintText: "Search your location...",
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Icon(
+                      Icons.location_pin,
+                      color: Colors.grey[400],
                     ),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        _searchController.clear();
-                      },
-                      icon: const Icon(Icons.close),
-                    )),
+                  ),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                    icon: const Icon(Icons.close),
+                  ),
+                ),
               ),
             ),
           ),

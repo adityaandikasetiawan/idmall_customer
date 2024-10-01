@@ -33,10 +33,12 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
   List<PaymentMethodModel> paymentMethodListBank = [];
   List<PaymentMethodModelOutlet> paymentMethodListOutlet = [];
   final oCcy = NumberFormat("#,##0", "en_US");
-  String? vat;
-  String? monthly_price;
-  String? total;
-  String? installation_fee;
+  String vat = "";
+  String monthly_price = "";
+  String total = "";
+  String installation_fee = "";
+  String paid = "";
+  String remain = "";
 
   Future<void> getPaymentMethod() async {
     final prefs = await SharedPreferences.getInstance();
@@ -46,7 +48,8 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
       "${config.backendBaseUrl}/payment-method",
       options: Options(headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
+        "Cache-Control": "no-cache",
       }),
     );
     for (var ele in response.data['data']['bank']) {
@@ -60,6 +63,7 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
   }
 
   Future<void> getCart() async {
+    try {} catch (e) {}
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? "";
     final dio = Dio();
@@ -67,7 +71,8 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
       "${config.backendBaseUrl}/transaction/ca/${widget.taskid}",
       options: Options(headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
+        "Cache-Control": "no-cache",
       }),
     );
     var result2 = response2.data['data'][0];
@@ -78,6 +83,8 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
       installation_fee = result2['Installation'] != null
           ? oCcy.format(result2['Installation']).replaceAll(",", ".")
           : '0';
+      paid = oCcy.format(result2['Payment']).replaceAll(",", ".");
+      remain = oCcy.format(result2['AR_Remain']).replaceAll(",", ".");
     });
   }
 
@@ -170,6 +177,40 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                 ],
               ),
               const SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Terbayar:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    paid,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Sisa:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    remain,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -272,6 +313,8 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                 "Authorization": "Bearer $token"
               }),
             );
+            String paymentCode = response3.data['data']['payment_code'];
+
             if (response3.statusCode == 200) {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -280,6 +323,7 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                     bankName: bankName,
                     total: total!,
                     typePayment: typePayment,
+                    paymentCode: paymentCode,
                   ),
                 ),
               );

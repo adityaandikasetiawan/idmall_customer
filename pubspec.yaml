@@ -80,6 +80,7 @@ dependencies:
   dots_indicator: ^2.1.2
   url_launcher: ^6.2.6
   flutter_treeview: ^1.0.7+1
+  shimmer: ^3.0.0
 
 
 

@@ -18,14 +18,19 @@ class FormSurvey extends StatefulWidget {
   final String tipe;
   final String price;
   final String productCode;
+  final String address;
+  final String zipcode;
 
-  const FormSurvey(
-      {super.key,
-      required this.latitude,
-      required this.longitude,
-      required this.tipe,
-      required this.price,
-      required this.productCode});
+  const FormSurvey({
+    super.key,
+    required this.latitude,
+    required this.longitude,
+    required this.tipe,
+    required this.price,
+    required this.productCode,
+    required this.address,
+    required this.zipcode,
+  });
   @override
   _FormSurveyState createState() => _FormSurveyState();
 }
@@ -63,7 +68,6 @@ class _FormSurveyState extends State<FormSurvey> {
   @override
   void initState() {
     super.initState();
-    print("code: ${widget.productCode}");
     getNameUser();
   }
 
@@ -71,6 +75,7 @@ class _FormSurveyState extends State<FormSurvey> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    _installationAddressController.text = widget.address;
     String fullName = _customerNameController.text;
     String address = _installationAddressController.text;
     String phone = _phoneNumberController.text;

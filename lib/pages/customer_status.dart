@@ -94,17 +94,18 @@ class _CustomerStatusState extends State<CustomerStatus> {
       final prefs = await SharedPreferences.getInstance();
       final String token = prefs.getString('token') ?? "";
       final dio = Dio();
-      final response = await dio.get(
-          "${config.backendBaseUrl}/sales/detail-status-customer",
-          options: Options(headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer $token",
-            "Cache-Control": "no-cache"
-          }),
-          data: {
+      final response =
+          await dio.get("${config.backendBaseUrl}/sales/detail-status-customer",
+              options: Options(headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer $token",
+                "Cache-Control": "no-cache"
+              }),
+              data: {
             "status": widget.status,
             "task_id": widget.taskid,
           });
+      print(response.data['data']);
       setState(() {
         createdDate = dateFormatter.format(
             DateTime.tryParse(response.data['data'][0]['Created_Date'])!);

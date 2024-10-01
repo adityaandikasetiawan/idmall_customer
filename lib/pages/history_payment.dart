@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:idmall/models/payment_history_list.dart';
+import 'package:idmall/pages/history_payment_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:intl/intl.dart';
@@ -25,6 +26,7 @@ class _HistoryPaymentState extends State<HistoryPayment> {
   Future<void> getHistoryPayment() async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? "";
+
     final dio = Dio();
     final response = await dio.get(
       "${config.backendBaseUrl}/customer/billing/histories",
@@ -71,7 +73,17 @@ class _HistoryPaymentState extends State<HistoryPayment> {
                           trailing: Text(
                             "Rp. ${oCcy.format(paymentHistory[index].monthlyPrice).toString().replaceAll(",", ".")}",
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HistoryPaymentDetail(
+                                  taskid: "",
+                                  periode: paymentHistory[index].periode,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       );
                     },

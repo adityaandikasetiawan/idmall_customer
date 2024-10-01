@@ -11,8 +11,15 @@ import 'package:flutter/material.dart';
 class ProductList extends StatefulWidget {
   final double latitude;
   final double longitude;
-  const ProductList(
-      {super.key, required this.longitude, required this.latitude});
+  final String address;
+  final String zipcode;
+  const ProductList({
+    super.key,
+    required this.longitude,
+    required this.latitude,
+    required this.address,
+    required this.zipcode,
+  });
 
   @override
   State<ProductList> createState() => _ProductListState();
@@ -71,12 +78,13 @@ class _ProductListState extends State<ProductList> {
       "${config.backendBaseUrlProd}/common/products",
       queryParameters: {
         "product_type": "NORMAL",
-        "product_query": "Retail",
+        "customer_type": "RETAIL",
         "region": proviceName
       },
       options: Options(headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
+        "Cache-Control": "no-cache",
       }),
     );
 
@@ -85,8 +93,6 @@ class _ProductListState extends State<ProductList> {
           .map((ele) => Product.fromJson(ele))
           .toList();
     });
-
-
   }
 
   @override
@@ -239,7 +245,9 @@ class _ProductListState extends State<ProductList> {
                             longitude: widget.longitude,
                             tipe: tipe,
                             price: price,
-                            productCode: productCode
+                            productCode: productCode,
+                            address: widget.address,
+                            zipcode: widget.zipcode,
                           )));
                 },
                 style: ElevatedButton.styleFrom(

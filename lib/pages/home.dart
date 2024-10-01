@@ -38,6 +38,7 @@ class _HomeState extends State<Home> {
   String? billing = "";
   String? dueDate = "";
   String dataUsed = "";
+  String fullDueDate = "";
   bool isDueDateActive = false;
 
   final oCcy = NumberFormat("#,##0", "en_US");
@@ -93,6 +94,8 @@ class _HomeState extends State<Home> {
         }),
       );
 
+      print(response.data['data']);
+
       final response2 = await dio.get(
         "${config.backendBaseUrl}/customer/billing/due",
         options: Options(headers: {
@@ -139,13 +142,16 @@ class _HomeState extends State<Home> {
             points = response4.data['data']['Points'];
             isDueDateActive = true;
             billStatus = response4.data['data']['Bill_Status'] ?? "";
-            billing = oCcy.format(response4.data['data']['Total_Payment']);
+            billing = oCcy.format(response4.data['data']['AR_Remain']);
             int number = response4.data['data']['GB_in'];
             double formattedNumber = number.toDouble();
             dataUsed = formattedNumber.toStringAsFixed(2);
             DateTime dueDates =
                 DateTime.tryParse(response4.data['data']['Period'] + "-01")!;
             dueDate = DateFormat('MMM, yyyy').format(dueDates);
+            DateTime fullDueDates =
+                DateTime.tryParse(response4.data['data']['Due_Date'])!;
+            fullDueDate = DateFormat('dd MMMM yyyy').format(fullDueDates);
           },
         );
       }
@@ -563,6 +569,20 @@ class _HomeState extends State<Home> {
                                         ],
                                       ),
                                     ),
+                                    billStatus == 'Tagihan'
+                                        ? Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 5.0),
+                                            child: Text(
+                                              "Bayar tagihan Anda sebelum $fullDueDate",
+                                              style: const TextStyle(
+                                                fontFamily: "Roboto",
+                                                fontSize: 8,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          )
+                                        : const Text(""),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16.0),
@@ -656,6 +676,13 @@ class _HomeState extends State<Home> {
                                       ],
                                     ),
                                   ),
+                                  billStatus == 'Tagihan'
+                                      ? const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 5.0),
+                                          child: Text(""),
+                                        )
+                                      : const Text(""),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16.0),
@@ -711,7 +738,7 @@ class _HomeState extends State<Home> {
                 status == "QUOTATION" || status == "PENDING_PAYMENT_MOBILE"
                     ? GestureDetector(
                         onTap: () {
-                          if (status == "QUOATATION") {
+                          if (status == "QUOTATION") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(

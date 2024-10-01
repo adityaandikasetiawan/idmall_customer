@@ -14,8 +14,11 @@ import 'package:geolocator/geolocator.dart';
 class UpgradeDowngradeDetail extends StatefulWidget {
   final String task;
   final String sid;
-  const UpgradeDowngradeDetail(
-      {super.key, required this.task, required this.sid});
+  const UpgradeDowngradeDetail({
+    super.key,
+    required this.task,
+    required this.sid,
+  });
 
   @override
   State<UpgradeDowngradeDetail> createState() => _UpgradeDowngradeDetailState();

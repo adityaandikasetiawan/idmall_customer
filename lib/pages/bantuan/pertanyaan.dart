@@ -54,7 +54,7 @@ class _PertanyaanPageState extends State<PertanyaanPage> {
       const FAQItem(
         question: 'Bagaimana cara berlangganan IdPlay?',
         answer:
-            'Pendaftaran layanan IdPlay dapat dilakukan dengan beberapa cara.\n• Daftar Online di website IdPlay.\n• Menghubungi Hotline di 08111520938\n• Melalui whatsapp representatif IdPlay di area Anda.',
+            'Pendaftaran layanan IdPlay dapat dilakukan dengan beberapa cara.\n• Daftar Online di website IdPlay.\n• Menghubungi Hotline di 082289986477\n• Melalui whatsapp representatif IdPlay di area Anda.',
       ),
       const FAQItem(
         question: 'Apakah ada biaya Instalasi jika ingin berlangganan?',
@@ -104,7 +104,7 @@ class _PertanyaanPageState extends State<PertanyaanPage> {
       const FAQItem(
         question: 'Harga & Paket IdPlay apakah sudah termasuk pajak?',
         answer:
-            'Paket & Harga yang tertera pada brochure/ flyer IdPlay merupakan harga Nett (sudah termasuk PPN 10%)',
+            'Paket & Harga yang tertera pada brochure/ flyer IdPlay merupakan harga Nett (harga belum termasuk PPN 11%)',
       ),
       const FAQItem(
         question:

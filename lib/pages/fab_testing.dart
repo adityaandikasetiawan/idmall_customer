@@ -321,8 +321,10 @@ class _FABTestingState extends State<FABTesting> {
                   _sign = pngByteData!.buffer.asUint8List();
                   base64Image = base64Encode(_sign!);
                 }
-                FormData formData =
-                    FormData.fromMap({'signature': base64Image});
+                FormData formData = FormData.fromMap({
+                  'signature': base64Image,
+                  "type": "AUTOGRAPH",
+                });
                 FormData formData2 = FormData.fromMap({
                   'ktp': await MultipartFile.fromFile(ktpImageFile!.path,
                       filename: ktpImageFile?.path.split('/').last),
@@ -356,7 +358,9 @@ class _FABTestingState extends State<FABTesting> {
                     });
                   }
                   // ignore: unused_catch_clause
-                } on DioException catch (e) {}
+                } on DioException catch (e) {
+                  print(e);
+                }
               }
             }
           }

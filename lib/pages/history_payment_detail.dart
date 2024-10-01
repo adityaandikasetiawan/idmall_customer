@@ -9,100 +9,66 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:intl/intl.dart';
 
-class PaymentMethod extends StatefulWidget {
+class HistoryPaymentDetail extends StatefulWidget {
   final String taskid;
-  const PaymentMethod({
+  final String periode;
+  const HistoryPaymentDetail({
     super.key,
     required this.taskid,
+    required this.periode,
   });
 
   @override
-  State<PaymentMethod> createState() => _PaymentMethodState();
+  State<HistoryPaymentDetail> createState() => _PaymentMethodExistingState();
 }
 
-class _PaymentMethodState extends State<PaymentMethod> {
+class _PaymentMethodExistingState extends State<HistoryPaymentDetail> {
   @override
   void initState() {
     super.initState();
-    getPaymentMethod();
-    getCart();
+    getPaymentHistoryDetail();
   }
 
   List<PaymentMethodModel> paymentMethodListBank = [];
   List<PaymentMethodModelOutlet> paymentMethodListOutlet = [];
   final oCcy = NumberFormat("#,##0", "en_US");
-  String? vat;
-  String? monthly_price;
-  String? total;
-  String? installation_fee;
 
-  Future<void> getPaymentMethod() async {
+  String vat = "";
+  String monthly_price = "";
+  String total = "";
+  String installation_fee = "";
+  String paymentDate = "";
+  String paymentMethod = "";
+
+  Future<void> getPaymentHistoryDetail() async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? "";
     final dio = Dio();
-    final response = await dio.get(
-      "${config.backendBaseUrl}/payment-method",
-      options: Options(headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
-      }),
-    );
-    for (var ele in response.data['data']['bank']) {
-      paymentMethodListBank.add(PaymentMethodModel.fromJson(ele));
-    }
-    for (var ele2 in response.data['data']['outlet']) {
-      paymentMethodListOutlet.add(PaymentMethodModelOutlet.fromJson(ele2));
-    }
-
-    setState(() {});
-  }
-
-  Future<void> getCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
-    final dio = Dio();
-    final response2 = await dio.get(
-      "${config.backendBaseUrlProd}/transaction/ca/${widget.taskid}",
-      options: Options(headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-        "Cache-Control": "no-cache",
-      }),
-    );
+    final response2 =
+        await dio.get("${config.backendBaseUrl}/transaction/history/detail",
+            options: Options(
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer $token"
+              },
+            ),
+            data: {
+          "task_id": widget.taskid,
+          "period": "",
+        });
     var result2 = response2.data['data'][0];
-    setState(() {
-      vat = oCcy.format(result2['vat']).replaceAll(",", ".");
-      monthly_price = oCcy.format(result2['Monthly_Price']);
-      total = oCcy.format(result2['total']);
-      installation_fee = result2['Installation'] != null
-          ? oCcy.format(result2['Installation']).replaceAll(",", ".")
-          : '0';
-    });
-  }
-
-  Future<bool> createTransaction(bankCode, paymentType) async {
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
-    final dio = Dio();
-    final response3 = await dio.post(
-      "${config.backendBaseUrl}/transaction/ca/${widget.taskid}",
-      data: {
-        "task_id": widget.taskid,
-        "payment_method_code": bankCode,
-        "payment_type": paymentType,
-        "total_payment": total
+    setState(
+      () {
+        vat = oCcy.format(result2['PPN']).replaceAll(",", ".");
+        monthly_price = oCcy.format(result2['Subtotal']);
+        total = oCcy.format(result2['Total']);
+        installation_fee = result2['Installation'] != null
+            ? oCcy.format(result2['Installation']).replaceAll(",", ".")
+            : '0';
+        paymentDate = result2['Payment_Date'];
+        paymentMethod = result2['Payment_Method'];
       },
-      options: Options(headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
-      }),
     );
-
-    if (response3.statusCode == 200) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   @override
@@ -169,48 +135,58 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 ],
               ),
               const SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Tanggal Pembayaran:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "$paymentDate",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Metode Pembayaran:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "$paymentMethod",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Status:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "Terbayar",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
               const Divider(),
-              const SizedBox(height: 8.0),
-              const Text(
-                'Metode Pembayaran:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20.0),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: paymentMethodListBank.length,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return buildPaymentMethodCard(
-                    paymentMethodListBank[index].iconURL,
-                    paymentMethodListBank[index].code,
-                    paymentMethodListBank[index].name,
-                    "BANK",
-                    context,
-                    cardWidth: MediaQuery.of(context).size.width,
-                    cardHeight: 120,
-                    imageWidth: 80,
-                    imageHeight: 80,
-                  );
-                },
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: paymentMethodListOutlet.length,
-                itemBuilder: (context, index) {
-                  return buildPaymentMethodCard(
-                    paymentMethodListOutlet[index].iconURL,
-                    paymentMethodListOutlet[index].code,
-                    paymentMethodListOutlet[index].name,
-                    "OUTLET",
-                    context,
-                    cardWidth: MediaQuery.of(context).size.width,
-                    cardHeight: 120,
-                    imageWidth: 80,
-                    imageHeight: 80,
-                  );
-                },
-              ),
             ],
           ),
         ),
@@ -239,14 +215,13 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 "payment_method_code": bankCode,
                 "payment_type": typePayment,
                 "total_payment": total!.replaceAll(",", ""),
-                "status": "activation"
+                "status": "existing"
               },
               options: Options(headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer $token"
               }),
             );
-
             String paymentCode = response3.data['data']['payment_code'];
 
             if (response3.statusCode == 200) {
@@ -255,16 +230,14 @@ class _PaymentMethodState extends State<PaymentMethod> {
                   builder: (builder) => InvoicePage(
                     taskid: widget.taskid,
                     bankName: bankName,
-                    total: total ?? "0",
+                    total: total!,
                     typePayment: typePayment,
                     paymentCode: paymentCode,
                   ),
                 ),
               );
             }
-          } catch (e) {
-            print(e.toString());
-          }
+          } catch (e) {}
         },
         child: SizedBox(
           width: cardWidth,
