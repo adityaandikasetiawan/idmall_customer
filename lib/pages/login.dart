@@ -61,7 +61,10 @@ Future<dynamic> loginWithEmailPassword(payload) async {
   } else {
     final response = await dio.post(
       '${config.backendBaseUrl}/user/login',
-      data: {"email": body["email"], "password": body["password"]},
+      data: {
+        "email": body["email"],
+        "password": body["password"],
+      },
     );
     return response;
   }

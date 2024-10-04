@@ -184,7 +184,7 @@ class MapSampleState extends State<MapSample> {
                                 builder: (builder) => ProductList(
                                   latitude: _lat,
                                   longitude: _long,
-                                  address: _searchController.text!,
+                                  address: _searchController.text,
                                   zipcode: realzipcode!,
                                 ),
                               ),

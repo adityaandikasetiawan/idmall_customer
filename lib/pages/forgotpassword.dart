@@ -29,10 +29,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           "target_email": email,
         },
         options: Options(
-          headers: {
-            "Cache-Control": "no-cache"
-          }
-        )
+          headers: {"Cache-Control": "no-cache"},
+        ),
       );
 
       showDialog(

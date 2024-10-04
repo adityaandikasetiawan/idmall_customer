@@ -56,8 +56,7 @@ class Bantuan extends StatelessWidget {
 
   void _launchWhatsApp() async {
     const phoneNumber = '+6282289986477'; // Ganti dengan nomor tujuan
-    const message =
-        'Hello.'; // Pesan yang ingin dikirim
+    const message = 'Hello.'; // Pesan yang ingin dikirim
     final Uri whatsappUrl = Uri.parse(
         'whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}'); // Skema URI WhatsApp
 
@@ -129,8 +128,8 @@ class Bantuan extends StatelessWidget {
                 children: [
                   const SizedBox(height: 8),
                   Text(
-                    "${textDescription}",
-                    style: TextStyle(fontSize: 14, color: Colors.black),
+                    textDescription,
+                    style: const TextStyle(fontSize: 14, color: Colors.black),
                   ),
                   const SizedBox(height: 16),
                   // Teks button (pengaduan layanan atau lihat pertanyaan) dengan border
@@ -148,13 +147,13 @@ class Bantuan extends StatelessWidget {
                         side: const BorderSide(color: Colors.orange, width: 2),
                       ),
                       child: Text(
-                          buttonText,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                        buttonText,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
+                      ),
                     ),
                   ),
                 ],

@@ -105,7 +105,6 @@ class _CustomerStatusState extends State<CustomerStatus> {
             "status": widget.status,
             "task_id": widget.taskid,
           });
-      print(response.data['data']);
       setState(() {
         createdDate = dateFormatter.format(
             DateTime.tryParse(response.data['data'][0]['Created_Date'])!);

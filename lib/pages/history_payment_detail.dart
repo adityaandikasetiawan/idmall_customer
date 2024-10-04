@@ -94,7 +94,7 @@ class _PaymentMethodExistingState extends State<HistoryPaymentDetail> {
                 children: [
                   const Text('Pesanan:'),
                   Text(
-                    '$monthly_price',
+                    monthly_price,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -104,7 +104,7 @@ class _PaymentMethodExistingState extends State<HistoryPaymentDetail> {
                 children: [
                   const Text('Pajak(11%):'),
                   Text(
-                    '$vat',
+                    vat,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -114,7 +114,7 @@ class _PaymentMethodExistingState extends State<HistoryPaymentDetail> {
                 children: [
                   const Text('Biaya Instalasi:'),
                   Text(
-                    '$installation_fee',
+                    installation_fee,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -129,7 +129,7 @@ class _PaymentMethodExistingState extends State<HistoryPaymentDetail> {
                     ),
                   ),
                   Text(
-                    '$total',
+                    total,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -145,7 +145,7 @@ class _PaymentMethodExistingState extends State<HistoryPaymentDetail> {
                     ),
                   ),
                   Text(
-                    "$paymentDate",
+                    paymentDate,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
@@ -162,17 +162,17 @@ class _PaymentMethodExistingState extends State<HistoryPaymentDetail> {
                     ),
                   ),
                   Text(
-                    "$paymentMethod",
+                    paymentMethod,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Status:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -180,7 +180,7 @@ class _PaymentMethodExistingState extends State<HistoryPaymentDetail> {
                   ),
                   Text(
                     "Terbayar",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -214,7 +214,7 @@ class _PaymentMethodExistingState extends State<HistoryPaymentDetail> {
                 "task_id": widget.taskid,
                 "payment_method_code": bankCode,
                 "payment_type": typePayment,
-                "total_payment": total!.replaceAll(",", ""),
+                "total_payment": total.replaceAll(",", ""),
                 "status": "existing"
               },
               options: Options(headers: {
@@ -230,7 +230,7 @@ class _PaymentMethodExistingState extends State<HistoryPaymentDetail> {
                   builder: (builder) => InvoicePage(
                     taskid: widget.taskid,
                     bankName: bankName,
-                    total: total!,
+                    total: total,
                     typePayment: typePayment,
                     paymentCode: paymentCode,
                   ),

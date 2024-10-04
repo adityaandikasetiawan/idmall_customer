@@ -63,8 +63,6 @@ class _FormSurveyState extends State<FormSurvey> {
     });
   }
 
-  String? _selectedServiceType;
-
   @override
   void initState() {
     super.initState();
@@ -90,7 +88,6 @@ class _FormSurveyState extends State<FormSurvey> {
       firstName += '${explode[i]} ';
     }
     firstName = firstName.substring(0, firstName.length - 1);
-    String selectedServiceType = _selectedServiceType ?? '';
     String postalCodeType = _selectedZipCode ?? '';
     explode = postalCodeType.split('=>');
     postalCodeType = explode[0].trim();
@@ -169,7 +166,6 @@ class _FormSurveyState extends State<FormSurvey> {
 
   @override
   Widget build(BuildContext context) {
-    _selectedServiceType = widget.tipe;
     _services.text = widget.tipe;
     return Scaffold(
       appBar: AppBar(
@@ -342,42 +338,6 @@ class _FormSurveyState extends State<FormSurvey> {
           // You can add additional email validation here
           return null;
         },
-      ),
-    );
-  }
-
-  Widget _buildDropdownButtonFormField() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15.0),
-        border: Border.all(color: Colors.grey),
-      ),
-      child: DropdownButtonFormField<String>(
-        value: _selectedServiceType,
-        onChanged: (String? newValue) {
-          setState(() {
-            _selectedServiceType = newValue;
-          });
-        },
-        items: <String>[
-          'idplay Retail Up To 10 Mbps',
-          'idplay Retail Up To 20 Mbps',
-          'idplay Retail Up To 30 Mbps',
-          'idplay Retail Up To 50 Mbps',
-          'idplay Retail Up To 100 Mbps',
-          'idplay Retail Up To 200 Mbps',
-        ].map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        decoration: const InputDecoration(
-          labelText: 'Service Type',
-          contentPadding:
-              EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          border: InputBorder.none,
-        ),
       ),
     );
   }

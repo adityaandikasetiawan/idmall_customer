@@ -61,14 +61,7 @@ class _SignUpState extends State<SignUp> {
         },
       );
 
-      if (isAlreadySubscribed == "0") {
-        final verification = await dio.post(
-          "${config.backendBaseUrl}/send-verification-email",
-          data: {
-            "target_email": emailController.text,
-          },
-        );
-      }
+      if (isAlreadySubscribed == "0") {}
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -127,7 +120,6 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
-    print("$isAlreadySubscribed");
     // firstNameController.text = widget.existingUserFirstName ?? "";
     // lastNameController.text = widget.existingUserLastName ?? "";
     fullNameController.text = widget.existingUserFullName ?? "";
@@ -153,7 +145,6 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    print('widget ${widget.existingUserFirstName}');
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SingleChildScrollView(
@@ -341,6 +332,14 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                     ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    const BulletList(items: [
+                      'Panjang password minimal 8 karakter',
+                      'Password harus mengandung special character',
+                      'Password harus mengandung angka'
+                    ]),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: repeatPasswordController,
@@ -457,6 +456,49 @@ class _SignUpState extends State<SignUp> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class BulletList extends StatelessWidget {
+  final List<String> items;
+
+  const BulletList({
+    super.key,
+    required this.items,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: items.map((item) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Baseline(
+              baseline: 20.0, // Sesuaikan dengan tinggi teks
+              baselineType: TextBaseline.alphabetic,
+              child: Icon(
+                Icons.circle,
+                size: 8,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Baseline(
+                baseline: 20.0,
+                baselineType: TextBaseline.alphabetic,
+                child: Text(
+                  item,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            ),
+          ],
+        );
+      }).toList(),
     );
   }
 }

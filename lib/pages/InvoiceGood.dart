@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
 
 class TreeSelectPage extends StatefulWidget {
+  const TreeSelectPage({super.key});
+
   @override
   _TreeSelectPageState createState() => _TreeSelectPageState();
 }
@@ -47,7 +49,7 @@ class _TreeSelectPageState extends State<TreeSelectPage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              content: Container(
+              content: SizedBox(
                 width: double.maxFinite,
                 height: 400,
                 child: TreeView(
@@ -181,7 +183,7 @@ class _TreeSelectPageState extends State<TreeSelectPage> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: TreeSelectPage(),
   ));
 }

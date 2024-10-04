@@ -62,6 +62,11 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   setState(() {});
                 },
               ),
+              const BulletList(items: [
+                'Panjang password minimal 8 karakter',
+                'Password harus mengandung special character',
+                'Password harus mengandung angka'
+              ]),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
@@ -81,6 +86,34 @@ class _RegistrationFormState extends State<RegistrationForm> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class BulletList extends StatelessWidget {
+  final List<String> items;
+
+  const BulletList({required this.items});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: items.map((item) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Icon(
+              Icons.circle,
+              size: 8, // Ukuran bullet
+            ),
+            const SizedBox(width: 8), // Spasi antara bullet dan teks
+            Expanded(
+              child: Text(item),
+            ),
+          ],
+        );
+      }).toList(),
     );
   }
 }

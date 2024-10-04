@@ -25,9 +25,7 @@ class NotificationController {
         await prefs.setString(
             "token", response.data['data']['Updated_Auth_Token']);
       }
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
     // Your code goes here
   }
 
@@ -35,8 +33,6 @@ class NotificationController {
   @pragma("vm:entry-point")
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification receivedNotification) async {
-    print("bbb");
-
     // Your code goes here
   }
 

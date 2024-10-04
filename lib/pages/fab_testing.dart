@@ -358,9 +358,7 @@ class _FABTestingState extends State<FABTesting> {
                     });
                   }
                   // ignore: unused_catch_clause
-                } on DioException catch (e) {
-                  print(e);
-                }
+                } on DioException catch (e) {}
               }
             }
           }

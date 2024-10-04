@@ -62,7 +62,7 @@ class _InvoicePageState extends State<InvoicePage> {
   void _copyToClipboard() {
     Clipboard.setData(ClipboardData(text: widget.paymentCode)).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Copied to clipboard!")),
+        const SnackBar(content: Text("Copied to clipboard!")),
       );
     });
   }
@@ -105,7 +105,7 @@ class _InvoicePageState extends State<InvoicePage> {
                       children: [
                         Text(widget.paymentCode),
                         IconButton(
-                          icon: Icon(Icons.copy),
+                          icon: const Icon(Icons.copy),
                           onPressed: _copyToClipboard,
                           tooltip: 'Copy to clipboard',
                         ),

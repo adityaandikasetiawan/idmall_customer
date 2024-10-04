@@ -139,9 +139,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       await prefs.setString(
           "token", response.data['data']['Updated_Auth_Token']);
     }
-  } catch (e) {
-    print(e);
-  }
+  } catch (e) {}
 }
 
 // ignore: must_be_immutable

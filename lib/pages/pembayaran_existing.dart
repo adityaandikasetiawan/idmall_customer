@@ -136,7 +136,7 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                 children: [
                   const Text('Pesanan:'),
                   Text(
-                    '$monthly_price',
+                    monthly_price,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -146,7 +146,7 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                 children: [
                   const Text('Pajak(11%):'),
                   Text(
-                    '$vat',
+                    vat,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -156,7 +156,7 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                 children: [
                   const Text('Biaya Instalasi:'),
                   Text(
-                    '$installation_fee',
+                    installation_fee,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -171,7 +171,7 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                     ),
                   ),
                   Text(
-                    '$total',
+                    total,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -305,7 +305,7 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                 "task_id": widget.taskid,
                 "payment_method_code": bankCode,
                 "payment_type": typePayment,
-                "total_payment": total!.replaceAll(",", ""),
+                "total_payment": total.replaceAll(",", ""),
                 "status": "existing"
               },
               options: Options(headers: {
@@ -321,7 +321,7 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                   builder: (builder) => InvoicePage(
                     taskid: widget.taskid,
                     bankName: bankName,
-                    total: total!,
+                    total: total,
                     typePayment: typePayment,
                     paymentCode: paymentCode,
                   ),

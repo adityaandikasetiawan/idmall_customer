@@ -5,8 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:idmall/config/google_api_key.dart' as googleKey;
-import 'dart:developer';
-import 'package:flutter/material.dart';
 
 class ProductList extends StatefulWidget {
   final double latitude;
