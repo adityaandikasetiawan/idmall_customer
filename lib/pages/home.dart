@@ -94,8 +94,6 @@ class _HomeState extends State<Home> {
         }),
       );
 
-      print(response.data['data']);
-
       final response2 = await dio.get(
         "${config.backendBaseUrl}/customer/billing/due",
         options: Options(headers: {
@@ -1114,123 +1112,126 @@ class _HomeState extends State<Home> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Penawaran Terbaru',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     // Navigasi ke halaman yang diinginkan
-                        //     Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //           builder: (context) =>
-                        //               const PenawaranPage()), // Ganti dengan halaman yang diinginkan
-                        //     );
-                        //   },
-                        //   child: const Text(
-                        //     'Lihat Semuanya',
-                        //     style: TextStyle(
-                        //       fontSize: 10,
-                        //       color: Color.fromARGB(255, 228, 99, 7),
-                        //       fontWeight: FontWeight.bold,
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                    const SizedBox(
-                        height:
-                            5), // Tambahkan jarak vertikal antara judul dan carousel
                     SizedBox(
-                      height: 280,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const DetailPage(
-                                    title: 'IdPlay Home',
-                                    price: 'Rp. 179.000',
-                                    imagePath: 'images/promo1.png',
-                                    description:
-                                        '1. Streaming Video HD Tanpa Buffering.\n2. Panggilan Video Berkualitas Tinggi.\n3. Koneksi Stabil Untuk 1-3 Perangkat.',
-                                  ),
-                                ),
-                              );
-                            },
-                            child: buildRoundedCarouselItem(
-                              title: 'IdPlay Home',
-                              price: 'Rp. 179.000',
-                              imagePath: 'images/promo1.png',
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 255, 255),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ), // Tambahkan jarak horizontal antara slide
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const DetailPage(
-                                    title: 'IdPlay Home',
-                                    price: 'Rp. 230.000',
-                                    imagePath: 'images/promo2.png',
-                                    description:
-                                        '1. Ideal untuk bisnis menengah yang membutuhkan akses cepat untuk aplikasi cloud dan video conferencing berkualitas tinggi.\n2. Bandwidth yang cukup untuk mendukung beberapa pengguna sekaligus.\n3. Dukungan teknis 24/7.',
-                                  ),
-                                ),
-                              );
-                            },
-                            child: buildRoundedCarouselItem(
-                              title: 'IdPlay Home',
-                              price: 'Rp. 230.000',
-                              imagePath: 'images/promo2.png',
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 255, 255),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ), // Tambahkan jarak horizontal antara slide
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const DetailPage(
-                                    title: 'IdPlay Home',
-                                    price: 'Rp. 270.000',
-                                    imagePath: 'images/promo3.png',
-                                    description:
-                                        '1. Direkomendasikan untuk bisnis dengan penggunaan data tinggi seperti e-commerce, video streaming, dan kolaborasi online.\n2. Kecepatan tinggi untuk mengunduh dan mengunggah file besar.\n3. Dukungan teknis prioritas 24/7.',
-                                  ),
-                                ),
-                              );
-                            },
-                            child: buildRoundedCarouselItem(
-                              title: 'IdPlay Home',
-                              price: 'Rp. 270.000',
-                              imagePath: 'images/promo3.png',
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 255, 255),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                      height: 300,
+                    )
+                    // const Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     Text(
+                    //       'Penawaran Terbaru',
+                    //       style: TextStyle(
+                    //         fontSize: 14,
+                    //         fontWeight: FontWeight.bold,
+                    //       ),
+                    //     ),
+                    //     // GestureDetector(
+                    //     //   onTap: () {
+                    //     //     // Navigasi ke halaman yang diinginkan
+                    //     //     Navigator.push(
+                    //     //       context,
+                    //     //       MaterialPageRoute(
+                    //     //           builder: (context) =>
+                    //     //               const PenawaranPage()), // Ganti dengan halaman yang diinginkan
+                    //     //     );
+                    //     //   },
+                    //     //   child: const Text(
+                    //     //     'Lihat Semuanya',
+                    //     //     style: TextStyle(
+                    //     //       fontSize: 10,
+                    //     //       color: Color.fromARGB(255, 228, 99, 7),
+                    //     //       fontWeight: FontWeight.bold,
+                    //     //     ),
+                    //     //   ),
+                    //     // ),
+                    //   ],
+                    // ),
+                    // const SizedBox(
+                    //     height:
+                    //         5), // Tambahkan jarak vertikal antara judul dan carousel
+                    // SizedBox(
+                    //   height: 280,
+                    //   child: ListView(
+                    //     scrollDirection: Axis.horizontal,
+                    //     children: [
+                    //       GestureDetector(
+                    //         onTap: () {
+                    //           Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //               builder: (context) => const DetailPage(
+                    //                 title: 'IdPlay Home',
+                    //                 price: 'Rp. 179.000',
+                    //                 imagePath: 'images/promo1.png',
+                    //                 description:
+                    //                     '1. Streaming Video HD Tanpa Buffering.\n2. Panggilan Video Berkualitas Tinggi.\n3. Koneksi Stabil Untuk 1-3 Perangkat.',
+                    //               ),
+                    //             ),
+                    //           );
+                    //         },
+                    //         child: buildRoundedCarouselItem(
+                    //           title: 'IdPlay Home',
+                    //           price: 'Rp. 179.000',
+                    //           imagePath: 'images/promo1.png',
+                    //           backgroundColor:
+                    //               const Color.fromARGB(255, 255, 255, 255),
+                    //         ),
+                    //       ),
+                    //       const SizedBox(
+                    //         width: 10,
+                    //       ), // Tambahkan jarak horizontal antara slide
+                    //       GestureDetector(
+                    //         onTap: () {
+                    //           Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //               builder: (context) => const DetailPage(
+                    //                 title: 'IdPlay Home',
+                    //                 price: 'Rp. 230.000',
+                    //                 imagePath: 'images/promo2.png',
+                    //                 description:
+                    //                     '1. Ideal untuk bisnis menengah yang membutuhkan akses cepat untuk aplikasi cloud dan video conferencing berkualitas tinggi.\n2. Bandwidth yang cukup untuk mendukung beberapa pengguna sekaligus.\n3. Dukungan teknis 24/7.',
+                    //               ),
+                    //             ),
+                    //           );
+                    //         },
+                    //         child: buildRoundedCarouselItem(
+                    //           title: 'IdPlay Home',
+                    //           price: 'Rp. 230.000',
+                    //           imagePath: 'images/promo2.png',
+                    //           backgroundColor:
+                    //               const Color.fromARGB(255, 255, 255, 255),
+                    //         ),
+                    //       ),
+                    //       const SizedBox(
+                    //         width: 10,
+                    //       ), // Tambahkan jarak horizontal antara slide
+                    //       GestureDetector(
+                    //         onTap: () {
+                    //           Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //               builder: (context) => const DetailPage(
+                    //                 title: 'IdPlay Home',
+                    //                 price: 'Rp. 270.000',
+                    //                 imagePath: 'images/promo3.png',
+                    //                 description:
+                    //                     '1. Direkomendasikan untuk bisnis dengan penggunaan data tinggi seperti e-commerce, video streaming, dan kolaborasi online.\n2. Kecepatan tinggi untuk mengunduh dan mengunggah file besar.\n3. Dukungan teknis prioritas 24/7.',
+                    //               ),
+                    //             ),
+                    //           );
+                    //         },
+                    //         child: buildRoundedCarouselItem(
+                    //           title: 'IdPlay Home',
+                    //           price: 'Rp. 270.000',
+                    //           imagePath: 'images/promo3.png',
+                    //           backgroundColor:
+                    //               const Color.fromARGB(255, 255, 255, 255),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                   ],
                 ),
 
