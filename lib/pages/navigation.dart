@@ -8,6 +8,7 @@ import 'package:idmall/pages/home.dart';
 import 'package:idmall/pages/account.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:idmall/pages/new_home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 
@@ -35,7 +36,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     getDetailCustomer().then((_) {
       setState(() {
         pages = [
-          const Home(),
+          const NewHomeScreen(),
           HistoryList(
             customerId: _customerid,
             status: _status,
