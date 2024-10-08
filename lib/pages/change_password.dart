@@ -139,6 +139,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       );
 
                       Future.delayed(const Duration(seconds: 3), () {
+                        // ignore: use_build_context_synchronously
                         Navigator.pop(context);
                       });
                     } else {
@@ -171,7 +172,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   void saveChanges(String email, String newPassword) async {
     try {
       if (FirebaseAuth.instance.currentUser != null) {
-        AuthMethods authMethods = AuthMethods();
+        AuthService authMethods = AuthService();
         await authMethods.reauthenticateUser(email, "currentPassword");
         await FirebaseAuth.instance.currentUser!.updatePassword(newPassword);
       } else {}

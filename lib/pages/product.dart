@@ -237,16 +237,19 @@ class _ProductListState extends State<ProductList> {
               widthFactor: 3 / 4,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
                       builder: (builder) => FormSurvey(
-                            latitude: widget.latitude,
-                            longitude: widget.longitude,
-                            tipe: tipe,
-                            price: price,
-                            productCode: productCode,
-                            address: widget.address,
-                            zipcode: widget.zipcode,
-                          )));
+                        latitude: widget.latitude,
+                        longitude: widget.longitude,
+                        tipe: tipe,
+                        price: price,
+                        productCode: productCode,
+                        address: widget.address,
+                        zipcode: widget.zipcode,
+                      ),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,

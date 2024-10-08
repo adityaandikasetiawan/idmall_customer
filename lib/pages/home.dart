@@ -1,19 +1,18 @@
 // ignore_for_file: empty_catches, avoid_print, use_build_context_synchronously, deprecated_member_use
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:idmall/controller/dashboard.controller.dart';
 import 'package:idmall/models/customer_by_email.dart';
-import 'package:idmall/pages/details.dart';
+import 'package:idmall/models/product_flyer.dart';
+import 'package:idmall/pages/details_product.dart';
 import 'package:idmall/pages/fab_testing.dart';
 import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/pembayaran_existing.dart';
 import 'package:idmall/pages/pembayaran_testing.dart';
 import 'package:idmall/pages/upgrade_downgrade_detail.dart';
-import 'package:idmall/service/coverage_area.dart';
-import 'package:idmall/widget/widget_support.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:idmall/config/config.dart' as config;
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -23,140 +22,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String? name;
-  String? fullName;
-  String greeting = '';
-  int points = 0;
-  String vouchers = '1';
-  String? package = "";
-  String? basePackage = "";
-  String? customerID = "";
-  String? status = "";
-  String billStatus = "";
-
-  //endpoint h-7 billing
-  String? billing = "";
-  String? dueDate = "";
-  String dataUsed = "";
-  String fullDueDate = "";
-  bool isDueDateActive = false;
+  final DashboardController dashboardController =
+      Get.put(DashboardController());
 
   final oCcy = NumberFormat("#,##0", "en_US");
   List<CustomerListByEmail> customerListEmails = [];
 
+  final TextEditingController _keyword = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    setGreeting();
-    getUserName();
-    dashboardData();
-  }
-
-  void setGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) {
-      setState(() {
-        greeting = 'Pagi';
-      });
-    } else if (hour < 18) {
-      setState(() {
-        greeting = 'Siang';
-      });
-    } else {
-      setState(() {
-        greeting = 'Malam';
-      });
-    }
-  }
-
-  Future<void> getUserName() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? fullNames = prefs.getString("fullName");
-    List<String> nameParts = fullNames!.split(" ");
-
-    setState(() {
-      name = nameParts[0];
-      fullName = fullNames;
-    });
-  }
-
-  Future<void> dashboardData() async {
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      final String token = prefs.getString('token') ?? "";
-
-      final response = await dio.get(
-        "${config.backendBaseUrl}/customer/dashboard/detail-customer",
-        options: Options(headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "Cache-Control": "no-cache"
-        }),
-      );
-
-      final response2 = await dio.get(
-        "${config.backendBaseUrl}/customer/billing/due",
-        options: Options(headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "Cache-Control": "no-cache"
-        }),
-      );
-
-      final response3 = await dio.get(
-        "${config.backendBaseUrl}/customer/billing/list",
-        options: Options(headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "Cache-Control": "no-cache"
-        }),
-      );
-
-      for (var ele in response3.data['data']) {
-        customerListEmails.add(CustomerListByEmail.fromJson(ele));
-      }
-
-      if (response.data['data'].length > 0) {
-        await prefs.setString(
-            "token", response.data['data']['Updated_Auth_Token']);
-
-        final response4 = await dio.get(
-          "${config.backendBaseUrl}/customer/dashboard",
-          options: Options(headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer $token"
-          }),
-          data: {
-            "task_id": response.data['data']['Task_ID'],
-          },
-        );
-
-        setState(
-          () {
-            package = response4.data['data']['Product_Name'] ?? "";
-            basePackage = response4.data['data']['Product_Code'] ?? "";
-            customerID = response4.data['data']['Task_ID'] ?? "";
-            status = response.data['data']['Status'] ?? "";
-            points = response4.data['data']['Points'];
-            isDueDateActive = true;
-            billStatus = response4.data['data']['Bill_Status'] ?? "";
-            billing = oCcy.format(response4.data['data']['AR_Remain']);
-            int number = response4.data['data']['GB_in'];
-            double formattedNumber = number.toDouble();
-            dataUsed = formattedNumber.toStringAsFixed(2);
-            DateTime dueDates =
-                DateTime.tryParse(response4.data['data']['Period'] + "-01")!;
-            dueDate = DateFormat('MMM, yyyy').format(dueDates);
-            DateTime fullDueDates =
-                DateTime.tryParse(response4.data['data']['Due_Date'])!;
-            fullDueDate = DateFormat('dd MMMM yyyy').format(fullDueDates);
-          },
-        );
-      }
-    } on DioException catch (e) {
-      print(e.message);
-      print(e.error);
-    }
+    // dashboardController.fetchDashboardData();
+    // dashboardController.fetchTaskIdByEmail();
   }
 
   @override
@@ -189,7 +67,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 2,
+                      height: MediaQuery.of(context).size.height / 1.5,
                       child: ListView(
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -207,8 +85,10 @@ class _HomeState extends State<Home> {
                                 // Tindakan saat bagian pertama ditekan
                               },
                               leading: const Icon(Icons.account_circle),
-                              title: Text("$fullName"),
-                              subtitle: Text("$status - $basePackage"),
+                              title: Text(dashboardController
+                                  .dashboardData.value.customerName),
+                              subtitle: Text(
+                                  "${dashboardController.dashboardData.value.taskId} - ${dashboardController.dashboardData.value.status}"),
                             ),
                           ),
                           const SizedBox(
@@ -232,7 +112,8 @@ class _HomeState extends State<Home> {
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("$customerID"),
+                                Text(dashboardController
+                                    .dashboardData.value.taskId),
                                 const Row(
                                   children: [
                                     Text(
@@ -251,82 +132,72 @@ class _HomeState extends State<Home> {
                                 )
                               ],
                             ),
-                            subtitle: Text("$fullName"),
+                            subtitle: Text(dashboardController
+                                .dashboardData.value.customerName),
                           ),
                           const Divider(),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height / 4,
+                            height: 40,
+                            child: Container(
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: TextField(
+                                controller: _keyword,
+                                decoration: InputDecoration(
+                                  prefixIcon: const Icon(
+                                    Icons.search_rounded,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: const Icon(
+                                      Icons.clear_rounded,
+                                    ),
+                                    onPressed: () => {
+                                      setState(() {
+                                        _keyword.clear();
+                                        dashboardController
+                                            .filterContractList(_keyword.text);
+                                      })
+                                    },
+                                  ),
+                                  hintText: 'Pencarian...',
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (text) {
+                                  setState(() {
+                                    dashboardController
+                                        .filterContractList(text);
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height,
                             child: ListView.builder(
-                              itemCount: customerListEmails.length,
+                              itemCount: dashboardController
+                                  .filteredCustomerIdList.length,
                               itemBuilder: (context, index) {
+                                CustomerListByEmail customerList =
+                                    dashboardController
+                                        .filteredCustomerIdList[index];
                                 return ListTile(
                                   onTap: () async {
-                                    final prefs =
-                                        await SharedPreferences.getInstance();
-                                    String token =
-                                        prefs.getString('token') ?? "";
-
-                                    final response = await dio.get(
-                                      "${config.backendBaseUrl}/billing/get",
-                                      options: Options(headers: {
-                                        "Content-Type": "application/json",
-                                        "Authorization": "Bearer $token",
-                                        "Cache-Control": "no-cache"
-                                      }),
-                                      data: {
-                                        "task_id":
-                                            customerListEmails[index].customerId
-                                      },
-                                    );
-                                    if (response.data['data'].length > 0) {
-                                      await prefs.setString(
-                                        "token",
-                                        response.data['data'][0]
-                                            ['Updated_Auth_Token'],
-                                      );
-                                      await prefs.setString(
-                                        "fullName",
-                                        response.data['data'][0]
-                                            ['Customer_Sub_Name'],
-                                      );
-                                      getUserName();
-                                      setState(
-                                        () {
-                                          package = response.data['data'][0]
-                                                  ['Package_Name'] ??
-                                              "";
-                                          basePackage = response.data['data'][0]
-                                                  ['Base_Package_Name'] ??
-                                              "";
-                                          customerID = response.data['data'][0]
-                                                  ['Task_ID'] ??
-                                              "";
-                                          status = response.data['data'][0]
-                                                  ['Status'] ??
-                                              "";
-                                          // isDueDateActive = true;
-                                          // billing = oCcy.format(response
-                                          //     .data['data'][0]['AR_Val']);
-                                          // DateTime dueDates = DateTime.tryParse(
-                                          //     response.data['data'][0]
-                                          //         ['Due_Date'])!;
-                                          // dueDate = DateFormat('MMMM, yyyy')
-                                          //     .format(dueDates);
-                                        },
-                                      );
-                                    }
+                                    dashboardController
+                                        .updateToken(customerList.customerId);
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
                                           title: const Text("Success"),
                                           content: Text(
-                                              "Berhasil pindah ke CID ${customerListEmails[index].customerId}"),
+                                              "Berhasil pindah ke CID ${customerList.customerId}"),
                                           actions: <Widget>[
                                             TextButton(
                                               onPressed: () {
-                                                Navigator.of(context).popUntil(
-                                                    (route) => route.isFirst);
+                                                Get.back();
                                               },
                                               child: const Text("OK"),
                                             ),
@@ -340,12 +211,11 @@ class _HomeState extends State<Home> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                          customerListEmails[index].customerId),
+                                      Text(customerList.customerId),
                                     ],
                                   ),
                                   subtitle: Text(
-                                      "${customerListEmails[index].name} - ${customerListEmails[index].status}"),
+                                      "${customerList.name} - ${customerList.status}"),
                                 );
                               },
                             ),
@@ -359,146 +229,93 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "$greeting, ",
-                              style: AppWidget.boldTextFeildStyle()
-                                  .copyWith(color: Colors.black, fontSize: 15),
-                            ),
-                            TextSpan(
-                              text: name ?? "Guest",
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: Color.fromARGB(
-                                  255,
-                                  0,
-                                  0,
-                                  0,
-                                ),
-                              ),
-                            ),
-                          ],
+                  Obx(() {
+                    if (dashboardController.isLoading.value) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          width: 100.0,
+                          height: 5.0,
+                          color: Colors.grey[300],
                         ),
-                      ),
-                      const Icon(Icons.arrow_drop_down),
-                    ],
-                  ),
+                      );
+                    } else {
+                      return Row(
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: dashboardController
+                                      .dashboardData.value.customerName,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.white,
+                                    fontFamily: "Inter",
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.white,
+                          ),
+                        ],
+                      );
+                    }
+                  }),
                   const SizedBox(
                     height: 10,
                   ),
-                  Text(
-                    "$points pts",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w300,
-                    ),
+                  Obx(
+                    () {
+                      if (dashboardController.isLoading.value) {
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey.shade300,
+                          highlightColor: Colors.grey.shade100,
+                          child: Container(
+                            width: 50.0,
+                            height: 5.0,
+                            color: Colors.grey[300],
+                          ),
+                        );
+                      } else {
+                        return Text(
+                          "${dashboardController.dashboardData.value.points} pts",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Inter",
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),
             ),
-            // Row(
-            //   children: [
-            //     GestureDetector(
-            //       onTap: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //       builder: (context) => const NotificationPage()),
-            // );
-            //       },
-            //       child: Container(
-            //         decoration: BoxDecoration(
-            //           borderRadius: BorderRadius.circular(15),
-            //           border: Border.all(
-            //             color: Colors.black,
-            //           ),
-            //           boxShadow: const [
-            //             BoxShadow(
-            //               color: Color.fromARGB(255, 0, 0, 0),
-            //             ),
-            //             BoxShadow(
-            //               color: Color.fromARGB(255, 255, 255, 255),
-            //               spreadRadius: 7.0,
-            //               blurRadius: 12.0,
-            //             ),
-            //           ],
-            //         ),
-            // child: IconButton(
-            //   icon: const Icon(Icons.notifications),
-            //   color: const Color.fromARGB(255, 0, 0, 0),
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //           builder: (context) => const NotificationPage()),
-            //     );
-            //   },
-            // ),
-            //       ),
-            //     ),
-            //     const SizedBox(width: 10),
-            //     GestureDetector(
-            //       onTap: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => InvoicePage(
-            //           taskid: customerID ?? "",
-            //           bankName: "",
-            //           total: "",
-            //           typePayment: "",
-            //         ),
-            //   ),
-            // );
-            //       },
-            //       child: Container(
-            //         decoration: BoxDecoration(
-            //           borderRadius: BorderRadius.circular(15),
-            //           border: Border.all(
-            //             color: Colors.black,
-            //           ),
-            //           boxShadow: const [
-            //             BoxShadow(
-            //               color: Color.fromARGB(255, 0, 0, 0),
-            //             ),
-            //             BoxShadow(
-            //               color: Color.fromARGB(255, 255, 255, 255),
-            //               spreadRadius: 7.0,
-            //               blurRadius: 12.0,
-            //             ),
-            //           ],
-            //         ),
-            // child: IconButton(
-            //   icon: const Icon(Icons.shopping_cart),
-            //   color: const Color.fromARGB(255, 0, 0, 0),
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => InvoicePage(
-            //           taskid: customerID ?? "",
-            //           bankName: "",
-            //           total: "",
-            //           typePayment: "",
-            //         ),
-            //       ),
-            //     );
-            //   },
-            // ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
           ],
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: <Color>[
+                Color(0xFFFFC107),
+                Color(0xFFFFA000),
+              ],
+            ),
+          ),
         ),
       ),
       backgroundColor: const Color.fromARGB(255, 250, 250, 255),
       body: RefreshIndicator(
-        onRefresh: dashboardData,
+        onRefresh: dashboardController.fetchDashboardData,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
@@ -506,23 +323,175 @@ class _HomeState extends State<Home> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                status == "ACTIVE" || status == "DU" || status == "FREEZE"
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PaymentMethodExisting(
-                                      taskid: "$customerID",
-                                      billStatus: billStatus,
+                Obx(
+                  () {
+                    if (dashboardController.isLoading.value) {
+                      if (["ACTIVE", "DU", "FREEZE"].contains(
+                          dashboardController.dashboardData.value.status)) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Shimmer.fromColors(
+                              baseColor: Colors.grey.shade300,
+                              highlightColor: Colors.grey.shade100,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.grey[300],
+                                ),
+                                width: 170,
+                                height: 150,
+                              ),
+                            ),
+                            Shimmer.fromColors(
+                              baseColor: Colors.grey.shade300,
+                              highlightColor: Colors.grey.shade100,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.grey[300],
+                                ),
+                                width: 170,
+                                height: 150,
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                    } else {
+                      if (["ACTIVE", "DU", "FREEZE"].contains(
+                          dashboardController.dashboardData.value.status)) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PaymentMethodExisting(
+                                        taskid: dashboardController
+                                            .dashboardData.value.taskId,
+                                        billStatus: dashboardController
+                                            .dashboardData.value.billStatus,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    image: const DecorationImage(
+                                      image: AssetImage(
+                                          'images/background_card.png'),
+                                      fit: BoxFit.cover,
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.grey.withOpacity(0.5),
                                     ),
                                   ),
-                                );
-                              },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.all(16.0),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                "Tagihan Internet",
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.check_circle,
+                                              color: Colors.green,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      dashboardController.dashboardData.value
+                                                  .billStatus ==
+                                              'Tagihan'
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5.0),
+                                              child: Text(
+                                                "Bayar tagihan Anda sebelum ${DateFormat('dd MMMM yyyy').format(DateTime.tryParse(dashboardController.dashboardData.value.dueDate)!)}",
+                                                style: const TextStyle(
+                                                  fontFamily: "Roboto",
+                                                  fontSize: 8,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            )
+                                          : const Text(""),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0),
+                                        child: Text(
+                                          "Rp ${oCcy.format(dashboardController.dashboardData.value.arRemain).replaceAll(",", ".")}",
+                                          style: const TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      const Divider(height: 1),
+                                      const SizedBox(height: 8),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              dashboardController.dashboardData
+                                                  .value.billStatus,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                            Text(
+                                              DateFormat('MMM, yyyy').format(
+                                                  DateTime.tryParse(
+                                                      dashboardController
+                                                          .dashboardData
+                                                          .value
+                                                          .dueDate)!),
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
@@ -531,13 +500,6 @@ class _HomeState extends State<Home> {
                                         'images/background_card.png'),
                                     fit: BoxFit.cover,
                                   ),
-                                  // boxShadow: [
-                                  //   BoxShadow(
-                                  //     color: Colors.grey.withOpacity(0.3),
-                                  //     blurRadius: 8,
-                                  //     offset: Offset(4, 4),
-                                  //   ),
-                                  // ],
                                   border: Border.all(
                                     color: Colors.grey.withOpacity(0.5),
                                   ),
@@ -551,7 +513,7 @@ class _HomeState extends State<Home> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              "Tagihan Internet",
+                                              "Penggunaan Bulan Ini",
                                               style: TextStyle(
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w600,
@@ -561,34 +523,50 @@ class _HomeState extends State<Home> {
                                             ),
                                           ),
                                           Icon(
-                                            Icons.check_circle,
-                                            color: Colors.green,
+                                            Icons.wifi,
+                                            color: Colors.red,
                                           ),
                                         ],
                                       ),
                                     ),
-                                    billStatus == 'Tagihan'
-                                        ? Padding(
-                                            padding: const EdgeInsets.symmetric(
+                                    dashboardController.dashboardData.value
+                                                .billStatus ==
+                                            'Tagihan'
+                                        ? const Padding(
+                                            padding: EdgeInsets.symmetric(
                                                 horizontal: 5.0),
-                                            child: Text(
-                                              "Bayar tagihan Anda sebelum $fullDueDate",
-                                              style: const TextStyle(
-                                                fontFamily: "Roboto",
-                                                fontSize: 8,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
+                                            child: Text(""),
                                           )
                                         : const Text(""),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16.0),
-                                      child: Text(
-                                        "Rp.$billing",
-                                        style: const TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
+                                      child: RichText(
+                                        text: TextSpan(
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                                text: dashboardController
+                                                    .dashboardData.value.gbIn
+                                                    .toString()),
+                                            WidgetSpan(
+                                              child: Transform.translate(
+                                                offset: const Offset(2, -12),
+                                                child: const Text(
+                                                  'GB',
+                                                  textScaleFactor: 0.8,
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -597,160 +575,61 @@ class _HomeState extends State<Home> {
                                     const SizedBox(height: 8),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            billStatus,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black54,
-                                            ),
-                                          ),
-                                          Text(
-                                            "$dueDate",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        ],
+                                          horizontal: 16.0),
+                                      child: Text(
+                                        dashboardController
+                                            .dashboardData.value.productName,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    const SizedBox(height: 8),
+                                    const SizedBox(height: 10),
                                   ],
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                image: const DecorationImage(
-                                  image:
-                                      AssetImage('images/background_card.png'),
-                                  fit: BoxFit.cover,
-                                ),
-                                // boxShadow: [
-                                //   BoxShadow(
-                                //     color: Colors.grey.withOpacity(0.3),
-                                //     blurRadius: 8,
-                                //     offset: Offset(4, 4),
-                                //   ),
-                                // ],
-                                border: Border.all(
-                                  color: Colors.grey.withOpacity(0.5),
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            "Penggunaan Bulan Ini",
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        Icon(
-                                          Icons.wifi,
-                                          color: Colors.red,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  billStatus == 'Tagihan'
-                                      ? const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 5.0),
-                                          child: Text(""),
-                                        )
-                                      : const Text(""),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
-                                    child: RichText(
-                                      text: TextSpan(
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        children: [
-                                          TextSpan(text: dataUsed),
-                                          WidgetSpan(
-                                            child: Transform.translate(
-                                              offset: const Offset(2, -12),
-                                              child: const Text(
-                                                'GB',
-                                                textScaleFactor: 0.8,
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  const Divider(height: 1),
-                                  const SizedBox(height: 8),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
-                                    child: Text(
-                                      "$package",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : const SizedBox(
-                        height: 0,
-                      ),
-                //card menuju FAB & pending payment
-                status == "QUOTATION" || status == "PENDING_PAYMENT_MOBILE"
-                    ? GestureDetector(
+                          ],
+                        );
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Obx(
+                  () {
+                    if ([
+                      "QUOTATION",
+                      "PENDING_PAYMENT",
+                      "PENDING_PAYMENT_MOBILE"
+                    ].contains(
+                        dashboardController.dashboardData.value.status)) {
+                      return GestureDetector(
                         onTap: () {
-                          if (status == "QUOTATION") {
+                          if (dashboardController.dashboardData.value.status ==
+                              "QUOTATION") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    FABTesting(taskID: customerID ?? ""),
+                                builder: (context) => FABTesting(
+                                    taskID: dashboardController
+                                        .dashboardData.value.taskId),
                               ),
                             );
-                          } else if (status == "PENDING_PAYMENT_MOBILE" ||
-                              status == "PENDING_PAYMENT") {
+                          } else if (dashboardController
+                                      .dashboardData.value.status ==
+                                  "PENDING_PAYMENT_MOBILE" ||
+                              dashboardController.dashboardData.value.status ==
+                                  "PENDING_PAYMENT") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => PaymentMethod(
-                                  taskid: customerID ?? "",
+                                  taskid: dashboardController
+                                      .dashboardData.value.taskId,
                                 ),
                               ),
                             );
@@ -780,7 +659,9 @@ class _HomeState extends State<Home> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    status == "QUOTATION"
+                                    dashboardController
+                                                .dashboardData.value.status ==
+                                            "QUOTATION"
                                         ? const Text(
                                             "Registrasi Anda sudah disetujui, mohon isi FORM AKTIVASI BERLANGGANAN",
                                             style: TextStyle(
@@ -803,163 +684,12 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                      )
-                    : const SizedBox(),
-
-                //card billing, point, etc
-                // status == "ACTIVE" || status == "DU" || status == "FREEZE"
-                //     ? SizedBox(
-                //         key: UniqueKey(),
-                //         width: double.infinity * 2,
-                //         child: Card(
-                //           elevation: 4.0,
-                //           shape: RoundedRectangleBorder(
-                //             borderRadius:
-                //                 BorderRadius.circular(15), // Bentuk sudut card
-                //           ),
-                //           // Mengubah warna background menjadi biru dongker
-                //           child: Container(
-                //             decoration: BoxDecoration(
-                //               borderRadius: BorderRadius.circular(
-                //                   15), // Bentuk sudut container
-                //               image: const DecorationImage(
-                //                 image: AssetImage(
-                //                     'images/bb_green_mint.jpg'), // Gambar background
-                //                 fit: BoxFit
-                //                     .cover, // Menyesuaikan gambar dengan ukuran container
-                //               ),
-                //             ),
-                //             child: Padding(
-                //               padding: const EdgeInsets.all(18.0),
-                //               child: Column(
-                //                 mainAxisAlignment: MainAxisAlignment.start,
-                //                 crossAxisAlignment: CrossAxisAlignment.start,
-                //                 children: [
-                //                   Text(
-                //                     "$customerID",
-                //                     style: const TextStyle(
-                //                       color: Colors.white,
-                //                       fontSize: 14,
-                //                       fontWeight: FontWeight.bold,
-                //                     ),
-                //                   ),
-                //                   Text(
-                //                     "$package",
-                //                     style: const TextStyle(
-                //                       color: Colors.white,
-                //                       fontSize: 14,
-                //                       fontWeight: FontWeight.bold,
-                //                     ),
-                //                   ),
-                //                   Text(
-                //                     "$status",
-                //                     style: const TextStyle(
-                //                       color: Colors.white,
-                //                       fontSize: 14,
-                //                       fontWeight: FontWeight.bold,
-                //                     ),
-                //                   ),
-                //                 ],
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       )
-                //     : const SizedBox(),
-
-                // isDueDateActive == true &&
-                //         (status == "ACTIVE" ||
-                //             status == "DU" ||
-                //             status == "FREEZE")
-                //     ? Column(
-                //         key: UniqueKey(),
-                //         children: [
-                //           const SizedBox(
-                //             height: 15,
-                //           ),
-                //           const Text(
-                //             "Periode tagihan bulan ini",
-                //             style: TextStyle(
-                //               fontSize: 10,
-                //               color: Colors.black,
-                //               fontWeight: FontWeight.bold,
-                //             ),
-                //           ),
-                //           GestureDetector(
-                //             onTap: () {
-                //               Navigator.push(
-                //                 context,
-                //                 MaterialPageRoute(
-                //                   builder: (context) => PaymentMethodExisting(
-                //                     taskid: "$customerID",
-                //                     billStatus: billStatus,
-                //                   ),
-                //                 ),
-                //               );
-                //             },
-                //             child: SizedBox(
-                //               width: double.infinity * 2,
-                //               child: Card(
-                //                 elevation: 4,
-                //                 shape: RoundedRectangleBorder(
-                //                   borderRadius: BorderRadius.circular(15),
-                //                 ),
-                //                 child: Container(
-                //                   decoration: BoxDecoration(
-                //                     borderRadius: BorderRadius.circular(
-                //                         15), // Bentuk sudut container
-                //                     image: const DecorationImage(
-                //                       image: AssetImage(
-                //                           'images/bb_red_orange.jpg'), // Gambar background
-                //                       fit: BoxFit
-                //                           .cover, // Menyesuaikan gambar dengan ukuran container
-                //                     ),
-                //                   ),
-                //                   child: Padding(
-                //                     padding: const EdgeInsets.all(10.0),
-                //                     child: ListTile(
-                //                       title: Text(
-                //                         "$dueDate",
-                //                         style: const TextStyle(
-                //                           color: Colors.white,
-                //                           fontSize: 20,
-                //                           fontWeight: FontWeight.bold,
-                //                         ),
-                //                       ),
-                //                       subtitle: Column(
-                //                         crossAxisAlignment:
-                //                             CrossAxisAlignment.start,
-                //                         children: [
-                //                           Text(
-                //                             "$billing",
-                //                             style: const TextStyle(
-                //                               color: Colors.white,
-                //                               fontSize: 20,
-                //                               fontWeight: FontWeight.bold,
-                //                             ),
-                //                           ),
-                //                           Text(
-                //                             billStatus,
-                //                             style: const TextStyle(
-                //                               color: Colors.white,
-                //                               fontSize: 10,
-                //                               fontWeight: FontWeight.bold,
-                //                             ),
-                //                           ),
-                //                         ],
-                //                       ),
-                //                       trailing:
-                //                           const Icon(Icons.arrow_forward_ios),
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //         ],
-                //       )
-                //     : const SizedBox(),
-
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
+                ),
                 // New Promotion Card
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 20.0),
@@ -976,7 +706,8 @@ class _HomeState extends State<Home> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => UpgradeDowngradeDetail(
-                                    task: customerID ?? "",
+                                    task: dashboardController
+                                        .dashboardData.value.taskId,
                                     sid: '',
                                   )),
                         );
@@ -1107,135 +838,125 @@ class _HomeState extends State<Home> {
                   ),
                 ),
 
-                const SizedBox(height: 2),
-                // Carousel slides
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 300,
-                    )
-                    // const Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     Text(
-                    //       'Penawaran Terbaru',
-                    //       style: TextStyle(
-                    //         fontSize: 14,
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //     // GestureDetector(
-                    //     //   onTap: () {
-                    //     //     // Navigasi ke halaman yang diinginkan
-                    //     //     Navigator.push(
-                    //     //       context,
-                    //     //       MaterialPageRoute(
-                    //     //           builder: (context) =>
-                    //     //               const PenawaranPage()), // Ganti dengan halaman yang diinginkan
-                    //     //     );
-                    //     //   },
-                    //     //   child: const Text(
-                    //     //     'Lihat Semuanya',
-                    //     //     style: TextStyle(
-                    //     //       fontSize: 10,
-                    //     //       color: Color.fromARGB(255, 228, 99, 7),
-                    //     //       fontWeight: FontWeight.bold,
-                    //     //     ),
-                    //     //   ),
-                    //     // ),
-                    //   ],
-                    // ),
-                    // const SizedBox(
-                    //     height:
-                    //         5), // Tambahkan jarak vertikal antara judul dan carousel
-                    // SizedBox(
-                    //   height: 280,
-                    //   child: ListView(
-                    //     scrollDirection: Axis.horizontal,
-                    //     children: [
-                    //       GestureDetector(
-                    //         onTap: () {
-                    //           Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //               builder: (context) => const DetailPage(
-                    //                 title: 'IdPlay Home',
-                    //                 price: 'Rp. 179.000',
-                    //                 imagePath: 'images/promo1.png',
-                    //                 description:
-                    //                     '1. Streaming Video HD Tanpa Buffering.\n2. Panggilan Video Berkualitas Tinggi.\n3. Koneksi Stabil Untuk 1-3 Perangkat.',
-                    //               ),
-                    //             ),
-                    //           );
-                    //         },
-                    //         child: buildRoundedCarouselItem(
-                    //           title: 'IdPlay Home',
-                    //           price: 'Rp. 179.000',
-                    //           imagePath: 'images/promo1.png',
-                    //           backgroundColor:
-                    //               const Color.fromARGB(255, 255, 255, 255),
-                    //         ),
-                    //       ),
-                    //       const SizedBox(
-                    //         width: 10,
-                    //       ), // Tambahkan jarak horizontal antara slide
-                    //       GestureDetector(
-                    //         onTap: () {
-                    //           Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //               builder: (context) => const DetailPage(
-                    //                 title: 'IdPlay Home',
-                    //                 price: 'Rp. 230.000',
-                    //                 imagePath: 'images/promo2.png',
-                    //                 description:
-                    //                     '1. Ideal untuk bisnis menengah yang membutuhkan akses cepat untuk aplikasi cloud dan video conferencing berkualitas tinggi.\n2. Bandwidth yang cukup untuk mendukung beberapa pengguna sekaligus.\n3. Dukungan teknis 24/7.',
-                    //               ),
-                    //             ),
-                    //           );
-                    //         },
-                    //         child: buildRoundedCarouselItem(
-                    //           title: 'IdPlay Home',
-                    //           price: 'Rp. 230.000',
-                    //           imagePath: 'images/promo2.png',
-                    //           backgroundColor:
-                    //               const Color.fromARGB(255, 255, 255, 255),
-                    //         ),
-                    //       ),
-                    //       const SizedBox(
-                    //         width: 10,
-                    //       ), // Tambahkan jarak horizontal antara slide
-                    //       GestureDetector(
-                    //         onTap: () {
-                    //           Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //               builder: (context) => const DetailPage(
-                    //                 title: 'IdPlay Home',
-                    //                 price: 'Rp. 270.000',
-                    //                 imagePath: 'images/promo3.png',
-                    //                 description:
-                    //                     '1. Direkomendasikan untuk bisnis dengan penggunaan data tinggi seperti e-commerce, video streaming, dan kolaborasi online.\n2. Kecepatan tinggi untuk mengunduh dan mengunggah file besar.\n3. Dukungan teknis prioritas 24/7.',
-                    //               ),
-                    //             ),
-                    //           );
-                    //         },
-                    //         child: buildRoundedCarouselItem(
-                    //           title: 'IdPlay Home',
-                    //           price: 'Rp. 270.000',
-                    //           imagePath: 'images/promo3.png',
-                    //           backgroundColor:
-                    //               const Color.fromARGB(255, 255, 255, 255),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                  ],
+                const SizedBox(height: 20),
+
+                Obx(
+                  () {
+                    if (dashboardController.isLoading.value) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 100.0,
+                          color: Colors.grey[300],
+                        ),
+                      );
+                    } else {
+                      return Card(
+                        color:
+                            Color.fromARGB(1, 217, 217, 217).withOpacity(0.2),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            // crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "IDPLAY HOME",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  fontFamily: "Inter",
+                                ),
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount:
+                                    dashboardController.productHome.length,
+                                itemBuilder: (context, index) {
+                                  ProductFlyer productHome =
+                                      dashboardController.productHome[index];
+                                  return InternetSpeedCard(
+                                    id: productHome.id.toString(),
+                                    speed: productHome.speed,
+                                    price: productHome.price,
+                                    packageName: productHome.name,
+                                  );
+                                },
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  },
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(
+                  height: 20,
+                ),
+
+                Obx(
+                  () {
+                    if (dashboardController.isLoading.value) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 100.0,
+                          color: Colors.grey[300],
+                        ),
+                      );
+                    } else {
+                      return Card(
+                        color:
+                            Color.fromARGB(1, 217, 217, 217).withOpacity(0.2),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            // crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "IDPLAY HOME",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  fontFamily: "Inter",
+                                ),
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount:
+                                    dashboardController.productBisnis.length,
+                                itemBuilder: (context, index) {
+                                  ProductFlyer productBisnis =
+                                      dashboardController.productBisnis[index];
+                                  return InternetSpeedCard(
+                                    id: productBisnis.id.toString(),
+                                    speed: productBisnis.speed,
+                                    price: productBisnis.price,
+                                    packageName: productBisnis.name,
+                                  );
+                                },
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ],
             ),
           ),
@@ -1243,88 +964,84 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-
-  Widget buildRoundedCarouselItem({
-    required String title,
-    required String price,
-    required String imagePath,
-    required Color backgroundColor,
-  }) {
-    return Container(
-      width: 200,
-      margin: const EdgeInsets.symmetric(horizontal: 1),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30), // Rounded corners
-        color: backgroundColor,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            // Rounded image
-            borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
-              imagePath,
-              height: 150,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            price,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-class CardWidgetWithIcon extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  final String value;
+class InternetSpeedCard extends StatelessWidget {
+  final String id;
+  final int speed;
+  final int price;
+  final String packageName;
 
-  const CardWidgetWithIcon({
+  const InternetSpeedCard({
     super.key,
-    required this.icon,
-    required this.text,
-    required this.value,
+    required this.id,
+    required this.speed,
+    required this.price,
+    required this.packageName,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: Colors.black),
-            const SizedBox(width: 8),
-            Text(
-              text,
-              style: const TextStyle(fontSize: 16, color: Colors.black),
-            ),
-          ],
+    final oCcy = NumberFormat("#,##0", "en_US");
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.white, // Warna latar belakang ListTile
+        borderRadius: BorderRadius.circular(12), // Membuat border melengkung
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // Posisi bayangan
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('$speed Mbps', style: TextStyle(color: Colors.red)),
+                  Text(
+                    "Rp. ${oCcy.format(price).replaceAll(",", ".")}",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(packageName),
+                  SizedBox(width: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Colors.red, // Warna latar belakang tombol
+                    ),
+                    onPressed: () {
+                      Get.to(
+                        () => DetailPage(
+                          ids: id,
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Beli',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(
-              fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-      ],
+      ),
     );
   }
 }

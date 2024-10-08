@@ -9,14 +9,15 @@ class Product {
   String region;
   int price;
 
-  Product(
-      {required this.id,
-      required this.category,
-      required this.group,
-      required this.code,
-      required this.name,
-      required this.region,
-      required this.price});
+  Product({
+    required this.id,
+    required this.category,
+    required this.group,
+    required this.code,
+    required this.name,
+    required this.region,
+    required this.price,
+  });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     // if (json['id'] == null) return null;

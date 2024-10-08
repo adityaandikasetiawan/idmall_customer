@@ -1,7 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
-import 'package:idmall/pages/details.dart';
 
 class PromoPage extends StatelessWidget {
   // Daftar judul untuk setiap card
@@ -83,17 +82,17 @@ class PromoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DetailPage(
-              title: title,
-              price: price,
-              imagePath: imagePath,
-              description: description,
-            ),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => DetailPage(
+        //       title: title,
+        //       price: price,
+        //       imagePath: imagePath,
+        //       description: description,
+        //     ),
+        //   ),
+        // );
       },
       child: Card(
         elevation: 4.0,

@@ -1,4 +1,4 @@
-library config;
+library;
 
 export 'config.dart';
 

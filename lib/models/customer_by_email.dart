@@ -6,11 +6,12 @@ class CustomerListByEmail {
   final String product;
   final String status;
 
-  CustomerListByEmail(
-      {required this.name,
-      required this.customerId,
-      required this.product,
-      required this.status});
+  CustomerListByEmail({
+    required this.name,
+    required this.customerId,
+    required this.product,
+    required this.status,
+  });
 
   factory CustomerListByEmail.fromJson(Map<String, dynamic> json) {
     return CustomerListByEmail(

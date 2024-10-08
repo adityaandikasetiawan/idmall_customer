@@ -1,9 +1,11 @@
 // ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
 
 import 'dart:convert';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:idmall/admin/home_admin.dart';
+import 'package:idmall/controller/login.controller.dart';
 import 'package:idmall/guest/dashboard.dart';
-import 'package:idmall/pages/navigation.dart';
 import 'package:idmall/pages/forgotpassword.dart';
 import 'package:idmall/pages/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,29 +19,6 @@ class Login extends StatefulWidget {
 
   @override
   State<Login> createState() => _LoginState();
-}
-
-class LoginResponse {
-  final String email;
-  final String fullName;
-  final String token;
-
-  const LoginResponse(
-    this.email,
-    this.fullName,
-    this.token,
-  );
-
-  LoginResponse.fromJson(Map<String, dynamic> json)
-      : email = json['email'] as String,
-        fullName = json['full_name'] as String,
-        token = json['token'] as String;
-
-  Map<String, dynamic> toJson() => {
-        'email': email,
-        'fullName': fullName,
-        'token': token,
-      };
 }
 
 Future<dynamic> loginWithEmailPassword(payload) async {
@@ -72,111 +51,11 @@ Future<dynamic> loginWithEmailPassword(payload) async {
 
 class _LoginState extends State<Login> {
   User? currentUser;
+  final LoginController loginController = Get.put(LoginController());
 
-  String email = "", password = "", taskid = "", status = "", fullName = "";
   bool _isPasswordVisible = false;
-  bool isLoading = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  TextEditingController useremailcontroller = TextEditingController();
-  TextEditingController userpasswordcontroller = TextEditingController();
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
-  @override
-  void dispose() {
-    useremailcontroller.dispose();
-    userpasswordcontroller.dispose();
-    super.dispose();
-  }
-
-  Future<void> userLogin() async {
-    try {
-      var payload = json.encode({
-        "email": useremailcontroller.text,
-        "password": userpasswordcontroller.text,
-      });
-
-      var response = await loginWithEmailPassword(payload);
-      if (response.statusCode == 200) {
-        var token = response.data['data']['token'];
-        fullName = response.data['data']['full_name'];
-
-        if (response.data['data']['subscription_status'] != null) {
-          status = response.data['data']['subscription_status'];
-        } else {
-          status = response.data['data']['status'] ?? "";
-        }
-        var userId = response.data['data']['id'];
-        var email = response.data['data']['email'];
-
-        taskid = response.data['data']['task_id'] ?? "";
-        final SharedPreferences prefs = await _prefs;
-        prefs.setString('token', token);
-        prefs.setString('fullName', fullName);
-        prefs.setString('email', email);
-        prefs.setString("taskId", taskid);
-        prefs.setString('user_id', userId.toString());
-        prefs.setString(
-          'is_email_verified',
-          response.data['data']['is_email_verified'].toString(),
-        );
-
-        if (response.data['data']['is_connected_to_oss'].toString() == "1") {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SignUp(
-                  existingUserFirstName: response.data['data']['first_name'],
-                  existingUserLastName: response.data['data']['last_name'],
-                  existingUserFullName: fullName,
-                  existingUserEmail: email,
-                  isAlreadySubscribed:
-                      response.data['data']['is_connected_to_oss'].toString()),
-            ),
-            (Route<dynamic> route) => false,
-          );
-        } else {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NavigationScreen(
-                customerID: taskid,
-                status: status,
-              ),
-            ),
-            (Route<dynamic> route) => false,
-          );
-        }
-      }
-
-      setState(() {
-        isLoading = false;
-      });
-    } on DioException catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Warning"),
-            content: Text(e.response?.data['errors']['message']),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          );
-        },
-      );
-
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -232,7 +111,7 @@ class _LoginState extends State<Login> {
                     child: Column(
                       children: [
                         TextFormField(
-                          controller: useremailcontroller,
+                          controller: loginController.emailController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Tolong Masukkan Email';
@@ -257,7 +136,7 @@ class _LoginState extends State<Login> {
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
-                          controller: userpasswordcontroller,
+                          controller: loginController.passwordController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Tolong Masukkan Password';
@@ -318,52 +197,63 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         const SizedBox(height: 30.0),
-                        isLoading == false
-                            ? GestureDetector(
-                                onTap: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    String enteredEmail =
-                                        useremailcontroller.text;
-                                    String enteredPassword =
-                                        userpasswordcontroller.text;
+                        Obx(() {
+                          if (loginController.isLoading.value) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 228, 99, 7),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 50.0,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return GestureDetector(
+                              onTap: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  String enteredEmail =
+                                      loginController.emailController.text;
+                                  String enteredPassword =
+                                      loginController.passwordController.text;
 
-                                    if (enteredEmail == 'admin' &&
-                                        enteredPassword == 'admin') {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const HomeAdmin(),
-                                        ),
-                                      );
-                                    } else {
-                                      setState(() {
-                                        isLoading = true;
-                                      });
-                                      userLogin();
-                                    }
+                                  if (enteredEmail == 'admin' &&
+                                      enteredPassword == 'admin') {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const HomeAdmin(),
+                                      ),
+                                    );
+                                  } else {
+                                    loginController.login();
                                   }
-                                },
-                                child: Material(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  color: const Color.fromARGB(255, 228, 99, 7),
-                                  child: const SizedBox(
-                                    width: 400.0,
-                                    height: 50.0,
-                                    child: Center(
-                                      child: Text(
-                                        "Sign In",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18.0,
-                                          fontFamily: 'Poppins',
-                                        ),
+                                }
+                              },
+                              child: Material(
+                                borderRadius: BorderRadius.circular(20.0),
+                                color: const Color.fromARGB(255, 228, 99, 7),
+                                child: const SizedBox(
+                                  width: 400.0,
+                                  height: 50.0,
+                                  child: Center(
+                                    child: Text(
+                                      "Sign In",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18.0,
+                                        fontFamily: 'Poppins',
                                       ),
                                     ),
                                   ),
                                 ),
-                              )
-                            : const CircularProgressIndicator(),
+                              ),
+                            );
+                          }
+                        }),
                         const SizedBox(height: 10.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -380,9 +270,11 @@ class _LoginState extends State<Login> {
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const SignUp()));
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SignUp(),
+                                  ),
+                                );
                               },
                               child: const Text(
                                 "Daftar",
@@ -404,7 +296,8 @@ class _LoginState extends State<Login> {
                                 height: 1.0,
                                 color: Colors.grey,
                                 margin: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
+                                  horizontal: 10.0,
+                                ),
                               ),
                             ),
                             const Text(
@@ -432,15 +325,17 @@ class _LoginState extends State<Login> {
                             fixedSize:
                                 Size(MediaQuery.of(context).size.width, 50),
                             side: const BorderSide(
-                                width: 2.0,
-                                color: Color.fromARGB(255, 228, 99, 7)),
+                              width: 2.0,
+                              color: Color.fromARGB(255, 228, 99, 7),
+                            ),
                           ),
                           onPressed: () {
                             Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const DashboardGuest()));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const DashboardGuest(),
+                              ),
+                            );
                           },
                           child: const Text(
                             'Log In as Guest',

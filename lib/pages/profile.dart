@@ -321,7 +321,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      AuthMethods().deleteuser();
+                      AuthService().deleteuser();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const Splash()),
@@ -372,7 +372,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      await AuthMethods().SignOut();
+                      await AuthService().SignOut();
                       FirebaseAuth.instance
                           .authStateChanges()
                           .listen((User? user) {

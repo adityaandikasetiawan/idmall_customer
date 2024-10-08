@@ -73,7 +73,6 @@ class _FormSurveyState extends State<FormSurvey> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    _installationAddressController.text = widget.address;
     String fullName = _customerNameController.text;
     String address = _installationAddressController.text;
     String phone = _phoneNumberController.text;
@@ -167,6 +166,7 @@ class _FormSurveyState extends State<FormSurvey> {
   @override
   Widget build(BuildContext context) {
     _services.text = widget.tipe;
+    _installationAddressController.text = widget.address;
     return Scaffold(
       appBar: AppBar(
         title: const Text(

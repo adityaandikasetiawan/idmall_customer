@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:idmall/models/odp_list.dart';
 import 'package:idmall/models/zip_code.dart';
+import 'package:idmall/pages/form_suervey.dart';
 import 'package:idmall/pages/gmaps_search_location.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:idmall/pages/product.dart';
@@ -14,7 +15,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MapSample extends StatefulWidget {
-  const MapSample({super.key});
+  final String? productCode;
+  final String? productName;
+  const MapSample({
+    super.key,
+    this.productCode,
+    this.productName,
+  });
 
   @override
   State<MapSample> createState() => MapSampleState();
@@ -109,19 +116,21 @@ class MapSampleState extends State<MapSample> {
   }
 
   Set<Circle> _buildCircles() {
-    return apiData.map((data) {
-      double latitude = double.tryParse(data.latitude.trim()) ?? 0;
-      double longitude = double.tryParse(data.longitude.trim()) ?? 0;
+    return apiData.map(
+      (data) {
+        double latitude = double.tryParse(data.latitude.trim()) ?? 0;
+        double longitude = double.tryParse(data.longitude.trim()) ?? 0;
 
-      return Circle(
-        circleId: CircleId("$latitude,$longitude"),
-        center: LatLng(latitude, longitude),
-        radius: 500.0,
-        fillColor: Colors.blue.withOpacity(0.3),
-        strokeColor: Colors.blue,
-        strokeWidth: 2,
-      );
-    }).toSet();
+        return Circle(
+          circleId: CircleId("$latitude,$longitude"),
+          center: LatLng(latitude, longitude),
+          radius: 500.0,
+          fillColor: Colors.blue.withOpacity(0.3),
+          strokeColor: Colors.blue,
+          strokeWidth: 2,
+        );
+      },
+    ).toSet();
   }
 
   Future<void> getCurrentLocation() async {
@@ -179,16 +188,33 @@ class MapSampleState extends State<MapSample> {
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (builder) => ProductList(
-                                  latitude: _lat,
-                                  longitude: _long,
-                                  address: _searchController.text,
-                                  zipcode: realzipcode!,
+                            print(_searchController.text);
+                            if (widget.productCode == null) {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (builder) => ProductList(
+                                    latitude: _lat,
+                                    longitude: _long,
+                                    address: _searchController.text,
+                                    zipcode: realzipcode!,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            } else {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (builder) => FormSurvey(
+                                    latitude: _lat,
+                                    longitude: _long,
+                                    tipe: widget.productName!,
+                                    price: "",
+                                    productCode: widget.productCode!,
+                                    address: _searchController.text,
+                                    zipcode: realzipcode!,
+                                  ),
+                                ),
+                              );
+                            }
                           },
                           child: const Text('Lanjutkan'),
                         ),
@@ -241,9 +267,11 @@ class MapSampleState extends State<MapSample> {
                     myLocationEnabled: true,
                     myLocationButtonEnabled: false,
                     onMapCreated: (controller) {
-                      setState(() {
-                        _mapController = controller;
-                      });
+                      setState(
+                        () {
+                          _mapController = controller;
+                        },
+                      );
                     },
                     initialCameraPosition: CameraPosition(
                       target: currentLocation,
@@ -301,8 +329,9 @@ class MapSampleState extends State<MapSample> {
                           filled: true,
                           fillColor: Colors.white60,
                           border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(16.0)),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(16.0),
+                            ),
                           ),
                         ),
                       ),
