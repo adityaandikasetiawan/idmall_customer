@@ -74,6 +74,9 @@ class _HistoryPaymentState extends State<HistoryPayment> {
                             "Rp. ${oCcy.format(paymentHistory[index].monthlyPrice).toString().replaceAll(",", ".")}",
                           ),
                           onTap: () {
+                            String formattedDate = DateFormat('yyyy-MM').format(
+                                DateTime.parse(paymentHistory[index].periode));
+                            print(formattedDate);
                             Navigator.push(
                               context,
                               MaterialPageRoute(

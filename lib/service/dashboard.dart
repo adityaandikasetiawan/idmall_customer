@@ -100,6 +100,7 @@ class DashboardService extends getx.GetxService {
         "fullName",
         response.data['data'][0]['Customer_Sub_Name'],
       );
+      await prefs.setString("taskId", response.data['data'][0]['Task_ID']);
 
       //update detail
       final response2 = await dio.get(

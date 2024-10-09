@@ -2,12 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
+import 'package:idmall/controller/payment.controller.dart';
 import 'package:idmall/models/payment_method.dart';
-import 'package:idmall/models/payment_method_model.dart';
 import 'package:idmall/pages/invoice_testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:intl/intl.dart';
+
+final PaymentController paymentController = Get.put(PaymentController());
 
 class PaymentMethodExisting extends StatefulWidget {
   final String taskid;
@@ -26,92 +30,11 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
   @override
   void initState() {
     super.initState();
-    getPaymentMethod();
-    getCart();
+    paymentController.getPaymentDetailTransaction(widget.taskid);
+    paymentController.getPaymentMethod();
   }
 
-  List<PaymentMethodModel> paymentMethodListBank = [];
-  List<PaymentMethodModelOutlet> paymentMethodListOutlet = [];
   final oCcy = NumberFormat("#,##0", "en_US");
-  String vat = "";
-  String monthly_price = "";
-  String total = "";
-  String installation_fee = "";
-  String paid = "";
-  String remain = "";
-
-  Future<void> getPaymentMethod() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
-    final dio = Dio();
-    final response = await dio.get(
-      "${config.backendBaseUrl}/payment-method",
-      options: Options(headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-        "Cache-Control": "no-cache",
-      }),
-    );
-    for (var ele in response.data['data']['bank']) {
-      paymentMethodListBank.add(PaymentMethodModel.fromJson(ele));
-    }
-    for (var ele2 in response.data['data']['outlet']) {
-      paymentMethodListOutlet.add(PaymentMethodModelOutlet.fromJson(ele2));
-    }
-
-    setState(() {});
-  }
-
-  Future<void> getCart() async {
-    try {} catch (e) {}
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
-    final dio = Dio();
-    final response2 = await dio.get(
-      "${config.backendBaseUrl}/transaction/ca/${widget.taskid}",
-      options: Options(headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-        "Cache-Control": "no-cache",
-      }),
-    );
-    var result2 = response2.data['data'][0];
-    setState(() {
-      vat = oCcy.format(result2['vat']).replaceAll(",", ".");
-      monthly_price = oCcy.format(result2['Monthly_Price']);
-      total = oCcy.format(result2['total']);
-      installation_fee = result2['Installation'] != null
-          ? oCcy.format(result2['Installation']).replaceAll(",", ".")
-          : '0';
-      paid = oCcy.format(result2['Payment']).replaceAll(",", ".");
-      remain = oCcy.format(result2['AR_Remain']).replaceAll(",", ".");
-    });
-  }
-
-  Future<bool> createTransaction(bankCode, paymentType) async {
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
-    final dio = Dio();
-    final response3 = await dio.post(
-      "${config.backendBaseUrl}/transaction/ca/${widget.taskid}",
-      data: {
-        "task_id": widget.taskid,
-        "payment_method_code": bankCode,
-        "payment_type": paymentType,
-        "total_payment": total
-      },
-      options: Options(headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
-      }),
-    );
-
-    if (response3.statusCode == 200) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,170 +50,224 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
         scrollDirection: Axis.vertical,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Pesanan:'),
-                  Text(
-                    monthly_price,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+          child: Obx(
+            () {
+              if (paymentController.isLoading.value) {
+                return Center(
+                  child: SpinKitFadingCircle(
+                    color: Colors.grey,
+                    size: 50.0,
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Pajak(11%):'),
-                  Text(
-                    vat,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Biaya Instalasi:'),
-                  Text(
-                    installation_fee,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Total:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    total,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Terbayar:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    paid,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Sisa:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    remain,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Status:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    widget.billStatus,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const Divider(),
-              widget.billStatus != "Terbayar"
-                  ? Column(
+                );
+              } else {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const SizedBox(height: 8.0),
-                        const Text(
-                          'Metode Pembayaran:',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 20.0),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: paymentMethodListBank.length,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return buildPaymentMethodCard(
-                              paymentMethodListBank[index].iconURL,
-                              paymentMethodListBank[index].code,
-                              paymentMethodListBank[index].name,
-                              "BANK",
-                              context,
-                              cardWidth: MediaQuery.of(context).size.width,
-                              cardHeight: 120,
-                              imageWidth: 80,
-                              imageHeight: 80,
-                            );
-                          },
-                        ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: paymentMethodListOutlet.length,
-                          itemBuilder: (context, index) {
-                            return buildPaymentMethodCard(
-                              paymentMethodListOutlet[index].iconURL,
-                              paymentMethodListOutlet[index].code,
-                              paymentMethodListOutlet[index].name,
-                              "OUTLET",
-                              context,
-                              cardWidth: MediaQuery.of(context).size.width,
-                              cardHeight: 120,
-                              imageWidth: 80,
-                              imageHeight: 80,
-                            );
-                          },
+                        const Text('Tagihan:'),
+                        Text(
+                          oCcy
+                              .format(paymentController
+                                  .paymentDetail.value.monthlyPrice)
+                              .replaceAll(",", "."),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
-                    )
-                  : const SizedBox(
-                      height: 0,
                     ),
-            ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Pajak(11%):'),
+                        Text(
+                          oCcy
+                              .format(paymentController.paymentDetail.value.vat)
+                              .replaceAll(",", "."),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Biaya Instalasi:'),
+                        Text(
+                          oCcy
+                              .format(paymentController
+                                  .paymentDetail.value.installation)
+                              .replaceAll(",", "."),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Total:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          oCcy
+                              .format(
+                                  paymentController.paymentDetail.value.total)
+                              .replaceAll(",", "."),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // const SizedBox(height: 8.0),
+                    Divider(
+                      height: 8,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Terbayar:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          oCcy
+                              .format(
+                                  paymentController.paymentDetail.value.arPaid)
+                              .replaceAll(",", "."),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Sisa:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          oCcy
+                              .format(paymentController
+                                  .paymentDetail.value.arRemain)
+                              .replaceAll(",", "."),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Status:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          widget.billStatus,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+                    widget.billStatus != "Terbayar"
+                        ? Column(
+                            children: [
+                              const SizedBox(height: 8.0),
+                              const Text(
+                                'Metode Pembayaran:',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 20.0),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount:
+                                    paymentController.paymentMethodBank.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  PaymentMethodModel paymentMethodBank =
+                                      paymentController
+                                          .paymentMethodBank[index];
+                                  return buildPaymentMethodCard(
+                                    paymentMethodBank.iconURL,
+                                    paymentMethodBank.code,
+                                    paymentMethodBank.name,
+                                    "BANK",
+                                    paymentController.paymentDetail.value.total
+                                        .toString(),
+                                    context,
+                                    cardWidth:
+                                        MediaQuery.of(context).size.width,
+                                    cardHeight: 120,
+                                    imageWidth: 80,
+                                    imageHeight: 80,
+                                  );
+                                },
+                              ),
+                              // ListView.builder(
+                              //   shrinkWrap: true,
+                              //   itemCount: paymentMethodListOutlet.length,
+                              //   itemBuilder: (context, index) {
+                              //     return buildPaymentMethodCard(
+                              //       paymentMethodListOutlet[index].iconURL,
+                              //       paymentMethodListOutlet[index].code,
+                              //       paymentMethodListOutlet[index].name,
+                              //       "OUTLET",
+                              //       context,
+                              //       cardWidth: MediaQuery.of(context).size.width,
+                              //       cardHeight: 120,
+                              //       imageWidth: 80,
+                              //       imageHeight: 80,
+                              //     );
+                              //   },
+                              // ),
+                            ],
+                          )
+                        : const SizedBox(
+                            height: 0,
+                          ),
+                  ],
+                );
+              }
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget buildPaymentMethodCard(String imagePath, String bankCode,
-      String bankName, String typePayment, context,
-      {required double cardWidth,
-      required double cardHeight,
-      required double imageWidth,
-      required double imageHeight}) {
+  Widget buildPaymentMethodCard(
+    String imagePath,
+    String bankCode,
+    String bankName,
+    String typePayment,
+    String total,
+    context, {
+    required double cardWidth,
+    required double cardHeight,
+    required double imageWidth,
+    required double imageHeight,
+  }) {
     return Card(
       elevation: 2,
       child: InkWell(
@@ -308,10 +285,12 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                 "total_payment": total.replaceAll(",", ""),
                 "status": "existing"
               },
-              options: Options(headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer $token"
-              }),
+              options: Options(
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer $token"
+                },
+              ),
             );
             String paymentCode = response3.data['data']['payment_code'];
 

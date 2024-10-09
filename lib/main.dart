@@ -28,26 +28,28 @@ void main() async {
   String? token;
   SharedPreferences? pref = await SharedPreferences.getInstance();
   token = pref.getString('token') ?? '';
-  FirebaseMessaging.instance.getToken().then((value) async {
-    if (value != null) {
-      pref.setString('fcm_token', value);
-      if (token != null && token != '') {
-        await dio.post(
-          "${config.backendBaseUrl}/update-device-key",
-          options: Options(
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer $token",
-              "Cache-Control": "no-cache"
+  FirebaseMessaging.instance.getToken().then(
+    (value) async {
+      if (value != null) {
+        pref.setString('fcm_token', value);
+        if (token != null && token != '') {
+          await dio.post(
+            "${config.backendBaseUrl}/update-device-key",
+            options: Options(
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer $token",
+                "Cache-Control": "no-cache"
+              },
+            ),
+            data: {
+              "token": value,
             },
-          ),
-          data: {
-            "token": value,
-          },
-        );
+          );
+        }
       }
-    }
-  });
+    },
+  );
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true, // Required to display a heads up notification

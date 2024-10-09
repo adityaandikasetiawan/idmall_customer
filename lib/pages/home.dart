@@ -8,6 +8,7 @@ import 'package:idmall/models/product_flyer.dart';
 import 'package:idmall/pages/details_product.dart';
 import 'package:idmall/pages/fab_testing.dart';
 import 'package:idmall/pages/google_maps.dart';
+import 'package:idmall/pages/notification_list.dart';
 import 'package:idmall/pages/pembayaran_existing.dart';
 import 'package:idmall/pages/pembayaran_testing.dart';
 import 'package:idmall/pages/upgrade_downgrade_detail.dart';
@@ -43,8 +44,16 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            Icon(
+              Icons.account_circle,
+              color: Colors.white,
+              size: 40,
+            ),
+            SizedBox(
+              width: 10,
+            ),
             GestureDetector(
               onTap: () {
                 showModalBottomSheet<void>(
@@ -312,6 +321,20 @@ class _HomeState extends State<Home> {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.mail_outline,
+              color: Colors.white,
+              size: 20,
+            ),
+            onPressed: () {
+              Get.to(
+                () => NotificationList(),
+              );
+            },
+          ),
+        ],
       ),
       backgroundColor: const Color.fromARGB(255, 250, 250, 255),
       body: RefreshIndicator(

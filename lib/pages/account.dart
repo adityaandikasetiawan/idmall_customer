@@ -88,14 +88,11 @@ class _AccountState extends State<Account> {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Profile',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
               Card(
+                color: Colors.amber[50],
                 elevation: 3,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -107,12 +104,16 @@ class _AccountState extends State<Account> {
                           height: 60,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey, width: 2),
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 2,
+                            ),
                           ),
                           child: const CircleAvatar(
                             radius: 30,
                             backgroundImage: AssetImage(
-                                'images/profiles.png'), // Ganti dengan lokasi foto profil Anda
+                              'images/profiles.png',
+                            ), // Ganti dengan lokasi foto profil Anda
                           ),
                         ),
                       ),
@@ -124,31 +125,22 @@ class _AccountState extends State<Account> {
                             Text(fullName ?? ''),
                             const SizedBox(height: 10),
                             Text(email ?? ''),
-                            Column(children: [
-                              if (is_email_verified == "1")
-                                const Text("Terverifikasi")
-                              else ...[
-                                const Text("Belum verifikasi"),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      textStyle: const TextStyle(fontSize: 16)),
-                                  onPressed: verifyEmailAddress,
-                                  child: const Text('Verifikasi'),
-                                ),
-                              ]
-                            ]),
-
-                            // SizedBox(height: 20),
-                            // ElevatedButton(
-                            //   onPressed: () {
-                            //     Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //           builder: (context) => ActivationPage()),
-                            //     );
-                            //   },
-                            //   child: Text('Hubungkan Account'),
-                            // ),
+                            Column(
+                              children: [
+                                if (is_email_verified == "1")
+                                  const Text("Terverifikasi")
+                                else ...[
+                                  const Text("Belum verifikasi"),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      textStyle: const TextStyle(fontSize: 16),
+                                    ),
+                                    onPressed: verifyEmailAddress,
+                                    child: const Text('Verifikasi'),
+                                  ),
+                                ]
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -156,70 +148,9 @@ class _AccountState extends State<Account> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              // ListTile(
-              //   leading: Container(
-              //     width: 50,
-              //     height: 50,
-              //     decoration: BoxDecoration(
-              //       shape: BoxShape.circle,
-              //       border: Border.all(color: Colors.grey, width: 1),
-              //     ),
-              //     child: Icon(Icons.account_circle),
-              //   ),
-              //   title: Text('Account'),
-              //   trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
-              //   onTap: () {},
-              // ),
-              // SizedBox(height: 15),
-              // ListTile(
-              //   leading: Container(
-              //     width: 50,
-              //     height: 50,
-              //     decoration: BoxDecoration(
-              //       shape: BoxShape.circle,
-              //       border: Border.all(color: Colors.grey, width: 1),
-              //     ),
-              //     child: Icon(Icons.location_on),
-              //   ),
-              //   title: Text('Alamat'),
-              //   trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
-              //   onTap: () {
-              //     // Tambahkan logika untuk tombol Alamat
-              //   },
-              // ),
-              // SizedBox(height: 15),
-              // ListTile(
-              //   leading: Container(
-              //     width: 50,
-              //     height: 50,
-              //     decoration: BoxDecoration(
-              //       shape: BoxShape.circle,
-              //       border: Border.all(color: Colors.grey, width: 1),
-              //     ),
-              //     child: Icon(Icons.phone),
-              //   ),
-              //   title: Text('Pelanggan'),
-              //   trailing: Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
-              //   onTap: () {
-              //     // Navigasi ke halaman survei
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(builder: (context) => SurveyForm()),
-              //     );
-              //   },
-              // ),
               const SizedBox(height: 15),
               ListTile(
-                leading: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: const Icon(Icons.help),
-                ),
+                leading: const Icon(Icons.help),
                 title: const Text('Help Center'),
                 trailing:
                     const Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
@@ -227,45 +158,28 @@ class _AccountState extends State<Account> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const HelpCenterPage()),
+                      builder: (context) => const HelpCenterPage(),
+                    ),
                   );
                 },
               ),
-              const SizedBox(height: 15),
+              Divider(),
               ListTile(
-                leading: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: const Icon(Icons.settings),
-                ),
+                leading: const Icon(Icons.settings),
                 title: const Text('Settings'),
-                trailing:
-                    const Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
+                trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
-                  // Tambahkan logika untuk tombol Settings
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            const SettingChangePasswordPage()),
+                      builder: (context) => const SettingChangePasswordPage(),
+                    ),
                   );
                 },
               ),
-              const SizedBox(height: 20),
+              Divider(),
               ListTile(
-                leading: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: const Icon(Icons.move_to_inbox_rounded),
-                ),
+                leading: const Icon(Icons.move_to_inbox_rounded),
                 title: const Text('Saran & Masukkan'),
                 trailing: const Icon(
                   Icons.arrow_forward_ios,
@@ -279,25 +193,28 @@ class _AccountState extends State<Account> {
                   );
                 },
               ),
-
-              const SizedBox(height: 20),
-              Align(
-                alignment: Alignment.center,
+              Divider(),
+              const SizedBox(height: 50),
+              SizedBox(
+                width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     _logout(context);
                     // Tambahkan logika untuk tombol Logout
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange[300],
+                  ),
                   child: const Text(
                     'Logout',
                     style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold), // Teks menjadi tebal
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ), // Teks menjadi tebal
                   ),
                 ),
               ),
-              const SizedBox(height: 50),
             ],
           ),
         ),

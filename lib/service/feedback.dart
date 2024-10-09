@@ -34,7 +34,6 @@ class FeedbackService extends getx.GetxService {
       var result = response.data;
       return result;
     } catch (error) {
-      print(error);
       throw Exception('Failed to save feedback data: $error');
     }
   }

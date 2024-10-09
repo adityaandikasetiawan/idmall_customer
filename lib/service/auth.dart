@@ -45,7 +45,6 @@ class AuthService extends GetxService {
         };
       }
     } catch (e) {
-      print(e);
       return {
         'success': false,
         'message': 'An unexpected error occurred',
