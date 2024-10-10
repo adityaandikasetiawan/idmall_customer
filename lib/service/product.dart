@@ -13,11 +13,12 @@ class ProductService extends getx.GetxService {
   //get detail product
   Future<ProductFlyer> getProductDetail(String id) async {
     try {
+      print(id);
       final prefs = await SharedPreferences.getInstance();
       final String token = prefs.getString('token') ?? "";
 
       final response = await dio.get(
-        "${config.backendBaseUrl}/product/banner/",
+        "${config.backendBaseUrl}/product/banner/$id",
         options: Options(
           headers: {
             "Content-Type": "application/json",
@@ -25,9 +26,6 @@ class ProductService extends getx.GetxService {
             "Cache-Control": "no-cache"
           },
         ),
-        queryParameters: {
-          "id": id,
-        },
       );
 
       return ProductFlyer.fromJson(response.data['data'][0]);
