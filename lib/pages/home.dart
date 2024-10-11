@@ -38,6 +38,13 @@ class _HomeState extends State<Home> {
     // dashboardController.fetchTaskIdByEmail();
   }
 
+  Future<void> fetchRefreshData() async {
+    await dashboardController.fetchDashboardData();
+    await dashboardController.fetchTaskIdByEmail();
+    await dashboardController.fetchProductBisnis();
+    await dashboardController.fetchProductHome();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,17 +95,15 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                           const SizedBox(height: 15),
-                          Expanded(
-                            child: ListTile(
-                              onTap: () {
-                                // Tindakan saat bagian pertama ditekan
-                              },
-                              leading: const Icon(Icons.account_circle),
-                              title: Text(dashboardController
-                                  .dashboardData.value.customerName),
-                              subtitle: Text(
-                                  "${dashboardController.dashboardData.value.taskId} - ${dashboardController.dashboardData.value.status}"),
-                            ),
+                          ListTile(
+                            onTap: () {
+                              // Tindakan saat bagian pertama ditekan
+                            },
+                            leading: const Icon(Icons.account_circle),
+                            title: Text(dashboardController
+                                .dashboardData.value.customerName),
+                            subtitle: Text(
+                                "${dashboardController.dashboardData.value.taskId} - ${dashboardController.dashboardData.value.status}"),
                           ),
                           const SizedBox(
                             height: 10,
@@ -164,21 +169,26 @@ class _HomeState extends State<Home> {
                                       Icons.clear_rounded,
                                     ),
                                     onPressed: () => {
-                                      setState(() {
-                                        _keyword.clear();
-                                        dashboardController
-                                            .filterContractList(_keyword.text);
-                                      })
+                                      setState(
+                                        () {
+                                          _keyword.clear();
+                                          dashboardController
+                                              .filterContractList(
+                                                  _keyword.text);
+                                        },
+                                      )
                                     },
                                   ),
                                   hintText: 'Pencarian...',
                                   border: InputBorder.none,
                                 ),
                                 onChanged: (text) {
-                                  setState(() {
-                                    dashboardController
-                                        .filterContractList(text);
-                                  });
+                                  setState(
+                                    () {
+                                      dashboardController
+                                          .filterContractList(text);
+                                    },
+                                  );
                                 },
                               ),
                             ),
@@ -224,7 +234,8 @@ class _HomeState extends State<Home> {
                                     ],
                                   ),
                                   subtitle: Text(
-                                      "${customerList.name} - ${customerList.status}"),
+                                    "${customerList.name} - ${customerList.status}",
+                                  ),
                                 );
                               },
                             ),

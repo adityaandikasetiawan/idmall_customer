@@ -57,17 +57,20 @@ class DashboardService extends getx.GetxService {
 
       final response = await dio.get(
         "${config.backendBaseUrl}/customer/billing/list",
-        options: Options(headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "Cache-Control": "no-cache"
-        }),
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+            "Cache-Control": "no-cache"
+          },
+        ),
       );
       List<dynamic> data = response.data['data'];
       List<CustomerListByEmail> lists =
           data.map((json) => CustomerListByEmail.fromJson(json)).toList();
       return lists;
     } catch (e) {
+      print(e);
       throw Exception('Failed to get all task id by email: $e');
     }
   }

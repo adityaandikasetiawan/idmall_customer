@@ -13,7 +13,6 @@ class ProductService extends getx.GetxService {
   //get detail product
   Future<ProductFlyer> getProductDetail(String id) async {
     try {
-      print(id);
       final prefs = await SharedPreferences.getInstance();
       final String token = prefs.getString('token') ?? "";
 
