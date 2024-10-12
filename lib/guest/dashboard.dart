@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:idmall/controller/dashboard.controller.dart';
+import 'package:idmall/models/product_flyer.dart';
+import 'package:idmall/pages/details_product.dart';
 import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/login.dart';
 import 'package:idmall/widget/widget_support.dart';
 import 'package:idmall/pages/promo.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 class DashboardGuest extends StatefulWidget {
   const DashboardGuest({super.key});
@@ -12,6 +18,9 @@ class DashboardGuest extends StatefulWidget {
 }
 
 class _DashboardGuestState extends State<DashboardGuest> {
+  final DashboardController dashboardController =
+      Get.put(DashboardController());
+
   String? name;
   String greeting = '';
   String points = '10';
@@ -23,6 +32,13 @@ class _DashboardGuestState extends State<DashboardGuest> {
   void initState() {
     super.initState();
     setGreeting();
+    dashboardController.productBisnis();
+    dashboardController.productHome();
+  }
+
+  Future<void> fetchRefreshData() async {
+    await dashboardController.fetchProductBisnis();
+    await dashboardController.fetchProductHome();
   }
 
   void setGreeting() {
@@ -42,438 +58,454 @@ class _DashboardGuestState extends State<DashboardGuest> {
     }
   }
 
-  Stream? fooditemStream;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 250, 250, 255),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          margin: const EdgeInsets.only(top: 50.0, left: 20.0, right: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "$greeting, ",
-                          style: AppWidget.boldTextFeildStyle().copyWith(
-                            color: Colors.black, // Menambahkan warna hitam
-                          ),
-                        ),
-                        TextSpan(
-                          text: name ?? "Guest",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Color.fromARGB(
-                                255, 0, 0, 0), // Ubah warna sesuai kebutuhan
-                            fontFamily:
-                                'Poppins', // Sesuaikan dengan gaya font yang Anda gunakan
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        style: TextButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 228, 99, 7),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Login(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Sign In',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              // New Promotion Card
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 20.0),
-                child: Card(
-                  elevation: 4.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  color: const Color.fromARGB(255, 19, 24, 84),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(20.0),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PromoPage(),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(
+      body: RefreshIndicator(
+        onRefresh: fetchRefreshData,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            margin: const EdgeInsets.only(top: 50.0, left: 20.0, right: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RichText(
+                      text: TextSpan(
                         children: [
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'New Promotions !!!',
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(height: 10.0),
-                                Text(
-                                  'Learn More',
-                                  style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromARGB(255, 228, 99, 7),
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ],
+                          TextSpan(
+                            text: "$greeting, ",
+                            style: AppWidget.boldTextFeildStyle().copyWith(
+                              color: Colors.black,
                             ),
                           ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20.0),
-                              child: Image.asset(
-                                'images/card2.png',
-                                fit: BoxFit.cover,
-                                width: 150.0,
-                                height: 150.0,
-                              ),
+                          TextSpan(
+                            text: name ?? "Guest",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontFamily: 'Poppins',
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ),
-              ),
-
-              // New Card
-              SizedBox(
-                child: InkWell(
-                  onTap: () {
-                    if (!isAllowed) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Penggunaan Lokasi"),
-                            content: const Text(
-                              "Idmall mengumpulkan data terkait lokasi pengguna untuk mengidentifikasi ketersediaan layanan kami dengan lokasi pengguna",
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 228, 99, 7),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Login(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Sign In',
+                            style: TextStyle(
+                              color: Colors.white,
                             ),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text("Tolak"),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const MapSample(),
-                                    ),
-                                  );
-                                  isAllowed = true;
-                                },
-                                child: const Text("Terima"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MapSample(),
+                          ),
                         ),
-                      );
-                    }
-                  },
+                      ],
+                    ),
+                  ],
+                ),
+
+                // New Promotion Card
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 20.0),
                   child: Card(
                     elevation: 4.0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    color: const Color.fromARGB(255, 19, 24,
-                        84), // Ubah warna latar belakang kartu menjadi biru tua
-                    child: Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(
-                        children: [
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Check Coverage',
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors
-                                        .white, // Ubah warna teks menjadi putih
+                    color: const Color.fromARGB(255, 19, 24, 84),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20.0),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PromoPage(),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Row(
+                          children: [
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'New Promotions !!!',
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   ),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    'Learn More',
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(255, 228, 99, 7),
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20.0),
+                                child: Image.asset(
+                                  'images/card2.png',
+                                  fit: BoxFit.cover,
+                                  width: 150.0,
+                                  height: 150.0,
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Image.asset(
-                              'images/coverange.png', // Perhatikan penulisan nama gambar
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 20),
-              // Carousel slides
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Penawaran Terbaru',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                // New Card
+                SizedBox(
+                  child: InkWell(
+                    onTap: () {
+                      if (!isAllowed) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text("Penggunaan Lokasi"),
+                              content: const Text(
+                                "Idmall mengumpulkan data terkait lokasi pengguna untuk mengidentifikasi ketersediaan layanan kami dengan lokasi pengguna",
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text("Tolak"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const MapSample(),
+                                      ),
+                                    );
+                                    isAllowed = true;
+                                  },
+                                  child: const Text("Terima"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MapSample(),
+                          ),
+                        );
+                      }
+                    },
+                    child: Card(
+                      elevation: 4.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      color: const Color.fromARGB(255, 19, 24, 84),
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Row(
+                          children: [
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Check Coverage',
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Image.asset(
+                                'images/coverange.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      // const SizedBox(
-                      //   width: 150,
-                      // ),
-                      // GestureDetector(
-                      //   onTap: () {
-                      //     // Navigasi ke halaman yang diinginkan
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //           builder: (context) =>
-                      //               const PenawaranPage()), // Ganti dengan halaman yang diinginkan
-                      //     );
-                      //   },
-                      //   child: const Text(
-                      //     'Lihat Semuanya',
-                      //     style: TextStyle(
-                      //       fontSize: 10,
-                      //       color: Color.fromARGB(255, 228, 99, 7),
-                      //       fontWeight: FontWeight.bold,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(
-                      height:
-                          5), // Tambahkan jarak vertikal antara judul dan carousel
-                  SizedBox(
-                    height: 280,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
+                ),
+
+                const SizedBox(height: 20),
+
+                // Carousel slides
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const DetailPage(
-                            //       title: 'IdPlay Home',
-                            //       price: 'Rp. 179.000',
-                            //       imagePath: 'images/promo1.png',
-                            //       description:
-                            //           '1. Streaming Video HD Tanpa Buffering.\n2. Panggilan Video Berkualitas Tinggi.\n3. Koneksi Stabil Untuk 1-3 Perangkat.',
-                            //     ),
-                            //   ),
-                            // );
-                          },
-                          child: buildRoundedCarouselItem(
-                            title: 'IdPlay Home',
-                            price: 'Rp. 179.000',
-                            imagePath: 'images/promo1.png',
-                            backgroundColor:
-                                const Color.fromARGB(255, 255, 255, 255),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ), // Tambahkan jarak horizontal antara slide
-                        GestureDetector(
-                          onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const DetailPage(
-                            //       title: 'IdPlay Home',
-                            //       price: 'Rp. 230.000',
-                            //       imagePath: 'images/promo2.png',
-                            //       description:
-                            //           '1. Ideal untuk bisnis menengah yang membutuhkan akses cepat untuk aplikasi cloud dan video conferencing berkualitas tinggi.\n2. Bandwidth yang cukup untuk mendukung beberapa pengguna sekaligus.\n3. Dukungan teknis 24/7.',
-                            //     ),
-                            //   ),
-                            // );
-                          },
-                          child: buildRoundedCarouselItem(
-                            title: 'IdPlay Home',
-                            price: 'Rp. 230.000',
-                            imagePath: 'images/promo2.png',
-                            backgroundColor:
-                                const Color.fromARGB(255, 255, 255, 255),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ), // Tambahkan jarak horizontal antara slide
-                        GestureDetector(
-                          onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const DetailPage(
-                            //       title: 'IdPlay Home',
-                            //       price: 'Rp. 270.000',
-                            //       imagePath: 'images/promo3.png',
-                            //       description:
-                            //           '1. Direkomendasikan untuk bisnis dengan penggunaan data tinggi seperti e-commerce, video streaming, dan kolaborasi online.\n2. Kecepatan tinggi untuk mengunduh dan mengunggah file besar.\n3. Dukungan teknis prioritas 24/7.',
-                            //     ),
-                            //   ),
-                            // );
-                          },
-                          child: buildRoundedCarouselItem(
-                            title: 'IdPlay Home',
-                            price: 'Rp. 270.000',
-                            imagePath: 'images/promo3.png',
-                            backgroundColor:
-                                const Color.fromARGB(255, 255, 255, 255),
+                        Text(
+                          'Penawaran Terbaru',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(height: 5),
+                  ],
+                ),
 
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 20),
+
+                Obx(
+                  () {
+                    if (dashboardController.isLoading.value) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 100.0,
+                          color: Colors.grey[300],
+                        ),
+                      );
+                    } else {
+                      return Card(
+                        color: Color.fromARGB(
+                          1,
+                          217,
+                          217,
+                          217,
+                        ).withOpacity(0.2),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            // crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "IDPLAY HOME",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  fontFamily: "Inter",
+                                ),
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount:
+                                    dashboardController.productHome.length,
+                                itemBuilder: (context, index) {
+                                  ProductFlyer productHome =
+                                      dashboardController.productHome[index];
+                                  return InternetSpeedCard(
+                                    id: productHome.id.toString(),
+                                    speed: productHome.speed,
+                                    price: productHome.price,
+                                    packageName: productHome.name,
+                                  );
+                                },
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+
+                SizedBox(
+                  height: 20,
+                ),
+
+                Obx(
+                  () {
+                    if (dashboardController.isLoading.value) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 100.0,
+                          color: Colors.grey[300],
+                        ),
+                      );
+                    } else {
+                      return Card(
+                        color: Color.fromARGB(
+                          1,
+                          217,
+                          217,
+                          217,
+                        ).withOpacity(0.2),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            // crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "IDPLAY BISNIS",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  fontFamily: "Inter",
+                                ),
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount:
+                                    dashboardController.productBisnis.length,
+                                itemBuilder: (context, index) {
+                                  ProductFlyer productBisnis =
+                                      dashboardController.productBisnis[index];
+                                  return InternetSpeedCard(
+                                    id: productBisnis.id.toString(),
+                                    speed: productBisnis.speed,
+                                    price: productBisnis.price,
+                                    packageName: productBisnis.name,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                // SizedBox(
+                //   height: 300,
+                // ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget buildRoundedCarouselItem({
-    required String title,
-    required String price,
-    required String imagePath,
-    required Color backgroundColor,
-  }) {
-    return Container(
-      width: 200,
-      margin: const EdgeInsets.symmetric(horizontal: 1),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30), // Rounded corners
-        color: backgroundColor,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            // Rounded image
-            borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
-              imagePath,
-              height: 150,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            price,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
-        ],
       ),
     );
   }
 }
 
-class CardWidgetWithIcon extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  final String value;
+class InternetSpeedCard extends StatelessWidget {
+  final String id;
+  final int speed;
+  final int price;
+  final String packageName;
 
-  const CardWidgetWithIcon(
-      {super.key, required this.icon, required this.text, required this.value});
+  const InternetSpeedCard({
+    super.key,
+    required this.id,
+    required this.speed,
+    required this.price,
+    required this.packageName,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: Colors.black),
-            const SizedBox(width: 8),
-            Text(
-              text,
-              style: const TextStyle(fontSize: 16, color: Colors.black),
-            ),
-          ],
+    final oCcy = NumberFormat("#,##0", "en_US");
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('$speed Mbps', style: TextStyle(color: Colors.red)),
+                  Text(
+                    "Rp. ${oCcy.format(price).replaceAll(",", ".")}",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(packageName),
+                  SizedBox(width: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: () {
+                      Get.to(
+                        () => DetailPage(
+                          ids: id,
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Beli',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(
-              fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-      ],
+      ),
     );
   }
 }

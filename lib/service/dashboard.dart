@@ -18,8 +18,6 @@ class DashboardService extends getx.GetxService {
       final prefs = await SharedPreferences.getInstance();
       final String token = prefs.getString('token')!;
 
-      print(token);
-
       final response = await dio.get(
         "${config.backendBaseUrlProd}/customer/dashboard/detail-customer",
         options: Options(
@@ -140,7 +138,6 @@ class DashboardService extends getx.GetxService {
         options: Options(
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer $token",
             "Cache-Control": "no-cache"
           },
         ),
@@ -168,7 +165,6 @@ class DashboardService extends getx.GetxService {
         options: Options(
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer $token",
             "Cache-Control": "no-cache"
           },
         ),
