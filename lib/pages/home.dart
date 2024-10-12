@@ -1082,6 +1082,7 @@ class InternetSpeedCard extends StatelessWidget {
                       Get.to(
                         () => DetailPage(
                           ids: id,
+                          isGuest: 0,
                         ),
                       );
                     },

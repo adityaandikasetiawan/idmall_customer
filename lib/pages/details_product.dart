@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idmall/controller/product.controller.dart';
 import 'package:idmall/pages/google_maps.dart';
+import 'package:idmall/pages/signup.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 
 class DetailPage extends StatefulWidget {
   final String ids;
+  final int isGuest;
 
   const DetailPage({
     super.key,
     required this.ids,
+    required this.isGuest,
   });
 
   @override
@@ -99,16 +102,24 @@ class _DetailPageState extends State<DetailPage> {
                               side: const BorderSide(color: Colors.orange),
                             ),
                             onPressed: () {
-                              Get.to(
-                                () => MapSample(
-                                  productCode: productController
-                                      .detailProduct.value.code,
-                                  productName: productController
-                                      .detailProduct.value.name,
-                                ),
-                              );
+                              if (widget.isGuest == 0) {
+                                Get.to(
+                                  () => MapSample(
+                                    productCode: productController
+                                        .detailProduct.value.code,
+                                    productName: productController
+                                        .detailProduct.value.name,
+                                  ),
+                                );
+                              } else {
+                                Get.to(
+                                  () => SignUp(),
+                                );
+                              }
                             },
-                            child: const Text('Beli Sekarang!'),
+                            child: widget.isGuest == 0
+                                ? const Text('Beli Sekarang!')
+                                : const Text('Sign In'),
                           ),
                         ],
                       ),
