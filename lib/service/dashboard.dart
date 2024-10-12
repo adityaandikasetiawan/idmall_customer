@@ -16,15 +16,19 @@ class DashboardService extends getx.GetxService {
   Future<DashboardModel?> getDashboardData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final String token = prefs.getString('token') ?? "";
+      final String token = prefs.getString('token')!;
+
+      print(token);
 
       final response = await dio.get(
         "${config.backendBaseUrlProd}/customer/dashboard/detail-customer",
-        options: Options(headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "Cache-Control": "no-cache"
-        }),
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+            "Cache-Control": "no-cache"
+          },
+        ),
       );
 
       if (response.data['data'].length > 0) {
@@ -56,7 +60,7 @@ class DashboardService extends getx.GetxService {
       final String token = prefs.getString('token') ?? "";
 
       final response = await dio.get(
-        "${config.backendBaseUrl}/customer/billing/list",
+        "${config.backendBaseUrlProd}/customer/billing/list",
         options: Options(
           headers: {
             "Content-Type": "application/json",
@@ -70,7 +74,6 @@ class DashboardService extends getx.GetxService {
           data.map((json) => CustomerListByEmail.fromJson(json)).toList();
       return lists;
     } catch (e) {
-      print(e);
       throw Exception('Failed to get all task id by email: $e');
     }
   }
@@ -94,7 +97,8 @@ class DashboardService extends getx.GetxService {
           "task_id": taskid,
         },
       );
-      //change token and customer name
+
+      //change token and customer name in cookies
       await prefs.setString(
         "token",
         response.data['data'][0]['Updated_Auth_Token'],
@@ -107,7 +111,7 @@ class DashboardService extends getx.GetxService {
 
       //update detail
       final response2 = await dio.get(
-        "${config.backendBaseUrl}/customer/dashboard",
+        "${config.backendBaseUrlProd}/customer/dashboard",
         options: Options(
           headers: {
             "Content-Type": "application/json",
@@ -121,7 +125,6 @@ class DashboardService extends getx.GetxService {
       );
       return DashboardModel.fromJson(response2.data['data']);
     } catch (e) {
-      // print(e);
       throw Exception('Failed to update token and detail: $e');
     }
   }

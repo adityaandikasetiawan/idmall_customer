@@ -146,8 +146,10 @@ class _HomeState extends State<Home> {
                                 )
                               ],
                             ),
-                            subtitle: Text(dashboardController
-                                .dashboardData.value.customerName),
+                            subtitle: Text(
+                              dashboardController
+                                  .dashboardData.value.customerName,
+                            ),
                           ),
                           const Divider(),
                           SizedBox(
@@ -249,44 +251,46 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(() {
-                    if (dashboardController.isLoading.value) {
-                      return Shimmer.fromColors(
-                        baseColor: Colors.grey.shade300,
-                        highlightColor: Colors.grey.shade100,
-                        child: Container(
-                          width: 100.0,
-                          height: 5.0,
-                          color: Colors.grey[300],
-                        ),
-                      );
-                    } else {
-                      return Row(
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: dashboardController
-                                      .dashboardData.value.customerName,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.white,
-                                    fontFamily: "Inter",
-                                    fontWeight: FontWeight.w600,
+                  Obx(
+                    () {
+                      if (dashboardController.isLoading.value) {
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey.shade300,
+                          highlightColor: Colors.grey.shade100,
+                          child: Container(
+                            width: 100.0,
+                            height: 5.0,
+                            color: Colors.grey[300],
+                          ),
+                        );
+                      } else {
+                        return Row(
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: dashboardController
+                                        .dashboardData.value.customerName,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                      fontFamily: "Inter",
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          const Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.white,
-                          ),
-                        ],
-                      );
-                    }
-                  }),
+                            const Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.white,
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -349,11 +353,15 @@ class _HomeState extends State<Home> {
       ),
       backgroundColor: const Color.fromARGB(255, 250, 250, 255),
       body: RefreshIndicator(
-        onRefresh: dashboardController.fetchDashboardData,
+        onRefresh: fetchRefreshData,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: Container(
-            margin: const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: 10.0,
+              left: 20.0,
+              right: 20.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -678,13 +686,12 @@ class _HomeState extends State<Home> {
                             ),
                             child: Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    15), // Bentuk sudut container
+                                borderRadius: BorderRadius.circular(15),
                                 image: const DecorationImage(
                                   image: AssetImage(
-                                      'images/bb_green_mint.jpg'), // Gambar background
-                                  fit: BoxFit
-                                      .cover, // Menyesuaikan gambar dengan ukuran container
+                                    'images/bb_green_mint.jpg',
+                                  ),
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                               child: Padding(
@@ -739,11 +746,12 @@ class _HomeState extends State<Home> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => UpgradeDowngradeDetail(
-                                    task: dashboardController
-                                        .dashboardData.value.taskId,
-                                    sid: '',
-                                  )),
+                            builder: (context) => UpgradeDowngradeDetail(
+                              task: dashboardController
+                                  .dashboardData.value.taskId,
+                              sid: '',
+                            ),
+                          ),
                         );
                       },
                       child: Padding(
@@ -837,8 +845,12 @@ class _HomeState extends State<Home> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      color: const Color.fromARGB(255, 19, 24,
-                          84), // Ubah warna latar belakang kartu menjadi biru tua
+                      color: const Color.fromARGB(
+                        255,
+                        19,
+                        24,
+                        84,
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(18.0),
                         child: Row(
@@ -888,8 +900,12 @@ class _HomeState extends State<Home> {
                       );
                     } else {
                       return Card(
-                        color:
-                            Color.fromARGB(1, 217, 217, 217).withOpacity(0.2),
+                        color: Color.fromARGB(
+                          1,
+                          217,
+                          217,
+                          217,
+                        ).withOpacity(0.2),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Column(
@@ -949,15 +965,19 @@ class _HomeState extends State<Home> {
                       );
                     } else {
                       return Card(
-                        color:
-                            Color.fromARGB(1, 217, 217, 217).withOpacity(0.2),
+                        color: Color.fromARGB(
+                          1,
+                          217,
+                          217,
+                          217,
+                        ).withOpacity(0.2),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Column(
                             // crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "IDPLAY HOME",
+                                "IDPLAY BISNIS",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,

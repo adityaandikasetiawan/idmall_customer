@@ -173,6 +173,7 @@ flutter:
      - images/idmall_logo.png
      - images/carousel_bg.png
      - images/background_card.png
+     - images/dashboard_bg.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

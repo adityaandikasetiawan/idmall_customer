@@ -71,7 +71,7 @@ class PaymentController extends GetxController {
   ) async {
     try {
       isLoading(true);
-      var result = await paymentService.createTransaction(
+      await paymentService.createTransaction(
         taskid,
         bankCode,
         paymentType,

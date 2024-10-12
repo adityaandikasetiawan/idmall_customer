@@ -23,7 +23,8 @@ class LoginController extends GetxController {
 
       var result = await authService.login(email, password);
       if (result['success']) {
-        await saveUserData(result['data']);
+        saveUserData(result['data']);
+
         Get.snackbar("Success", "Login successful");
         Get.to(
           () => NavigationScreen(

@@ -30,11 +30,13 @@ class _HistoryPaymentState extends State<HistoryPayment> {
     final dio = Dio();
     final response = await dio.get(
       "${config.backendBaseUrl}/customer/billing/histories",
-      options: Options(headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-        "Cache-Control": "no-cache"
-      }),
+      options: Options(
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "Cache-Control": "no-cache"
+        },
+      ),
     );
     for (var ele in response.data['data']) {
       paymentHistory.add(PaymentHistoryList.fromJson(ele));
@@ -76,7 +78,6 @@ class _HistoryPaymentState extends State<HistoryPayment> {
                           onTap: () {
                             String formattedDate = DateFormat('yyyy-MM').format(
                                 DateTime.parse(paymentHistory[index].periode));
-                            print(formattedDate);
                             Navigator.push(
                               context,
                               MaterialPageRoute(

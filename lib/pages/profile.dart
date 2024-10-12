@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:idmall/pages/change_password.dart';
@@ -373,17 +375,18 @@ class _ProfileState extends State<Profile> {
                   GestureDetector(
                     onTap: () async {
                       await AuthService().SignOut();
-                      FirebaseAuth.instance
-                          .authStateChanges()
-                          .listen((User? user) {
-                        if (user == null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Splash()),
-                          );
-                        }
-                      });
+                      FirebaseAuth.instance.authStateChanges().listen(
+                        (User? user) {
+                          if (user == null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Splash(),
+                              ),
+                            );
+                          }
+                        },
+                      );
                     },
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 20.0),

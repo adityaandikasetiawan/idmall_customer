@@ -58,14 +58,12 @@ class NotificationService extends GetxService {
           "id": id,
         },
       );
-      print(response.data);
       if (response.statusCode == 200) {
         return true;
       } else {
         return false;
       }
     } catch (e) {
-      print(e);
       throw Exception('Failed to read notification: $e');
     }
   }

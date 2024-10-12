@@ -31,7 +31,6 @@ class AuthService extends GetxService {
         };
       }
     } on DioException catch (e) {
-      print(e);
       if (e.response != null) {
         return {
           'success': false,
@@ -44,11 +43,6 @@ class AuthService extends GetxService {
           'message': 'Network error, please try again later'
         };
       }
-    } catch (e) {
-      return {
-        'success': false,
-        'message': 'An unexpected error occurred',
-      };
     }
   }
 

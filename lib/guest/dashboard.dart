@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:idmall/pages/details_product.dart';
 import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/login.dart';
 import 'package:idmall/widget/widget_support.dart';
