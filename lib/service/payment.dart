@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:idmall/models/payment_history_detail.dart';
 import 'package:idmall/models/payment_method.dart';
 import 'package:idmall/models/payment_transaction.dart';
 import 'package:intl/intl.dart';
@@ -61,7 +62,7 @@ class PaymentService extends GetxService {
   }
 
   //create transaction to get VA number
-  Future<String> createTransaction(
+  Future<Map<String, dynamic>> createTransaction(
     String taskid,
     String bankCode,
     String paymentType,
@@ -72,7 +73,7 @@ class PaymentService extends GetxService {
 
     try {
       final response = await dio.post(
-        "${config.backendBaseUrl}/transaction/ca/$taskid",
+        "${config.backendBaseUrl}/transaction/create",
         data: {
           "task_id": taskid,
           "payment_method_code": bankCode,
@@ -87,9 +88,50 @@ class PaymentService extends GetxService {
         ),
       );
 
-      return response.data['data']['payment_code'];
+      if (response.statusCode == 200) {
+        return {
+          'status': response.data['status'],
+          'message': response.data['message'],
+          'payment_code': response.data['data']['payment_code'],
+        };
+      } else {
+        return {
+          'status': "error",
+          'message': response.data['errors']['message'] ?? "Terjadi kesalahan",
+        };
+      }
     } catch (e) {
       throw Exception('Failed to create transaction: $e');
+    }
+  }
+
+  //get history detail payment
+  Future<PaymentHistoryDetail> getPaymentHistoryDetail(
+    String taskid,
+    String periode,
+  ) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token') ?? "";
+
+      final response = await dio.get(
+        "${config.backendBaseUrl}/transaction/history/detail",
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+            "Cache-Control": "no-cache",
+          },
+        ),
+        data: {
+          "task_id": taskid,
+          "period": periode,
+        },
+      );
+
+      return PaymentHistoryDetail.fromJson(response.data['data'][0]);
+    } catch (error) {
+      throw Exception('Failed to get detail payment: $error');
     }
   }
 }

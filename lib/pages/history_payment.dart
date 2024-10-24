@@ -7,7 +7,11 @@ import 'package:idmall/config/config.dart' as config;
 import 'package:intl/intl.dart';
 
 class HistoryPayment extends StatefulWidget {
-  const HistoryPayment({super.key});
+  final String taskid;
+  const HistoryPayment({
+    super.key,
+    required this.taskid,
+  });
 
   @override
   State<HistoryPayment> createState() => _HistoryPaymentState();
@@ -64,12 +68,13 @@ class _HistoryPaymentState extends State<HistoryPayment> {
                       return Container(
                         width: MediaQuery.of(context).size.width,
                         decoration: const BoxDecoration(
-                            border: Border(
-                          bottom: BorderSide(
-                            color: Colors.grey, // Warna border
-                            width: 1.0, // Lebar border
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
                           ),
-                        )),
+                        ),
                         child: ListTile(
                           title: Text(formattedDate),
                           trailing: Text(
@@ -82,8 +87,8 @@ class _HistoryPaymentState extends State<HistoryPayment> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => HistoryPaymentDetail(
-                                  taskid: "",
-                                  periode: paymentHistory[index].periode,
+                                  taskid: widget.taskid,
+                                  periode: formattedDate,
                                 ),
                               ),
                             );

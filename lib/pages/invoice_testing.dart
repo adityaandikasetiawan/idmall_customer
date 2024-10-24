@@ -91,16 +91,18 @@ class _InvoicePageState extends State<InvoicePage> {
                   const SizedBox(height: 16),
                   ListTile(
                     title: const Text('Metode Pembayaran'),
-                    subtitle: Text(widget.typePayment == "BANK"
-                        ? "Virtual Account"
-                        : "Outlet"),
+                    subtitle: Text(
+                      widget.typePayment == "BANK"
+                          ? "Virtual Account"
+                          : "Outlet",
+                    ),
                   ),
                   ListTile(
                     title: const Text('Bank'),
                     subtitle: Text(widget.bankName),
                   ),
                   ListTile(
-                    title: const Text('Nomor Rekening'),
+                    title: const Text('Nomor Pembayaran'),
                     subtitle: Row(
                       children: [
                         Text(widget.paymentCode),

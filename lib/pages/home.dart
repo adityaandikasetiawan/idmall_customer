@@ -9,8 +9,8 @@ import 'package:idmall/pages/details_product.dart';
 import 'package:idmall/pages/fab_testing.dart';
 import 'package:idmall/pages/google_maps.dart';
 import 'package:idmall/pages/notification_list.dart';
+import 'package:idmall/pages/payment_webview.dart';
 import 'package:idmall/pages/pembayaran_existing.dart';
-import 'package:idmall/pages/pembayaran_testing.dart';
 import 'package:idmall/pages/upgrade_downgrade_detail.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
@@ -34,8 +34,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    // dashboardController.fetchDashboardData();
-    // dashboardController.fetchTaskIdByEmail();
   }
 
   Future<void> fetchRefreshData() async {
@@ -414,13 +412,7 @@ class _HomeState extends State<Home> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          PaymentMethodExisting(
-                                        taskid: dashboardController
-                                            .dashboardData.value.taskId,
-                                        billStatus: dashboardController
-                                            .dashboardData.value.billStatus,
-                                      ),
+                                      builder: (context) => PaymentWebview(),
                                     ),
                                   );
                                 },
@@ -429,7 +421,8 @@ class _HomeState extends State<Home> {
                                     borderRadius: BorderRadius.circular(15),
                                     image: const DecorationImage(
                                       image: AssetImage(
-                                          'images/background_card.png'),
+                                        'images/background_card.png',
+                                      ),
                                       fit: BoxFit.cover,
                                     ),
                                     border: Border.all(
@@ -539,7 +532,8 @@ class _HomeState extends State<Home> {
                                   borderRadius: BorderRadius.circular(15),
                                   image: const DecorationImage(
                                     image: AssetImage(
-                                        'images/background_card.png'),
+                                      'images/background_card.png',
+                                    ),
                                     fit: BoxFit.cover,
                                   ),
                                   border: Border.all(
@@ -657,8 +651,9 @@ class _HomeState extends State<Home> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => FABTesting(
-                                    taskID: dashboardController
-                                        .dashboardData.value.taskId),
+                                  taskID: dashboardController
+                                      .dashboardData.value.taskId,
+                                ),
                               ),
                             );
                           } else if (dashboardController
@@ -669,9 +664,10 @@ class _HomeState extends State<Home> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PaymentMethod(
+                                builder: (context) => PaymentMethodExisting(
                                   taskid: dashboardController
                                       .dashboardData.value.taskId,
+                                  billStatus: "Tertagih",
                                 ),
                               ),
                             );

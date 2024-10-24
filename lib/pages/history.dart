@@ -53,15 +53,16 @@ class _HistoryListState extends State<HistoryList> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Center(child: Text("History")),
+          title: const Center(
+            child: Text("History"),
+          ),
           bottom: const TabBar(
             tabs: [
               Tab(text: 'Pembayaran'),
               Tab(text: 'Aktivasi'),
             ],
-            indicatorColor:
-                Colors.orange, // Warna latar belakang tab saat aktif
-            labelColor: Colors.orange, // Warna teks pada tab saat aktif
+            indicatorColor: Colors.orange,
+            labelColor: Colors.orange,
           ),
         ),
         body: SingleChildScrollView(
@@ -79,7 +80,9 @@ class _HistoryListState extends State<HistoryList> {
                     height: 600,
                     child: TabBarView(
                       children: [
-                        const HistoryPayment(),
+                        HistoryPayment(
+                          taskid: widget.customerId!,
+                        ),
                         CustomerStatus(
                           status: widget.status ?? "",
                           taskid: widget.customerId ?? "",

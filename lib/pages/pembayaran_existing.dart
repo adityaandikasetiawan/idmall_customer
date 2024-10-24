@@ -5,13 +5,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:idmall/controller/payment.controller.dart';
-import 'package:idmall/models/payment_method.dart';
 import 'package:idmall/pages/invoice_testing.dart';
+import 'package:idmall/pages/payment/payment_method.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:idmall/config/config.dart' as config;
 import 'package:intl/intl.dart';
-
-final PaymentController paymentController = Get.put(PaymentController());
 
 class PaymentMethodExisting extends StatefulWidget {
   final String taskid;
@@ -27,11 +25,15 @@ class PaymentMethodExisting extends StatefulWidget {
 }
 
 class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
+  final PaymentController paymentController = Get.put(PaymentController());
+
   @override
   void initState() {
     super.initState();
-    paymentController.getPaymentDetailTransaction(widget.taskid);
-    paymentController.getPaymentMethod();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      paymentController.getPaymentDetailTransaction(widget.taskid);
+      paymentController.getPaymentMethod();
+    });
   }
 
   final oCcy = NumberFormat("#,##0", "en_US");
@@ -41,10 +43,25 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Pembayaran',
-          style: TextStyle(fontSize: 16.0), // Ubah ukuran font menjadi 16px
+          'Detail Pembayaran',
+          style: TextStyle(
+            fontSize: 16.0,
+            color: Colors.white,
+          ), //
         ),
-        centerTitle: true, // Posisikan judul ke tengah
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: <Color>[
+                Color(0xFFFFC107),
+                Color(0xFFFFA000),
+              ],
+            ),
+          ),
+        ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -63,7 +80,73 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 8.0),
+                    Row(
+                      children: [
+                        const Text(
+                          "Detail Paket",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 2,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Kode Layanan:'),
+                        Text(
+                          paymentController.paymentDetail.value.services,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Nama Layanan:'),
+                        Text(
+                          paymentController.paymentDetail.value.subProduct,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                          maxLines: 2,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          "Detail Tagihan",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 2,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -128,9 +211,27 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                         ),
                       ],
                     ),
-                    // const SizedBox(height: 8.0),
-                    Divider(
+                    SizedBox(
                       height: 8,
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          "Status Tagihan",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 2,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,57 +292,28 @@ class _PaymentMethodExistingState extends State<PaymentMethodExisting> {
                     ),
                     const Divider(),
                     widget.billStatus != "Terbayar"
-                        ? Column(
-                            children: [
-                              const SizedBox(height: 8.0),
-                              const Text(
-                                'Metode Pembayaran:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 20.0),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                itemCount:
-                                    paymentController.paymentMethodBank.length,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  PaymentMethodModel paymentMethodBank =
-                                      paymentController
-                                          .paymentMethodBank[index];
-                                  return buildPaymentMethodCard(
-                                    paymentMethodBank.iconURL,
-                                    paymentMethodBank.code,
-                                    paymentMethodBank.name,
-                                    "BANK",
-                                    paymentController.paymentDetail.value.total
-                                        .toString(),
-                                    context,
-                                    cardWidth:
-                                        MediaQuery.of(context).size.width,
-                                    cardHeight: 120,
-                                    imageWidth: 80,
-                                    imageHeight: 80,
+                        ? Center(
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.to(
+                                    () => PaymentMethodPage(
+                                      taskid: widget.taskid,
+                                    ),
                                   );
                                 },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.amber,
+                                ),
+                                child: Text(
+                                  "Pilih Metode Pembayaran",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
-                              // ListView.builder(
-                              //   shrinkWrap: true,
-                              //   itemCount: paymentMethodListOutlet.length,
-                              //   itemBuilder: (context, index) {
-                              //     return buildPaymentMethodCard(
-                              //       paymentMethodListOutlet[index].iconURL,
-                              //       paymentMethodListOutlet[index].code,
-                              //       paymentMethodListOutlet[index].name,
-                              //       "OUTLET",
-                              //       context,
-                              //       cardWidth: MediaQuery.of(context).size.width,
-                              //       cardHeight: 120,
-                              //       imageWidth: 80,
-                              //       imageHeight: 80,
-                              //     );
-                              //   },
-                              // ),
-                            ],
+                            ),
                           )
                         : const SizedBox(
                             height: 0,

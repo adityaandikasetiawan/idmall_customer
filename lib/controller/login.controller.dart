@@ -34,6 +34,7 @@ class LoginController extends GetxController {
         );
       } else {
         showErrorDialog("Error", result['message']);
+        isLoading.value = false;
       }
     } catch (e) {
       showErrorDialog("Error", "An unexpected error occurred");
@@ -42,6 +43,7 @@ class LoginController extends GetxController {
     }
   }
 
+  //dialog error
   void showErrorDialog(String title, String message) {
     Get.defaultDialog(
       title: title,
@@ -55,6 +57,7 @@ class LoginController extends GetxController {
     );
   }
 
+  //save login response to shared preferences
   Future<void> saveUserData(Map<String, dynamic> userData) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('user_id', userData['id']);

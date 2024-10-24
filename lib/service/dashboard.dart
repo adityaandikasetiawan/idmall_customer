@@ -121,6 +121,7 @@ class DashboardService extends getx.GetxService {
           "task_id": response.data['data'][0]['Task_ID'].toString(),
         },
       );
+
       return DashboardModel.fromJson(response2.data['data']);
     } catch (e) {
       throw Exception('Failed to update token and detail: $e');
@@ -138,7 +139,8 @@ class DashboardService extends getx.GetxService {
         options: Options(
           headers: {
             "Content-Type": "application/json",
-            "Cache-Control": "no-cache"
+            "Cache-Control": "no-cache",
+            "Authorization": "Bearer $token"
           },
         ),
         queryParameters: {
@@ -165,7 +167,8 @@ class DashboardService extends getx.GetxService {
         options: Options(
           headers: {
             "Content-Type": "application/json",
-            "Cache-Control": "no-cache"
+            "Cache-Control": "no-cache",
+            "Authorization": "Bearer $token"
           },
         ),
         queryParameters: {
