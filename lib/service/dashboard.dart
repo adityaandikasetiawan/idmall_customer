@@ -47,6 +47,7 @@ class DashboardService extends getx.GetxService {
       }
       return null;
     } catch (error) {
+      print(error);
       throw Exception('Failed to fetch dashboard data: $error');
     }
   }

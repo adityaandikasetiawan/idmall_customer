@@ -1,7 +1,9 @@
 // ignore_for_file: non_constant_identifier_names, use_build_context_synchronously, duplicate_ignore
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart' as getx;
 import 'package:idmall/config/config.dart';
+import 'package:idmall/pages/account_link.dart';
 import 'package:idmall/pages/feedback.dart';
 import 'package:idmall/pages/helpcenter.dart';
 import 'package:idmall/pages/login.dart';
@@ -150,6 +152,35 @@ class _AccountState extends State<Account> {
               ),
               const SizedBox(height: 15),
               ListTile(
+                leading: const Icon(Icons.account_circle),
+                title: const Text('Link Account'),
+                trailing:
+                    const Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AccountLink(),
+                    ),
+                  );
+                },
+              ),
+              Divider(),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Update Account'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingChangePasswordPage(),
+                    ),
+                  );
+                },
+              ),
+              Divider(),
+              ListTile(
                 leading: const Icon(Icons.help),
                 title: const Text('Help Center'),
                 trailing:
@@ -159,20 +190,6 @@ class _AccountState extends State<Account> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const HelpCenterPage(),
-                    ),
-                  );
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('Settings'),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SettingChangePasswordPage(),
                     ),
                   );
                 },
@@ -237,8 +254,13 @@ void _logout(BuildContext context) async {
   await prefs.remove(
       'fullName'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
 
+  getx.Get.deleteAll();
+
   // Navigasi kembali ke halaman login atau halaman lain yang sesuai
   // ignore: use_build_context_synchronously
-  Navigator.of(context)
-      .pushReplacement(MaterialPageRoute(builder: (builder) => const Login()));
+  Navigator.of(context).pushReplacement(
+    MaterialPageRoute(
+      builder: (builder) => const Login(),
+    ),
+  );
 }

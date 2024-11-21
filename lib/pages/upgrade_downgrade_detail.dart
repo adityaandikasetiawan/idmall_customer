@@ -1,15 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/io.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:idmall/models/customer_detail.dart';
-import 'package:idmall/models/product.dart';
-import 'package:idmall/models/zip_code.dart';
 import 'package:idmall/consts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:idmall/config/config.dart' as config;
 
 class UpgradeDowngradeDetail extends StatefulWidget {
   final String task;
@@ -28,6 +27,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
   String? firstName;
   String? lastName;
   String? token;
+  String? taskId;
   double? latitude;
   double? longitude;
   Dio dio = Dio();
@@ -48,6 +48,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
       firstName = prefs.getString('firstName');
       lastName = prefs.getString('lastName');
       token = prefs.getString('token');
+      taskId = prefs.getString('taskId');
       latitude = position.latitude;
       longitude = position.longitude;
     });
@@ -77,9 +78,6 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
         _idCardController.text = jsonNya.ktp!;
         _latitudeController.text = jsonNya.latitude;
         _longitudeController.text = jsonNya.longitude;
-        _postalCodeType =
-            "${jsonNya.zipCode} => ${jsonNya.district}, ${jsonNya.city}, ${jsonNya.province}";
-        _selectedServiceType = "${jsonNya.service} => ${jsonNya.productName}";
       });
     }
   }
@@ -94,38 +92,30 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _latitudeController = TextEditingController();
   final TextEditingController _longitudeController = TextEditingController();
-  String? _selectedServiceType;
-  String? _postalCodeType;
-  File? _imageFile;
-  String? _region;
 
   Future<void> _submitForm(context) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    String formLongitude = _longitudeController.text;
-    String formLatitude = _latitudeController.text;
-    // File? file = _imageFile; // Access the selected file if needed;
-    File? file = _imageFile;
-    if (formLongitude != '') {
-      longitude = double.parse(formLongitude);
-    }
-    if (formLatitude != '') {
-      latitude = double.parse(formLatitude);
-    }
-    if (file != null) {
-    } else {
-      // Send form data and image
-    }
+    final response = await dio.post(
+      "${config.backendBaseUrl}/request-du",
+      options: Options(
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "Cache-Control": "no-cache"
+        },
+      ),
+      data: {
+        "task_id": taskId,
+        "note": _noteController.text,
+      },
+    );
 
-    try {
-      // Replace URL with your endpoint
-
-      // Handle response
-      return Navigator.of(context).pop();
-    } catch (e) {
-      // Handle error
-    }
+    Get.snackbar(response.data['status'], response.data['message']);
+    Get.off(
+      () => UpgradeDowngradeDetail(task: widget.task, sid: ""),
+    );
   }
 
   @override
@@ -157,6 +147,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      readOnly: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your first name';
@@ -187,6 +178,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                         // You can add additional email validation here
                         return null;
                       },
+                      readOnly: true,
                     ),
                   ),
                   const SizedBox(
@@ -211,72 +203,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                         // You can add additional email validation here
                         return null;
                       },
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Material(
-                    elevation: 5,
-                    borderRadius: BorderRadius.circular(10.0),
-                    shadowColor: Colors.grey,
-                    child: DropdownSearch<String>(
-                      selectedItem: _postalCodeType,
-                      asyncItems: (String filter) async {
-                        (dio.httpClientAdapter as IOHttpClientAdapter)
-                            .createHttpClient = () => HttpClient()
-                          ..badCertificateCallback =
-                              (X509Certificate cert, String host, int port) =>
-                                  true;
-                        var response = await dio.get(
-                          "$linkLaravelAPI/entri-data/zipcode",
-                          queryParameters: {"chars": filter},
-                        );
-                        // print(jsonDecode(response.data)['status']);
-                        if (jsonDecode(response.data)['status'] == 'success') {
-                          var hasil = jsonDecode(response.data)['data'];
-                          List<String> list = [];
-                          for (var ele in hasil) {
-                            var zipCodeModel = ZipCode.fromJson(ele);
-                            var zipCodeNya = zipCodeModel.zipCode.toString();
-                            var kelurahan = zipCodeModel.district.toString();
-                            var kota = zipCodeModel.city.toString();
-                            var provinsi = zipCodeModel.province.toString();
-                            list.add(
-                                "$zipCodeNya => $kelurahan, $kota, $provinsi");
-                          }
-                          // print(model[0]);
-                          return list;
-                        } else {
-                          return [];
-                        }
-                      },
-                      dropdownDecoratorProps: DropDownDecoratorProps(
-                        dropdownSearchDecoration: InputDecoration(
-                          labelText: 'Kode Pos',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                      ),
-                      popupProps: const PopupProps.menu(
-                        showSelectedItems: true,
-                        isFilterOnline: true,
-                        showSearchBox: true,
-                        // disabledItemFn: (String s) => s.startsWith('I'),
-                      ),
-                      onChanged: (String? value) {
-                        setState(() {
-                          _postalCodeType = value;
-                          _region = value;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select a postal code';
-                        }
-                        return null;
-                      },
+                      readOnly: true,
                     ),
                   ),
                   const SizedBox(
@@ -301,122 +228,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                         // You can add additional email validation here
                         return null;
                       },
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Material(
-                    elevation: 5,
-                    borderRadius: BorderRadius.circular(10.0),
-                    shadowColor: Colors.grey,
-                    child: TextFormField(
-                      controller: _longitudeController,
-                      decoration: InputDecoration(
-                        labelText: 'Longitude',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter customer longitude';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Material(
-                    elevation: 5,
-                    borderRadius: BorderRadius.circular(10.0),
-                    shadowColor: Colors.grey,
-                    child: TextFormField(
-                      controller: _latitudeController,
-                      decoration: InputDecoration(
-                        labelText: 'Latitude',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter customer latitude';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Material(
-                    elevation: 5,
-                    borderRadius: BorderRadius.circular(10.0),
-                    shadowColor: Colors.grey,
-                    child: DropdownSearch<String>(
-                      selectedItem: _selectedServiceType,
-                      asyncItems: (String filter) async {
-                        (dio.httpClientAdapter as IOHttpClientAdapter)
-                            .createHttpClient = () => HttpClient()
-                          ..badCertificateCallback =
-                              (X509Certificate cert, String host, int port) =>
-                                  true;
-                        var response = await dio.get(
-                            "$linkLaravelAPI/entri-data/product",
-                            queryParameters: {
-                              "chars": filter,
-                              "region": _region
-                            },
-                            options: Options(headers: {
-                              HttpHeaders.authorizationHeader: token,
-                            }));
-                        if (jsonDecode(response.data)['status'] == 'success') {
-                          var hasil = jsonDecode(response.data)['data'];
-                          List<String> list = [];
-                          for (var ele in hasil) {
-                            var productModel = Product.fromJson(ele);
-                            var productNya = productModel.code.toString();
-                            var name = productModel.name.toString();
-                            var category = productModel.category.toString();
-                            var group = productModel.group.toString();
-                            var price = productModel.price.toString();
-                            var region = productModel.region.toString();
-                            list.add(
-                                "$productNya => $name, $category, $group, $region, $price");
-                          }
-                          return list;
-                        } else {
-                          return [];
-                        }
-                      },
-                      dropdownDecoratorProps: DropDownDecoratorProps(
-                        dropdownSearchDecoration: InputDecoration(
-                          labelText: 'Layanan',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                      ),
-                      popupProps: const PopupProps.menu(
-                        showSelectedItems: true,
-                        isFilterOnline: true,
-                        showSearchBox: true,
-                      ),
-                      items: const [],
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedServiceType = value;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select a product';
-                        }
-                        return null;
-                      },
+                      readOnly: true,
                     ),
                   ),
                   const SizedBox(
@@ -430,7 +242,7 @@ class _UpgradeDowngradeDetailState extends State<UpgradeDowngradeDetail> {
                       maxLines: 8,
                       controller: _noteController,
                       decoration: InputDecoration(
-                        labelText: 'Note',
+                        labelText: 'Tuliskan paket yang Anda inginkan',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

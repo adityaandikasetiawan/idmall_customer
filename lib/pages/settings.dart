@@ -1,7 +1,9 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:idmall/pages/setting_form_change_email.dart';
 import 'package:idmall/pages/setting_form_change_password.dart';
+import 'package:idmall/pages/setting_form_change_phone.dart';
 
 class SettingChangePasswordPage extends StatefulWidget {
   const SettingChangePasswordPage({super.key});
@@ -38,28 +40,6 @@ class _SettingChangePasswordPageState extends State<SettingChangePasswordPage> {
                 'Akun',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              // const SizedBox(height: 15),
-              // ListTile(
-              //   leading: Container(
-              //     width: 50,
-              //     height: 50,
-              //     decoration: BoxDecoration(
-              //       shape: BoxShape.circle,
-              //       border: Border.all(color: Colors.grey, width: 1),
-              //     ),
-              //     child: const Icon(Icons.info),
-              //   ),
-              //   title: const Text('Informasi Akun'),
-              //   trailing:
-              //   const Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
-              //   onTap: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (context) => const FormAccountInformation()),
-              //       );
-              //   },
-              // ),
               const SizedBox(height: 15),
               ListTile(
                 leading: Container(
@@ -67,18 +47,69 @@ class _SettingChangePasswordPageState extends State<SettingChangePasswordPage> {
                   height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 1),
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1,
+                    ),
                   ),
-                  child: const Icon(Icons.key),
+                  child: const Icon(Icons.phone_android),
                 ),
-                title: const Text('Ubah Password'),
-                trailing:
-                    const Icon(Icons.arrow_forward_ios), // Icon panah ke kanan
+                title: const Text('Ubah Nomor Handphone'),
+                trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const FormChangePassword()),
+                      builder: (context) => const FormChangePhoneNumber(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1,
+                    ),
+                  ),
+                  child: const Icon(Icons.email),
+                ),
+                title: const Text('Ubah Email'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FormChangeEmail(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1,
+                    ),
+                  ),
+                  child: const Icon(Icons.key),
+                ),
+                title: const Text('Ubah Password'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FormChangePassword(),
+                    ),
                   );
                 },
               ),
