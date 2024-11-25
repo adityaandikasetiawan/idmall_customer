@@ -130,10 +130,14 @@ class AccountService extends getx.GetxService {
     }
   }
 
-  Future<dynamic> validationOtp(String phoneNumber, String otpNumber) async {
+  Future<dynamic> validationOtp(
+    String phoneNumber,
+    String otpNumber,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final String token = prefs.getString('token') ?? "";
+      final String taskId = prefs.getString('taskId') ?? "";
 
       String fixPhoneNumber = "62$phoneNumber";
 
@@ -151,6 +155,29 @@ class AccountService extends getx.GetxService {
           "phone_number": fixPhoneNumber,
         },
       );
+
+      if (response.data['status'] == 'success') {
+        final response2 = await dio.patch(
+          "${config.backendBaseUrl}/account/connect",
+          options: Options(
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer $token",
+              "Cache-Control": "no-cache"
+            },
+          ),
+          data: {
+            "task_id": taskId,
+            "connect_by": "PHONE",
+            "updated_data": fixPhoneNumber,
+          },
+        );
+
+        return {
+          'status': response2.data['status'],
+          'data': response2.data['message'],
+        };
+      }
       return response.data;
     } catch (e) {
       throw Exception('Failed to verify otp number: $e');
