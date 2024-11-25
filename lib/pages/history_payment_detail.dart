@@ -330,7 +330,7 @@ class _HistoryPaymentDetailState extends State<HistoryPaymentDetail> {
             final String token = prefs.getString('token') ?? "";
             final dio = Dio();
             final response3 = await dio.post(
-              "${config.backendBaseUrl}/transaction/create",
+              "${config.backendBaseUrlProd}/transaction/create",
               data: {
                 "task_id": widget.taskid,
                 "payment_method_code": bankCode,

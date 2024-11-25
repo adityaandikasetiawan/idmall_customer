@@ -1,5 +1,4 @@
 // ignore_for_file: empty_catches, avoid_print, use_build_context_synchronously, deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idmall/controller/dashboard.controller.dart';
@@ -24,7 +23,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final DashboardController dashboardController =
-      Get.put(DashboardController());
+  Get.put(DashboardController());
 
   final oCcy = NumberFormat("#,##0", "en_US");
   List<CustomerListByEmail> customerListEmails = [];
@@ -170,11 +169,11 @@ class _HomeState extends State<Home> {
                                     ),
                                     onPressed: () => {
                                       setState(
-                                        () {
+                                            () {
                                           _keyword.clear();
                                           dashboardController
                                               .filterContractList(
-                                                  _keyword.text);
+                                              _keyword.text);
                                         },
                                       )
                                     },
@@ -184,7 +183,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 onChanged: (text) {
                                   setState(
-                                    () {
+                                        () {
                                       dashboardController
                                           .filterContractList(text);
                                     },
@@ -200,8 +199,8 @@ class _HomeState extends State<Home> {
                                   .filteredCustomerIdList.length,
                               itemBuilder: (context, index) {
                                 CustomerListByEmail customerList =
-                                    dashboardController
-                                        .filteredCustomerIdList[index];
+                                dashboardController
+                                    .filteredCustomerIdList[index];
                                 return ListTile(
                                   onTap: () async {
                                     dashboardController
@@ -228,7 +227,7 @@ class _HomeState extends State<Home> {
                                   leading: const Icon(Icons.home),
                                   title: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(customerList.customerId),
                                     ],
@@ -250,7 +249,7 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Obx(
-                    () {
+                        () {
                       if (dashboardController.isLoading.value) {
                         return Shimmer.fromColors(
                           baseColor: Colors.grey.shade300,
@@ -293,7 +292,7 @@ class _HomeState extends State<Home> {
                     height: 10,
                   ),
                   Obx(
-                    () {
+                        () {
                       if (dashboardController.isLoading.value) {
                         return Shimmer.fromColors(
                           baseColor: Colors.grey.shade300,
@@ -343,7 +342,7 @@ class _HomeState extends State<Home> {
             ),
             onPressed: () {
               Get.to(
-                () => NotificationList(),
+                    () => NotificationList(),
               );
             },
           ),
@@ -364,7 +363,7 @@ class _HomeState extends State<Home> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Obx(
-                  () {
+                      () {
                     if (dashboardController.isLoading.value) {
                       if (["ACTIVE", "DU", "FREEZE"].contains(
                           dashboardController.dashboardData.value.status)) {
@@ -431,7 +430,7 @@ class _HomeState extends State<Home> {
                                   ),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       const Padding(
                                         padding: EdgeInsets.all(16.0),
@@ -456,21 +455,21 @@ class _HomeState extends State<Home> {
                                         ),
                                       ),
                                       dashboardController.dashboardData.value
-                                                  .billStatus ==
-                                              'Tagihan'
+                                          .billStatus ==
+                                          'Tagihan'
                                           ? Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5.0),
-                                              child: Text(
-                                                "Bayar tagihan Anda sebelum ${DateFormat('dd MMMM yyyy').format(DateTime.tryParse(dashboardController.dashboardData.value.dueDate)!)}",
-                                                style: const TextStyle(
-                                                  fontFamily: "Roboto",
-                                                  fontSize: 8,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            )
+                                        padding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 5.0),
+                                        child: Text(
+                                          "Bayar tagihan Anda sebelum ${DateFormat('dd MMMM yyyy').format(DateTime.tryParse(dashboardController.dashboardData.value.dueDate)!)}",
+                                          style: const TextStyle(
+                                            fontFamily: "Roboto",
+                                            fontSize: 8,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      )
                                           : const Text(""),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -492,7 +491,7 @@ class _HomeState extends State<Home> {
                                         ),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               dashboardController.dashboardData
@@ -566,13 +565,13 @@ class _HomeState extends State<Home> {
                                       ),
                                     ),
                                     dashboardController.dashboardData.value
-                                                .billStatus ==
-                                            'Tagihan'
+                                        .billStatus ==
+                                        'Tagihan'
                                         ? const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 5.0),
-                                            child: Text(""),
-                                          )
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 5.0),
+                                      child: Text(""),
+                                    )
                                         : const Text(""),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -636,7 +635,7 @@ class _HomeState extends State<Home> {
                   height: 15,
                 ),
                 Obx(
-                  () {
+                      () {
                     if ([
                       "QUOTATION",
                       "PENDING_PAYMENT",
@@ -657,8 +656,8 @@ class _HomeState extends State<Home> {
                               ),
                             );
                           } else if (dashboardController
-                                      .dashboardData.value.status ==
-                                  "PENDING_PAYMENT_MOBILE" ||
+                              .dashboardData.value.status ==
+                              "PENDING_PAYMENT_MOBILE" ||
                               dashboardController.dashboardData.value.status ==
                                   "PENDING_PAYMENT") {
                             Navigator.push(
@@ -697,24 +696,24 @@ class _HomeState extends State<Home> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     dashboardController
-                                                .dashboardData.value.status ==
-                                            "QUOTATION"
+                                        .dashboardData.value.status ==
+                                        "QUOTATION"
                                         ? const Text(
-                                            "Registrasi Anda sudah disetujui, mohon isi FORM AKTIVASI BERLANGGANAN",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
+                                      "Registrasi Anda sudah disetujui, mohon isi FORM AKTIVASI BERLANGGANAN",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
                                         : const Text(
-                                            "Registrasi Anda mencapai tahap pembayaran, silahkan melanjutkan ke proses pembayaran",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
+                                      "Registrasi Anda mencapai tahap pembayaran, silahkan melanjutkan ke proses pembayaran",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -883,7 +882,7 @@ class _HomeState extends State<Home> {
                 const SizedBox(height: 20),
 
                 Obx(
-                  () {
+                      () {
                     if (dashboardController.isLoading.value) {
                       return Shimmer.fromColors(
                         baseColor: Colors.grey.shade300,
@@ -920,10 +919,10 @@ class _HomeState extends State<Home> {
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemCount:
-                                    dashboardController.productHome.length,
+                                dashboardController.productHome.length,
                                 itemBuilder: (context, index) {
                                   ProductFlyer productHome =
-                                      dashboardController.productHome[index];
+                                  dashboardController.productHome[index];
                                   return InternetSpeedCard(
                                     id: productHome.id.toString(),
                                     speed: productHome.speed,
@@ -948,7 +947,7 @@ class _HomeState extends State<Home> {
                 ),
 
                 Obx(
-                  () {
+                      () {
                     if (dashboardController.isLoading.value) {
                       return Shimmer.fromColors(
                         baseColor: Colors.grey.shade300,
@@ -985,10 +984,10 @@ class _HomeState extends State<Home> {
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemCount:
-                                    dashboardController.productBisnis.length,
+                                dashboardController.productBisnis.length,
                                 itemBuilder: (context, index) {
                                   ProductFlyer productBisnis =
-                                      dashboardController.productBisnis[index];
+                                  dashboardController.productBisnis[index];
                                   return InternetSpeedCard(
                                     id: productBisnis.id.toString(),
                                     speed: productBisnis.speed,
@@ -1072,11 +1071,11 @@ class InternetSpeedCard extends StatelessWidget {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
-                          Colors.red, // Warna latar belakang tombol
+                      Colors.red, // Warna latar belakang tombol
                     ),
                     onPressed: () {
                       Get.to(
-                        () => DetailPage(
+                            () => DetailPage(
                           ids: id,
                           isGuest: 0,
                         ),

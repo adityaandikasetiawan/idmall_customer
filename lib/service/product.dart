@@ -17,7 +17,7 @@ class ProductService extends getx.GetxService {
       final String token = prefs.getString('token') ?? "";
 
       final response = await dio.get(
-        "${config.backendBaseUrl}/product/banner/$id",
+        "${config.backendBaseUrlProd}/product/banner/$id",
         options: Options(
           headers: {
             "Content-Type": "application/json",

@@ -57,8 +57,10 @@ android {
         applicationId "com.supercorridor.idmall"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+
         minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
+
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
@@ -77,8 +79,8 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
-//            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
