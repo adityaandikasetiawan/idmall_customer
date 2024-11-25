@@ -65,6 +65,7 @@ class DashboardController extends GetxController {
         dashboardData.value = result;
       }
     } catch (e) {
+      // print(e);
       Get.snackbar('Error', 'Failed to get data');
     } finally {
       isLoading(false);

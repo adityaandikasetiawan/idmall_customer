@@ -7,6 +7,7 @@ import 'package:idmall/pages/login.dart';
 import 'package:idmall/pages/otp_code.dart';
 import 'package:idmall/pages/setting_form_change_phone.dart';
 import 'package:idmall/service/account.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountController extends GetxController {
   final AccountService accountService = Get.put(AccountService());
@@ -96,6 +97,11 @@ class AccountController extends GetxController {
           await accountService.updateAccountData("EMAIL", emailController.text);
       if (result != null) {
         Get.snackbar(result['status'], result['message']);
+
+        //remove all prefs
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+
         emailController.clear();
         Get.offAll(Login());
         Get.deleteAll();

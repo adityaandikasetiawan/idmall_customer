@@ -81,7 +81,7 @@ class _HistoryListState extends State<HistoryList> {
                     child: TabBarView(
                       children: [
                         HistoryPayment(
-                          taskid: widget.customerId!,
+                          taskid: widget.customerId ?? "",
                         ),
                         CustomerStatus(
                           status: widget.status ?? "",

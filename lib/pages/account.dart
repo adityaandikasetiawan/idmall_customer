@@ -243,16 +243,11 @@ class _AccountState extends State<Account> {
 void _logout(BuildContext context) async {
   // Menghapus data dari SharedPreferences
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.remove(
-      'token'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
-  await prefs.remove(
-      'firstName'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
-  await prefs.remove(
-      'lastName'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
-  await prefs.remove(
-      'user_id'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
-  await prefs.remove(
-      'fullName'); // Misalnya, ini adalah kunci yang menandakan bahwa pengguna sudah login
+  await prefs.remove('token');
+  await prefs.remove('firstName');
+  await prefs.remove('lastName');
+  await prefs.remove('user_id');
+  await prefs.remove('fullName');
 
   getx.Get.deleteAll();
 

@@ -118,19 +118,24 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
             ),
             SizedBox(height: 20),
-            Text(
-              'Time remaining: ${_formatTime(_remainingSeconds)}',
-              style: TextStyle(fontSize: 16, color: Colors.red),
+            SizedBox(
+              width: 50,
+              child: ElevatedButton(
+                onPressed: () async {
+                  final clipboardData = await Clipboard.getData('text/plain');
+                  if (clipboardData != null && clipboardData.text != null) {
+                    _pasteCode(clipboardData.text!);
+                  }
+                },
+                child: Text('Paste OTP'),
+              ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                final clipboardData = await Clipboard.getData('text/plain');
-                if (clipboardData != null && clipboardData.text != null) {
-                  _pasteCode(clipboardData.text!);
-                }
-              },
-              child: Text('Paste OTP'),
+            Center(
+              child: Text(
+                'Time remaining: ${_formatTime(_remainingSeconds)}',
+                style: TextStyle(fontSize: 16, color: Colors.red),
+              ),
             ),
             SizedBox(
               height: 20,

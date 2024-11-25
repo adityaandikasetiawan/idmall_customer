@@ -29,7 +29,7 @@ class DashboardService extends getx.GetxService {
         ),
       );
 
-      if (response.data['data'].length > 0) {
+      if (response.data['data']['Task_ID'] != "-") {
         final response2 = await dio.get(
           "${config.backendBaseUrlProd}/customer/dashboard",
           options: Options(
@@ -47,7 +47,7 @@ class DashboardService extends getx.GetxService {
       }
       return null;
     } catch (error) {
-      print(error);
+      // print(error);
       throw Exception('Failed to fetch dashboard data: $error');
     }
   }

@@ -20,6 +20,11 @@ class _FormChangeEmailState extends State<FormChangeEmail> {
     super.initState();
   }
 
+  void dispose() {
+    accountController.emailController.clear();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

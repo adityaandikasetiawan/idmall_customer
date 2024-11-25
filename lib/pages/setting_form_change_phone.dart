@@ -21,6 +21,12 @@ class _FormChangePhoneNumberState extends State<FormChangePhoneNumber> {
   }
 
   @override
+  void dispose() {
+    accountController.phoneNumberController.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
