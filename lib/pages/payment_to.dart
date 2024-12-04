@@ -66,7 +66,7 @@ class _PaymentToPageState extends State<PaymentToPage> {
         HttpClient()
           ..badCertificateCallback =
               (X509Certificate cert, String host, int port) => true;
-    var response = await dio.get("${config.backendBaseUrl}/payment-method/",
+    var response = await dio.get("${config.backendBaseUrlProd}/payment-method/",
         options: Options(headers: {
           HttpHeaders.authorizationHeader: token,
         }));
@@ -98,7 +98,7 @@ class _PaymentToPageState extends State<PaymentToPage> {
             ..badCertificateCallback =
                 (X509Certificate cert, String host, int port) => true;
       var response =
-          await dio.post('${config.backendBaseUrl}/transaction/create',
+          await dio.post('${config.backendBaseUrlProd}/transaction/create',
               data: dataNya,
               options: Options(headers: {
                 HttpHeaders.authorizationHeader: "Bearer $token",
