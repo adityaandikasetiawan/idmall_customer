@@ -64,9 +64,10 @@ class AccountService extends getx.GetxService {
           "updated_data": newData,
         },
       );
+      print(response.data);
       return response.data;
     } catch (error) {
-      throw Exception('Failed to fetch dashboard data: $error');
+      throw Exception('Failed to link account: $error');
     }
   }
 

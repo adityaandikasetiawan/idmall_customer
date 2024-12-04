@@ -81,6 +81,8 @@ class AccountController extends GetxController {
       );
       if (result != null) {
         Get.snackbar(result['status'], result['message']);
+        // Get.offAll(Login());
+        // Get.deleteAll();
       }
     } catch (e) {
       Get.snackbar("Failed", "Gagal menghubungkan account mohon hubungin CS");

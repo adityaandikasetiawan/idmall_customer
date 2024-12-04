@@ -14,7 +14,7 @@ class _AccountLinkState extends State<AccountLink> {
 
   final List<String> categoryList = <String>[
     'KTP',
-    'Email',
+    'EMAIL',
   ];
 
   @override
