@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -141,11 +142,30 @@ class _OtpScreenState extends State<OtpScreen> {
               height: 20,
             ),
             ElevatedButton(
-              onPressed: () async {
-                final clipboardData = await Clipboard.getData('text/plain');
-                if (clipboardData != null && clipboardData.text != null) {
-                  accountController.validationOtp(clipboardData.text!);
-                }
+              onPressed: () {
+                var fullOtp = _controllers[0].text.toString() +
+                    _controllers[1].text.toString() +
+                    _controllers[2].text.toString() +
+                    _controllers[3].text.toString() +
+                    _controllers[4].text.toString() +
+                    _controllers[5].text.toString();
+                accountController.validationOtp(fullOtp);
+
+                // final clipboardData = await Clipboard.getData('text/plain');
+                // if (clipboardData != null &&
+                //     clipboardData.text != null &&
+                //     clipboardData.text != '') {
+                //   accountController.validationOtp(clipboardData.text!);
+                //   Clipboard.setData(ClipboardData(text: ''));
+                // } else {
+                //   var fullOtp = _controllers[0].text.toString() +
+                //       _controllers[1].text.toString() +
+                //       _controllers[2].text.toString() +
+                //       _controllers[3].text.toString() +
+                //       _controllers[4].text.toString() +
+                //       _controllers[5].text.toString();
+                //   accountController.validationOtp(fullOtp);
+                // }
               },
               child: const Text('Kirim OTP'),
             ),

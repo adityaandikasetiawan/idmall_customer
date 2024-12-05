@@ -181,6 +181,7 @@ class AccountService extends getx.GetxService {
       }
       return response.data;
     } catch (e) {
+      print(e);
       throw Exception('Failed to verify otp number: $e');
     }
   }
