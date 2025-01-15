@@ -13,7 +13,7 @@ class AuthService extends GetxService {
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       var response = await dio.post(
-        "${config.backendBaseUrlProd}/user/login",
+        "${config.backendBaseUrlProd}/user/login?apps_id=IDMALL_CUSTOMER",
         data: {
           'email': email,
           'password': password,
